@@ -1,0 +1,26 @@
+{
+  "name": "scythe-stats-discord",
+  "version": "1.0.0",
+  "description": "Discord bot for tracking Scythe stats",
+  "main": "dist/index.js",
+  "repository": "https://github.com/shibrady/scythe-stats-discord",
+  "author": "Brady Shi",
+  "license": "MIT",
+  "scripts": {
+    "start": "node dist/index.js",
+    "tsc": "node_modules/.bin/tsc"
+  },
+  "devDependencies": {
+    "@types/node": "^13.1.4",
+    "@typescript-eslint/eslint-plugin": "^2.14.0",
+    "@typescript-eslint/parser": "^2.14.0",
+    "eslint": "^6.8.0",
+    "eslint-config-prettier": "^6.9.0",
+    "eslint-plugin-node": "^11.0.0",
+    "prettier": "^1.19.1",
+    "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
