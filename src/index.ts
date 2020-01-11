@@ -1,5 +1,6 @@
 import * as Discord from 'discord.js';
 
+import { BOT_TOKEN } from './common/config';
 const client = new Discord.Client();
 
 client.on('ready', () => {
@@ -7,3 +8,4 @@ client.on('ready', () => {
 });
 
 client.login(process.env.SCYTHE_BOT_TOKEN);
+client.login(BOT_TOKEN);
