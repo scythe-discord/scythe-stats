@@ -9,7 +9,9 @@
     "node": ">=12.0.0"
   },
   "scripts": {
+    "start:app-server": "node app-server/dist/index.js",
     "start:bot": "node discord-bot/dist/index.js",
+    "build:app-server": "rimraf -rf app-server/dist && tsc --project app-server/tsconfig.json",
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json"
   },
   "devDependencies": {
