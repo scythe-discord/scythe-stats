@@ -2,11 +2,8 @@
   "compilerOptions": {
     "noImplicitAny": true,
     "removeComments": true,
-    "outDir": "dist/",
     "target": "ES5",
     "module": "CommonJS",
     "moduleResolution": "Node"
-  },
-  "include": ["src/**/*"],
-  "exclude": ["node_modules"]
+  }
 }

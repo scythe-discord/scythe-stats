@@ -1,0 +1,15 @@
+{
+  "name": "scythe-stats-discord-bot",
+  "version": "1.0.0",
+  "description": "Discord bot for tracking Scythe stats",
+  "main": "dist/index.js",
+  "repository": "https://github.com/shibrady/scythe-stats",
+  "author": "Brady Shi",
+  "license": "MIT",
+  "engines": {
+    "node": ">=12.0.0"
+  },
+  "dependencies": {
+    "discord.js": "^11.5.1"
+  }
+}
