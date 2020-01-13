@@ -1,5 +1,5 @@
 {
-  "name": "scythe-stats-app-server",
+  "name": "scythe-stats-server",
   "version": "1.0.0",
   "description": "Application server for scythe-stats",
   "main": "dist/index.js",
