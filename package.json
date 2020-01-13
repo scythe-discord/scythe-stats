@@ -14,7 +14,8 @@
     "build:app-server": "rimraf -rf app-server/dist && tsc --project app-server/tsconfig.json",
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
     "update-dep": "yarn && yarn --cwd app-server && yarn --cwd discord-bot",
-    "graphql:codegen": "yarn --cwd app-server graphql:codegen"
+    "graphql:codegen": "yarn --cwd app-server graphql:codegen",
+    "dev:app-server": "yarn nodemon --config nodemon.app-server.json app-server/src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
@@ -23,8 +24,10 @@
     "eslint": "^6.8.0",
     "eslint-config-prettier": "^6.9.0",
     "eslint-plugin-node": "^11.0.0",
+    "nodemon": "^2.0.2",
     "prettier": "^1.19.1",
     "rimraf": "^3.0.0",
+    "ts-node": "^8.6.1",
     "typescript": "^3.7.4"
   }
 }
