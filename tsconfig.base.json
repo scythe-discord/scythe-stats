@@ -4,6 +4,7 @@
     "removeComments": true,
     "target": "ES5",
     "module": "CommonJS",
-    "moduleResolution": "Node"
+    "moduleResolution": "Node",
+    "esModuleInterop": true
   }
 }

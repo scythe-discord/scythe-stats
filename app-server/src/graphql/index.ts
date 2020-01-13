@@ -1,3 +1,5 @@
 import { ApolloServer } from 'apollo-server';
 
-export const graphqlServer = new ApolloServer({});
+import schema from './schema';
+
+export const graphqlServer = new ApolloServer(schema);

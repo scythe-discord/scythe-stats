@@ -1,4 +1,4 @@
-import * as Discord from 'discord.js';
+import Discord from 'discord.js';
 
 import { BOT_TOKEN, GAME_LOG_PREFIX } from './common/config';
 import { handleLogRequest } from './logger';
