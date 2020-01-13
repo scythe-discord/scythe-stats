@@ -113,3 +113,6 @@ dist
 !.vscode/launch.json
 !.vscode/extensions.json
 *.code-workspace
+
+# Generated GraphQL typings
+app-server/graphql/schema/types.ts
