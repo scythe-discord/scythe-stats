@@ -115,4 +115,4 @@ dist
 *.code-workspace
 
 # Generated GraphQL typings
-app-server/graphql/schema/types.ts
+app-server/src/graphql/schema/types.ts
