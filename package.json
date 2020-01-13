@@ -16,7 +16,7 @@
     "start:server": "node server/dist/index.js",
     "start:bot": "node discord-bot/dist/index.js",
     "graphql:codegen": "yarn --cwd server graphql:codegen",
-    "update-dep": "yarn && yarn --cwd server && yarn --cwd discord-bot"
+    "install": "yarn --cwd server && yarn --cwd discord-bot"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
