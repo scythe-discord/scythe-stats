@@ -1,8 +1,11 @@
-import * as express from 'express';
-import { EXPRESS_PORT } from './common/config';
+import { GRAPHQL_SERVER_PORT, APP_SERVER_PORT } from './common/config';
+import { appServer } from './app';
+import { graphqlServer } from './graphql';
 
-const app = express();
-
-app.listen(EXPRESS_PORT, () =>
-  console.log(`Starting scythe-stats app server on port ${EXPRESS_PORT}`)
+appServer.listen(APP_SERVER_PORT, () =>
+  console.log(`Starting scythe-stats app server on port ${APP_SERVER_PORT}`)
 );
+
+graphqlServer.listen({
+    port: GRAPHQL_SERVER_PORT,
+}).then(({ url }) => console.log(`Starting scythe-stats Apollo server at ${url}`));

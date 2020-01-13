@@ -1,1 +1,2 @@
-export const EXPRESS_PORT = process.env.EXPRESS_PORT || 8000;
+export const GRAPHQL_SERVER_PORT = process.env.GRAPHQL_SERVER_PORT || 4000;
+export const APP_SERVER_PORT = process.env.APP_SERVER_PORT || 3000;
