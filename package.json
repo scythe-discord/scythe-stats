@@ -15,7 +15,8 @@
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
     "update-dep": "yarn && yarn --cwd server && yarn --cwd discord-bot",
     "graphql:codegen": "yarn --cwd server graphql:codegen",
-    "dev:server": "yarn ts-node-dev --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts"
+    "dev:server": "yarn ts-node-dev --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts",
+    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
