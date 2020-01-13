@@ -9,14 +9,14 @@
     "node": ">=12.0.0"
   },
   "scripts": {
-    "start:server": "node server/dist/index.js",
-    "start:bot": "node discord-bot/dist/index.js",
+    "dev:server": "yarn ts-node-dev --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts",
+    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts",
     "build:server": "rimraf -rf server/dist && tsc --project server/tsconfig.json",
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
-    "update-dep": "yarn && yarn --cwd server && yarn --cwd discord-bot",
+    "start:server": "node server/dist/index.js",
+    "start:bot": "node discord-bot/dist/index.js",
     "graphql:codegen": "yarn --cwd server graphql:codegen",
-    "dev:server": "yarn ts-node-dev --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts",
-    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts"
+    "update-dep": "yarn && yarn --cwd server && yarn --cwd discord-bot"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
