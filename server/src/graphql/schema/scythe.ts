@@ -6,7 +6,7 @@ export const typeDef = gql`
   extend type Query {
     faction(name: String!): Faction
     playerMat(name: String!): PlayerMat
-  } 
+  }
 
   type Faction {
     id: Int!
@@ -22,6 +22,6 @@ export const typeDef = gql`
 export const resolvers = {
   Query: {
     faction: (): Query['faction'] => null,
-    playerMat: (): Query['playerMat'] => null,
+    playerMat: (): Query['playerMat'] => null
   }
-}
+};

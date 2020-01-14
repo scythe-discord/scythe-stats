@@ -1,10 +1,13 @@
 import { merge } from 'lodash';
 
 import { Query, Mutation } from './root';
-import { typeDef as scytheTypeDef, resolvers as scytheResolvers } from './scythe';
-import { typeDef as matchTypeDef , resolvers as matchResolvers } from './match';
+import {
+  typeDef as scytheTypeDef,
+  resolvers as scytheResolvers
+} from './scythe';
+import { typeDef as matchTypeDef, resolvers as matchResolvers } from './match';
 
 export default {
-  typeDefs: [ Query, Mutation, scytheTypeDef, matchTypeDef ],
-  resolvers: merge(scytheResolvers, matchResolvers),
-} 
+  typeDefs: [Query, Mutation, scytheTypeDef, matchTypeDef],
+  resolvers: merge(scytheResolvers, matchResolvers)
+};

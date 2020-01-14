@@ -35,4 +35,4 @@ export const resolvers = {
   Mutation: {
     logMatch: (): Mutation['logMatch'] => null
   }
-}
+};

@@ -10,5 +10,4 @@ export const Mutation = gql`
   type Mutation {
     _empty: String
   }
-`
-
+`;
