@@ -1403,17 +1403,6 @@ apollo-server-types@^0.2.10:
     apollo-server-caching "^0.5.1"
     apollo-server-env "^2.4.3"
 
-apollo-server@^2.9.16:
-  version "2.9.16"
-  resolved "https://registry.yarnpkg.com/apollo-server/-/apollo-server-2.9.16.tgz#c0054ed70ecb637cb3f585ff46fb4a060730076f"
-  integrity sha512-dqB1shkjl9ne7DfSHXDH5sT70llr9zswLL+/g/4zt4/H+k+2pkD1BShQkNIK7PBYcVa8KvRAHXiHTXZ36GCspA==
-  dependencies:
-    apollo-server-core "^2.9.16"
-    apollo-server-express "^2.9.16"
-    express "^4.0.0"
-    graphql-subscriptions "^1.0.0"
-    graphql-tools "^4.0.0"
-
 apollo-tracing@^0.8.11:
   version "0.8.11"
   resolved "https://registry.yarnpkg.com/apollo-tracing/-/apollo-tracing-0.8.11.tgz#55822aac7381da77c703b52d35c4dab9393ec33c"
@@ -2328,7 +2317,7 @@ expand-brackets@^2.1.4:
     snapdragon "^0.8.1"
     to-regex "^3.0.1"
 
-express@^4.0.0, express@^4.17.1:
+express@^4.17.1:
   version "4.17.1"
   resolved "https://registry.yarnpkg.com/express/-/express-4.17.1.tgz#4491fc38605cf51f8629d39c2b5d026f98a4c134"
   integrity sha512-mHJ9O79RqluphRrcw2X/GTh3k9tVv8YcoyY4Kkh4WDMUYKRZUq0h1o0w2rrrxBqM7VoeUVqgb27xlEMXTnYt4g==

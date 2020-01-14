@@ -13,7 +13,7 @@
     "graphql:codegen": "graphql-codegen --config codegen.yml"
   },
   "dependencies": {
-    "apollo-server": "^2.9.16",
+    "apollo-server-express": "^2.9.16",
     "express": "^4.17.1",
     "graphql": "^14.5.8",
     "lodash": "^4.17.15"
