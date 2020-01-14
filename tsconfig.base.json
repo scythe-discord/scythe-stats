@@ -1,6 +1,7 @@
 {
   "compilerOptions": {
     "noImplicitAny": true,
+    "strictNullChecks": true,
     "removeComments": true,
     "target": "ES5",
     "module": "CommonJS",

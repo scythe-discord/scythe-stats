@@ -4,10 +4,17 @@ import { GAME_LOG_PREFIX } from '../common/config';
 
 import { extractGameLog } from './extract';
 
-export const handleLogRequest = (message: Message): void => {
+export const handleLogRequest = async (message: Message): Promise<void> => {
   if (!message.content.startsWith(GAME_LOG_PREFIX)) {
     return;
   }
 
-  const matchResult = extractGameLog(message.content);
+  const playerMatchResults = extractGameLog(message.content);
+
+  if (!playerMatchResults) {
+    console.log(
+      `Failed to parse match results with content ${message.content}`
+    );
+    return;
+  }
 };

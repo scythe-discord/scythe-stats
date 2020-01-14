@@ -3,23 +3,37 @@ import { PlayerScore } from '../common/scythe';
 const GAME_SUMMARY_IDX = 1;
 const SCORES_START_IDX = 3;
 
-const getNumRounds = (gameSummaryLog: string): number => {
+const getNumRounds = (gameSummaryLog: string): number | null => {
   const numRoundsMatch = gameSummaryLog.match(/(?<rounds>\d+) Rounds/);
+
+  if (!numRoundsMatch || !numRoundsMatch.groups) {
+    return null;
+  }
+
   const numRounds = Number(numRoundsMatch.groups.rounds);
   return numRounds;
 };
 
-const getPlayerScore = (playerScoreLog: string): PlayerScore => {
+const getPlayerScore = (playerScoreLog: string): PlayerScore | null => {
   // Match from the end of the string due to stable formatting
   // (where the player name and Steam ID are unstable)
   const scoreLogMatch = playerScoreLog.match(
     /(?<playerDetails>.*)<:(?<faction>\w+):.*\| (?<playerMat>\w+) \| \*\*\$(?<coins>\d+)\*\*$/
   );
+
+  if (!scoreLogMatch || !scoreLogMatch.groups) {
+    return null;
+  }
+
   const playerDetails = scoreLogMatch.groups.playerDetails.trim();
 
   // TODO: Once Azor adds steam IDs,
   // change to /^\*\*(?<displayName>.*)\*\* \((?<steamId>.*)\)$/
   const playerDetailsMatch = playerDetails.match(/^\*\*(?<displayName>.*)\*\*/);
+
+  if (!playerDetailsMatch || !playerDetailsMatch.groups) {
+    return null;
+  }
 
   const { faction, playerMat, coins } = scoreLogMatch.groups;
   const { displayName, steamId } = playerDetailsMatch.groups;
@@ -46,25 +60,29 @@ export const extractGameLog = (
   */
   const logLines = log.split('\n');
 
-  try {
-    const gameSummaryLog = logLines[GAME_SUMMARY_IDX];
-    const playerScoreLogs = logLines.slice(SCORES_START_IDX);
+  const gameSummaryLog = logLines[GAME_SUMMARY_IDX];
+  const playerScoreLogs = logLines.slice(SCORES_START_IDX);
 
-    const numRounds = getNumRounds(gameSummaryLog);
-    const playerScores: PlayerScore[] = [];
+  const numRounds = getNumRounds(gameSummaryLog);
 
-    playerScoreLogs.forEach(playerScoreLog => {
-      const playerScore = getPlayerScore(playerScoreLog);
-      playerScores.push(playerScore);
-    });
-
-    return {
-      numRounds,
-      playerScores
-    };
-  } catch (e) {
-    console.error('Failed to parse game log result', e);
+  if (!numRounds) {
+    return null;
   }
 
-  return null;
+  const playerScores: PlayerScore[] = [];
+
+  for (let i = 0; i < playerScoreLogs.length; i++) {
+    const playerScore = getPlayerScore(playerScoreLogs[i]);
+
+    if (!playerScore) {
+      return null;
+    }
+
+    playerScores.push(playerScore);
+  }
+
+  return {
+    numRounds,
+    playerScores
+  };
 };
