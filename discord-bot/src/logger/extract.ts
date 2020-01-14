@@ -38,14 +38,12 @@ const getPlayerScore = (playerScoreLog: string): PlayerScore | null => {
   const { faction, playerMat, coins } = scoreLogMatch.groups;
   const { displayName, steamId } = playerDetailsMatch.groups;
 
-  const score = Number(coins);
-
   return {
     displayName,
     steamId,
-    score,
     faction,
-    playerMat
+    playerMat,
+    coins: Number(coins)
   };
 };
 

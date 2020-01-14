@@ -3,5 +3,5 @@ export interface PlayerScore {
   steamId: string;
   faction: string;
   playerMat: string;
-  score: number;
+  coins: number;
 }
