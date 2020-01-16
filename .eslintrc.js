@@ -17,5 +17,13 @@ module.exports = {
         tryExtensions: ['.js', '.ts', '.json', '.node']
       }
     ]
-  }
+  },
+  overrides: [
+    {
+      files: ['*.js'],
+      rules: {
+        '@typescript-eslint/explicit-function-return-type': 'off'
+      }
+    }
+  ]
 };
