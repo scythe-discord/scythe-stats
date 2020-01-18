@@ -2,11 +2,10 @@ import { Model, INTEGER } from 'sequelize';
 
 import { sequelize } from '../sequelize';
 
-import Faction from './faction';
-import PlayerMat from './player-mat';
-import Player from './player';
-
-export default class PlayerMatchResult extends Model {}
+export default class PlayerMatchResult extends Model {
+  public id: number;
+  public coins: number;
+}
 PlayerMatchResult.init(
   {
     coins: {
@@ -18,7 +17,3 @@ PlayerMatchResult.init(
     sequelize
   }
 );
-
-PlayerMatchResult.hasOne(Faction);
-PlayerMatchResult.hasOne(PlayerMat);
-PlayerMatchResult.hasOne(Player);
