@@ -4,12 +4,15 @@ import { Mutation } from './types';
 
 export const typeDef = gql`
   extend type Mutation {
-    logMatch(playerMatchResults: [PlayerMatchResultInput!]!): Match
+    logMatch(
+      numRounds: Int!
+      playerMatchResults: [PlayerMatchResultInput!]!
+    ): Match
   }
 
   type Match {
     id: Int!
-    date: Int!
+    datePlayed: Int!
     numRounds: Int!
     playerResults: [PlayerMatchResult!]!
   }
