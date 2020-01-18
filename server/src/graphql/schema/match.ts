@@ -6,6 +6,7 @@ export const typeDef = gql`
   extend type Mutation {
     logMatch(
       numRounds: Int!
+      datePlayed: Int!
       playerMatchResults: [PlayerMatchResultInput!]!
     ): Match
   }

@@ -38,6 +38,7 @@ export type Mutation = {
 
 export type MutationLogMatchArgs = {
   numRounds: Scalars['Int'],
+  datePlayed: Scalars['Int'],
   playerMatchResults: Array<PlayerMatchResultInput>
 };
 
