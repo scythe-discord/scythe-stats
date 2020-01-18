@@ -8,7 +8,7 @@ module.exports = {
         primaryKey: true,
         type: Sequelize.INTEGER
       },
-      rounds: {
+      numRounds: {
         allowNull: false,
         type: Sequelize.INTEGER
       },

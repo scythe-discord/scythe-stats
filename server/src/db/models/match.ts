@@ -7,7 +7,7 @@ import PlayerMatchResult from './player-match-result';
 export default class Match extends Model {}
 Match.init(
   {
-    rounds: {
+    numRounds: {
       type: NUMBER,
       allowNull: false
     },
