@@ -3,7 +3,7 @@
     "noImplicitAny": true,
     "strictNullChecks": true,
     "removeComments": true,
-    "target": "ES5",
+    "target": "ES6",
     "module": "CommonJS",
     "moduleResolution": "Node",
     "esModuleInterop": true
