@@ -74,5 +74,3 @@ PlayerMat.init(
     sequelize
   }
 );
-
-PlayerMat.hasMany(PlayerMatchResult);

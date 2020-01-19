@@ -74,5 +74,3 @@ Faction.init(
     sequelize
   }
 );
-
-Faction.hasMany(PlayerMatchResult);

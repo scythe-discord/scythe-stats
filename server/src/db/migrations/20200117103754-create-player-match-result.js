@@ -12,7 +12,7 @@ module.exports = {
         allowNull: false,
         type: Sequelize.INTEGER
       },
-      player: {
+      PlayerId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -20,7 +20,7 @@ module.exports = {
           key: 'id'
         }
       },
-      faction: {
+      FactionId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -28,7 +28,7 @@ module.exports = {
           key: 'id'
         }
       },
-      playerMat: {
+      PlayerMatId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {
@@ -36,7 +36,7 @@ module.exports = {
           key: 'id'
         }
       },
-      match: {
+      MatchId: {
         allowNull: false,
         type: Sequelize.INTEGER,
         references: {

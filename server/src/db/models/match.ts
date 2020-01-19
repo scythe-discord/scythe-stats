@@ -80,5 +80,3 @@ Match.init(
     sequelize
   }
 );
-
-Match.hasMany(PlayerMatchResult);
