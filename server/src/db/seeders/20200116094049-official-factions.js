@@ -1,5 +1,3 @@
-'use strict';
-
 const OFFICIAL_FACTIONS = [
   'Polania',
   'Saxony',

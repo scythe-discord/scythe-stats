@@ -1,5 +1,3 @@
-'use strict';
-
 const OFFICIAL_PLAYER_MATS = [
   'Industrial',
   'Engineering',
