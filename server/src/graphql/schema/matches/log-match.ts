@@ -76,7 +76,7 @@ const mergeFloatingPlayers = async (
     }
   );
 
-  await floatingPlayer.destroy();
+  await floatingPlayer.destroy({ transaction });
 };
 
 const createPlayerMatchResults = async (
@@ -126,7 +126,7 @@ const createPlayerMatchResults = async (
     }
 
     if (shouldMergeFloatingPlayers) {
-      mergeFloatingPlayers(player, transaction);
+      await mergeFloatingPlayers(player, transaction);
     }
 
     await PlayerMatchResult.create(
