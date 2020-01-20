@@ -23,6 +23,11 @@ PlayerMatchResult.init(
 );
 
 PlayerMatchResult.belongsTo(Faction);
-PlayerMatchResult.belongsTo(Match);
 PlayerMatchResult.belongsTo(PlayerMat);
+PlayerMatchResult.belongsTo(Match);
 PlayerMatchResult.belongsTo(Player);
+
+Faction.hasMany(PlayerMatchResult);
+PlayerMat.hasMany(PlayerMatchResult);
+Match.hasMany(PlayerMatchResult);
+Player.hasMany(PlayerMatchResult);
