@@ -24,7 +24,7 @@ export type Faction = {
 export type Match = {
    __typename?: 'Match',
   id: Scalars['Int'],
-  datePlayed: Scalars['Int'],
+  datePlayed: Scalars['String'],
   numRounds: Scalars['Int'],
   playerResults: Array<PlayerMatchResult>,
 };
@@ -38,7 +38,7 @@ export type Mutation = {
 
 export type MutationLogMatchArgs = {
   numRounds: Scalars['Int'],
-  datePlayed: Scalars['Int'],
+  datePlayed: Scalars['String'],
   playerMatchResults: Array<PlayerMatchResultInput>
 };
 

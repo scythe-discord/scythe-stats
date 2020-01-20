@@ -16,7 +16,7 @@ export const typeDef = gql`
   extend type Mutation {
     logMatch(
       numRounds: Int!
-      datePlayed: Int!
+      datePlayed: String!
       playerMatchResults: [PlayerMatchResultInput!]!
     ): Match
   }
@@ -187,7 +187,7 @@ export const resolvers: IResolvers = {
 
         return {
           id: match.id,
-          datePlayed: match.datePlayed.getTime(),
+          datePlayed: match.datePlayed.toISOString(),
           numRounds: match.numRounds,
           playerResults: playerMatchResults
         };
