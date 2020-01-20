@@ -5,7 +5,7 @@ import {
   typeDef as scytheTypeDef,
   resolvers as scytheResolvers
 } from './scythe';
-import { typeDef as matchTypeDef, resolvers as matchResolvers } from './match';
+import { matchTypeDef, matchResolvers } from './matches';
 
 export default {
   typeDefs: [Query, Mutation, scytheTypeDef, matchTypeDef],

@@ -3,18 +3,18 @@ import { Transaction } from 'sequelize';
 
 import {
   sequelize,
-  Match,
-  PlayerMatchResult,
   Faction,
-  PlayerMat
-} from '.././../db';
+  PlayerMat,
+  Match,
+  Player,
+  PlayerMatchResult,
+} from '.././../../db';
 
 import {
   Mutation,
   MutationLogMatchArgs,
   PlayerMatchResult as PlayerMatchResultType
-} from './types';
-import Player from '../../db/models/player';
+} from '../types';
 
 export const typeDef = gql`
   extend type Mutation {
