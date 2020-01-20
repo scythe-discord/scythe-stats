@@ -19,13 +19,14 @@ module.exports = {
         resolvePaths: ['./src'],
         tryExtensions: ['.js', '.ts', '.json', '.node']
       }
-    ]
+    ],
+    '@typescript-eslint/no-explicit-any': 'off'
   },
   overrides: [
     {
       files: ['*.js'],
       rules: {
-        '@typescript-eslint/explicit-function-return-type': 'off'
+        '@typescript-eslint/explicit-function-return-type': 'off',
       }
     }
   ]
