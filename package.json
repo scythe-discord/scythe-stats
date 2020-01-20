@@ -9,11 +9,11 @@
     "node": ">=12.0.0"
   },
   "scripts": {
+    "dev:db": "docker run --rm --name scythe-stats-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
     "dev:server": "yarn ts-node-dev --inspect --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts",
     "dev:bot": "yarn ts-node-dev --inspect --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts",
     "build:server": "rimraf -rf server/dist && tsc --project server/tsconfig.json",
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
-    "start:db": "docker run --rm --name scythe-stats-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
     "start:server": "node server/dist/index.js",
     "start:bot": "node discord-bot/dist/index.js",
     "reset:db": "yarn --cwd server sequelize-cli db:migrate:undo:all && yarn --cwd server sequelize-cli db:migrate && yarn --cwd server sequelize-cli db:seed:all",
