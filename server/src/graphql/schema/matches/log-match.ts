@@ -10,12 +10,7 @@ import {
   PlayerMatchResult
 } from '.././../../db';
 
-import {
-  Mutation,
-  MutationLogMatchArgs,
-  PlayerMatchResultInput,
-  PlayerMatchResult as PlayerMatchResultNode
-} from '../types';
+import Schema from '../codegen';
 
 export const typeDef = gql`
   extend type Mutation {
@@ -86,10 +81,10 @@ const mergeFloatingPlayers = async (
 
 const createPlayerMatchResults = async (
   matchId: number,
-  loggedMatchResults: PlayerMatchResultInput[],
+  loggedMatchResults: Schema.PlayerMatchResultInput[],
   transaction: Transaction
-): Promise<PlayerMatchResultNode[]> => {
-  const playerMatchResults: PlayerMatchResultNode[] = [];
+): Promise<Schema.PlayerMatchResult[]> => {
+  const playerMatchResults: Schema.PlayerMatchResult[] = [];
 
   for (let i = 0; i < loggedMatchResults.length; i++) {
     const {
@@ -163,8 +158,8 @@ export const resolvers: IResolvers = {
         numRounds,
         datePlayed,
         playerMatchResults: loggedMatchResults
-      }: MutationLogMatchArgs
-    ): Promise<Mutation['logMatch'] | null> => {
+      }: Schema.MutationLogMatchArgs
+    ): Promise<Schema.Mutation['logMatch'] | null> => {
       if (numRounds === 0 || loggedMatchResults.length < 2) {
         return null;
       }

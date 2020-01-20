@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server-express';
 
-import { Query } from './types';
+import Schema from './codegen';
 
 export const typeDef = gql`
   extend type Query {
@@ -21,7 +21,7 @@ export const typeDef = gql`
 
 export const resolvers = {
   Query: {
-    faction: (): Query['faction'] => null,
-    playerMat: (): Query['playerMat'] => null
+    faction: (): Schema.Query['faction'] => null,
+    playerMat: (): Schema.Query['playerMat'] => null
   }
 };

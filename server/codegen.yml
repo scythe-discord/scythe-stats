@@ -1,7 +1,7 @@
 overwrite: true
-schema: 'http://localhost:3000/graphql'
+schema: "http://localhost:3000/graphql"
 documents: null
 generates:
-  src/graphql/schema/types.ts:
+  src/graphql/schema/codegen/generated.ts:
     plugins:
-      - 'typescript'
+      - "typescript"
