@@ -1,6 +1,6 @@
+import { gql } from 'apollo-server-express';
 import { merge } from 'lodash';
 
-import { Query, Mutation } from './root';
 import {
   typeDef as scytheTypeDef,
   resolvers as scytheResolvers
@@ -9,6 +9,18 @@ import {
   typeDef as matchTypeDef,
   resolvers as matchResolvers
 } from './matches';
+
+export const Query = gql`
+  type Query {
+    _empty: String
+  }
+`;
+
+export const Mutation = gql`
+  type Mutation {
+    _empty: String
+  }
+`;
 
 export default {
   typeDefs: [Query, Mutation, scytheTypeDef, ...matchTypeDef],
