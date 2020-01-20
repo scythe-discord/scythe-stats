@@ -6,8 +6,8 @@ import { GAME_LOG_PREFIX, GRAPHQL_SERVER_URL } from '../common/config';
 import { extractGameLog } from './extract';
 
 const LOG_MATCH_QUERY = `
-  mutation logMatch($playerMatchResults: [PlayerMatchResultInput!]!)  {
-    logMatch(playerMatchResults: $playerMatchResults) {
+  mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!)  {
+    logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults) {
       id
     }
   }
@@ -29,6 +29,8 @@ export const handleLogRequest = async (message: Message): Promise<void> => {
 
   try {
     const data = await request(GRAPHQL_SERVER_URL, LOG_MATCH_QUERY, {
+      numRounds: playerMatchResults.numRounds,
+      datePlayed: message.createdAt.toISOString(),
       playerMatchResults: playerMatchResults.playerScores
     });
     console.log(JSON.stringify(data, undefined, 2));
