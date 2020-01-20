@@ -1,4 +1,4 @@
-import Discord, { TextChannel } from 'discord.js';
+import { Client, Message, TextChannel } from 'discord.js';
 
 import {
   BOT_TOKEN,
@@ -11,7 +11,7 @@ import { handleLogRequest } from '../logger';
 // How many messages to read at a time
 const REQUEST_LIMIT = 50;
 
-const client = new Discord.Client();
+const client = new Client();
 
 const fetchAndLogMessages = async (
   channel: TextChannel,
@@ -22,7 +22,7 @@ const fetchAndLogMessages = async (
     after: after ? after : undefined
   });
 
-  let lastMessage: Discord.Message | undefined;
+  let lastMessage: Message | undefined;
   messages.forEach(message => {
     if (message.content.startsWith(GAME_LOG_PREFIX)) {
       handleLogRequest(message);
