@@ -159,9 +159,11 @@ export const resolvers: IResolvers = {
         datePlayed,
         playerMatchResults: loggedMatchResults
       }: Schema.MutationLogMatchArgs
-    ): Promise<Schema.Mutation['logMatch'] | null> => {
+    ): Promise<Schema.Mutation['logMatch']> => {
       if (numRounds === 0 || loggedMatchResults.length < 2) {
-        return null;
+        throw new Error(
+          `Failed to validate match from ${new Date(datePlayed)}`
+        );
       }
 
       let transaction: Transaction | undefined;
