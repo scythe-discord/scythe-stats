@@ -10,16 +10,16 @@
   },
   "scripts": {
     "dev:db": "docker run --rm --name scythe-stats-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
-    "dev:server": "yarn ts-node-dev --respawn --transpileOnly --project server/tsconfig.json server/src/index.ts",
+    "dev:api": "yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
     "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts",
-    "build:server": "rimraf -rf server/dist && tsc --project server/tsconfig.json",
+    "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
     "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
-    "start:server": "node server/dist/index.js",
+    "start:api": "node api/dist/index.js",
     "start:bot": "node discord-bot/dist/index.js",
-    "reset:db": "yarn --cwd server sequelize-cli db:migrate:undo:all && yarn --cwd server sequelize-cli db:migrate && yarn --cwd server sequelize-cli db:seed:all",
-    "graphql:codegen": "yarn --cwd server graphql:codegen",
-    "sequelize-cli": "yarn --cwd server sequelize-cli",
-    "install": "yarn --cwd server && yarn --cwd discord-bot"
+    "reset:db": "yarn --cwd api sequelize-cli db:migrate:undo:all && yarn --cwd api sequelize-cli db:migrate && yarn --cwd api sequelize-cli db:seed:all",
+    "graphql:codegen": "yarn --cwd api graphql:codegen",
+    "sequelize-cli": "yarn --cwd api sequelize-cli",
+    "install": "yarn --cwd api && yarn --cwd discord-bot"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",
