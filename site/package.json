@@ -1,0 +1,9 @@
+{
+  "name": "scythe-stats-site",
+  "version": "1.0.0",
+  "description": "Frontend project for scythe-stats",
+  "main": "pages/index.tsx",
+  "repository": "https://github.com/shibrady/scythe-stats",
+  "author": "Brady Shi",
+  "license": "MIT"
+}
