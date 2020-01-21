@@ -1,4 +1,4 @@
-import { gql, IResolvers } from 'apollo-server-express';
+import { gql, IResolvers } from 'apollo-server';
 import { Transaction } from 'sequelize';
 
 import {

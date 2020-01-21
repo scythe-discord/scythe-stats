@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'apollo-server';
 
 export const typeDef = gql`
   type Match {
