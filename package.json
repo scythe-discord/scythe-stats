@@ -11,15 +11,15 @@
   "scripts": {
     "dev:db": "docker run --rm --name scythe-stats-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
     "dev:api": "yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
-    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project discord-bot/tsconfig.json discord-bot/src/index.ts",
+    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project bot/tsconfig.json bot/src/index.ts",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
-    "build:bot": "rimraf -rf discord-bot/dist && tsc --project discord-bot/tsconfig.json",
+    "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
     "start:api": "node api/dist/index.js",
-    "start:bot": "node discord-bot/dist/index.js",
+    "start:bot": "node bot/dist/index.js",
     "reset:db": "yarn --cwd api sequelize-cli db:migrate:undo:all && yarn --cwd api sequelize-cli db:migrate && yarn --cwd api sequelize-cli db:seed:all",
     "graphql:codegen": "yarn --cwd api graphql:codegen",
     "sequelize-cli": "yarn --cwd api sequelize-cli",
-    "install": "yarn --cwd api && yarn --cwd discord-bot"
+    "install": "yarn --cwd api && yarn --cwd bot"
   },
   "devDependencies": {
     "@types/node": "^13.1.4",

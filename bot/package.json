@@ -1,5 +1,5 @@
 {
-  "name": "scythe-stats-discord-bot",
+  "name": "scythe-stats-bot",
   "version": "1.0.0",
   "description": "Discord bot for tracking Scythe stats",
   "main": "dist/index.js",
