@@ -1,5 +1,3 @@
-export const APP_SERVER_PORT = process.env.APP_SERVER_PORT || 3000;
-
 export const DB_NAME = process.env.DB_NAME || 'scythe';
 export const DB_USERNAME = process.env.DB_USERNAME || 'postgres';
 export const DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
