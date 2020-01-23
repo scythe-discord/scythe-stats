@@ -16,9 +16,7 @@
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
     "start:api": "node api/dist/index.js",
     "start:bot": "node bot/dist/index.js",
-    "reset:db": "yarn --cwd api sequelize-cli db:migrate:undo:all && yarn --cwd api sequelize-cli db:migrate && yarn --cwd api sequelize-cli db:seed:all",
     "graphql:codegen": "yarn --cwd api graphql:codegen",
-    "sequelize-cli": "yarn --cwd api sequelize-cli",
     "install": "yarn --cwd api && yarn --cwd bot"
   },
   "devDependencies": {

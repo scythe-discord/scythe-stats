@@ -1,4 +1,4 @@
-import { Client, Message, TextChannel } from 'discord.js';
+import { Client, TextChannel } from 'discord.js';
 
 import {
   BOT_TOKEN,
@@ -22,21 +22,17 @@ const fetchAndLogMessages = async (
     after: after ? after : undefined
   });
 
-  let lastMessage: Message | undefined;
-  messages.forEach(message => {
-    if (message.content.startsWith(GAME_LOG_PREFIX)) {
-      handleLogRequest(message);
-    }
+  if (messages.size == 0) {
+    return null;
+  }
 
-    if (
-      !lastMessage ||
-      lastMessage.createdTimestamp < message.createdTimestamp
-    ) {
-      lastMessage = message;
+  messages.forEach(async message => {
+    if (message.content.startsWith(GAME_LOG_PREFIX)) {
+      await handleLogRequest(message);
     }
   });
 
-  return lastMessage ? lastMessage.id : null;
+  return messages.first().channel.lastMessageID;
 };
 
 client.on('ready', async () => {
@@ -58,7 +54,12 @@ client.on('ready', async () => {
 
   let lastSeenMessage: string | null = null;
   do {
-    lastSeenMessage = await fetchAndLogMessages(logChannel, lastSeenMessage);
+    try {
+      lastSeenMessage = await fetchAndLogMessages(logChannel, lastSeenMessage);
+    } catch (error) {
+      console.error('Failed to fetch log messages:', error);
+      return;
+    }
   } while (lastSeenMessage !== null);
 });
 
