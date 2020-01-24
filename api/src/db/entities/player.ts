@@ -10,8 +10,8 @@ export default class Player {
   @Column()
   displayName: string;
 
-  @Column({ nullable: true })
-  steamId: string;
+  @Column({ type: 'varchar', nullable: true })
+  steamId: string | null;
 
   @OneToMany(
     type => PlayerMatchResult,
