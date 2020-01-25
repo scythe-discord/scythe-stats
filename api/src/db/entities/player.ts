@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  Index
+} from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
 
@@ -8,6 +14,7 @@ export default class Player {
   id: number;
 
   @Column()
+  @Index({ unique: true, where: '"steamId" IS NULL' })
   displayName: string;
 
   @Column({ type: 'varchar', nullable: true })
