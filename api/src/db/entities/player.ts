@@ -21,7 +21,7 @@ export default class Player {
   steamId: string | null;
 
   @OneToMany(
-    type => PlayerMatchResult,
+    () => PlayerMatchResult,
     playerMatchResult => playerMatchResult.player
   )
   playerMatchResults: PlayerMatchResult[];

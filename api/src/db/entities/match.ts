@@ -14,7 +14,7 @@ export default class Match {
   datePlayed: Date;
 
   @OneToMany(
-    type => PlayerMatchResult,
+    () => PlayerMatchResult,
     playerMatchResult => playerMatchResult.match
   )
   playerMatchResults: PlayerMatchResult[];

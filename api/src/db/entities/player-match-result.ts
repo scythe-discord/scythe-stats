@@ -14,7 +14,7 @@ export default class PlayerMatchResult {
   coins: number;
 
   @ManyToOne(
-    type => Player,
+    () => Player,
     player => player.playerMatchResults,
     {
       onDelete: 'CASCADE'
@@ -23,7 +23,7 @@ export default class PlayerMatchResult {
   player: Player;
 
   @ManyToOne(
-    type => Faction,
+    () => Faction,
     faction => faction.playerMatchResults,
     {
       onDelete: 'CASCADE'
@@ -32,7 +32,7 @@ export default class PlayerMatchResult {
   faction: Faction;
 
   @ManyToOne(
-    type => PlayerMat,
+    () => PlayerMat,
     playerMat => playerMat.playerMatchResults,
     {
       onDelete: 'CASCADE'
@@ -41,7 +41,7 @@ export default class PlayerMatchResult {
   playerMat: PlayerMat;
 
   @ManyToOne(
-    type => Match,
+    () => Match,
     match => match.playerMatchResults,
     {
       onDelete: 'CASCADE'

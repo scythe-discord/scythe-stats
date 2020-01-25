@@ -11,7 +11,7 @@ export default class Faction {
   name: string;
 
   @OneToMany(
-    type => PlayerMatchResult,
+    () => PlayerMatchResult,
     playerMatchResult => playerMatchResult.faction
   )
   playerMatchResults: PlayerMatchResult[];

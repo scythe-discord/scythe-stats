@@ -11,7 +11,7 @@ export default class PlayerMat {
   name: string;
 
   @OneToMany(
-    type => PlayerMatchResult,
+    () => PlayerMatchResult,
     playerMatchResult => playerMatchResult.playerMat
   )
   playerMatchResults: PlayerMatchResult[];
