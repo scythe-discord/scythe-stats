@@ -47,5 +47,5 @@ export default class PlayerMatchResult {
       onDelete: 'CASCADE'
     }
   )
-  match: Match[];
+  match: Match;
 }
