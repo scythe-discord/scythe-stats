@@ -9,7 +9,7 @@ import {
 import { handleLogRequest } from '../logger';
 
 // How many messages to read at a time
-const REQUEST_LIMIT = 50;
+const REQUEST_LIMIT = 5;
 
 const client = new Client();
 

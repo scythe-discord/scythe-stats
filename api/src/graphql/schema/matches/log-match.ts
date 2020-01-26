@@ -11,8 +11,8 @@ import {
 } from '../../../db/entities';
 import { delay } from '../../../common/utils';
 
-const MAX_RETRIES = 3;
-const MAX_RETRY_DELAY = 500;
+const MAX_RETRIES = 5;
+const MAX_RETRY_DELAY = 1500;
 
 export const typeDef = gql`
   extend type Mutation {
