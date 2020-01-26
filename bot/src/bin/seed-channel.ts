@@ -15,11 +15,11 @@ const client = new Client();
 
 const fetchAndLogMessages = async (
   channel: TextChannel,
-  after: string | null
+  before: string | null
 ): Promise<string | null> => {
   const messages = await channel.fetchMessages({
     limit: REQUEST_LIMIT,
-    after: after ? after : undefined
+    before: before ? before : undefined
   });
 
   if (messages.size == 0) {
@@ -32,7 +32,7 @@ const fetchAndLogMessages = async (
     }
   });
 
-  return messages.first().channel.lastMessageID;
+  return messages.last().id;
 };
 
 client.on('ready', async () => {
