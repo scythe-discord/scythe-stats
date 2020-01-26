@@ -225,6 +225,10 @@ export const resolvers: IResolvers = {
           // again
           await delay(Math.random() * MAX_RETRY_DELAY);
           numAttempts++;
+
+          if (numAttempts === MAX_RETRIES) {
+            console.error('Failed to log match', error);
+          }
         }
       }
 
