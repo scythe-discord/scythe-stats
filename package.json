@@ -12,6 +12,7 @@
     "dev:db": "docker run --rm --name scythe-stats-db -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
     "dev:api": "yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
     "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project bot/tsconfig.json bot/src/index.ts",
+    "dev:site": "yarn --cwd site next",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
     "start:api": "node api/dist/index.js",
