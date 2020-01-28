@@ -16,7 +16,7 @@
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
     "start:api": "node api/dist/index.js",
     "start:bot": "node bot/dist/index.js",
-    "graphql:codegen": "yarn --cwd api graphql:codegen",
+    "graphql:codegen": "yarn --cwd api graphql-codegen --config codegen.yml",
     "typeorm": "yarn --cwd api ts-node ./node_modules/typeorm/cli.js",
     "install": "yarn --cwd api && yarn --cwd bot"
   },
