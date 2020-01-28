@@ -7,6 +7,7 @@
   "author": "Brady Shi",
   "license": "MIT",
   "dependencies": {
+    "@types/react": "^16.9.19",
     "@types/styletron-engine-atomic": "^1.1.0",
     "@types/styletron-react": "^5.0.2",
     "@types/styletron-standard": "^2.0.0",
@@ -18,7 +19,6 @@
     "styletron-react": "^5.2.6"
   },
   "devDependencies": {
-    "@types/react": "^16.9.17",
     "eslint-plugin-baseui": "^9.46.0"
   }
 }

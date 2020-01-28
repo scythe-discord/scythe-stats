@@ -21,7 +21,6 @@
     "install": "yarn --cwd api && yarn --cwd bot"
   },
   "devDependencies": {
-    "@types/node": "^13.1.4",
     "@typescript-eslint/eslint-plugin": "^2.14.0",
     "@typescript-eslint/parser": "^2.14.0",
     "eslint": "^6.8.0",
@@ -31,5 +30,8 @@
     "rimraf": "^3.0.0",
     "ts-node-dev": "^1.0.0-pre.44",
     "typescript": "^3.7.4"
+  },
+  "dependencies": {
+    "@types/node": "^13.5.0"
   }
 }
