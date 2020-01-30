@@ -1,10 +1,8 @@
-import { styled } from 'baseui';
-import { StatefulInput } from 'baseui/input';
 import { NextPage } from 'next';
 
 import { SiteHeader } from '../components';
 
-const HomePage: NextPage = () => {
+const About: NextPage = () => {
   return (
     <div>
       <SiteHeader />
@@ -12,4 +10,4 @@ const HomePage: NextPage = () => {
   );
 };
 
-export default HomePage;
+export default About;
