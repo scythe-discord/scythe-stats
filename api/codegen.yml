@@ -5,3 +5,8 @@ generates:
   src/graphql/schema/codegen/generated.ts:
     plugins:
       - 'typescript'
+      - 'typescript-resolvers'
+    config:
+      useIndexSignature: true
+      mappers:
+        Player: '../../../db/entities#PlayerModel'

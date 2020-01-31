@@ -10,9 +10,11 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
+    "@types/graphql-relay": "^0.4.11",
     "@types/lodash": "^4.14.149",
     "apollo-server": "^2.9.16",
     "graphql": "^14.5.8",
+    "graphql-relay": "^0.6.0",
     "lodash": "^4.17.15",
     "pg": "^7.17.1",
     "reflect-metadata": "^0.1.13",
@@ -21,6 +23,7 @@
   "devDependencies": {
     "@graphql-codegen/cli": "^1.11.2",
     "@graphql-codegen/typescript": "^1.11.2",
+    "@graphql-codegen/typescript-resolvers": "^1.12.1",
     "sequelize-cli": "^5.5.1"
   }
 }

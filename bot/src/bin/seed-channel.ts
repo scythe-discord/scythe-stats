@@ -61,6 +61,8 @@ client.on('ready', async () => {
       return;
     }
   } while (lastSeenMessage !== null);
+
+  client.destroy();
 });
 
 client.login(BOT_TOKEN);

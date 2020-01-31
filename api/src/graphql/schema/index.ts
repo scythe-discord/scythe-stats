@@ -9,6 +9,11 @@ import {
   typeDef as matchTypeDef,
   resolvers as matchResolvers
 } from './matches';
+import {
+  typeDef as playerTypeDef,
+  resolvers as playerResolvers
+} from './player';
+import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
 
 export const Query = gql`
   type Query {
@@ -23,6 +28,18 @@ export const Mutation = gql`
 `;
 
 export default {
-  typeDefs: [Query, Mutation, scytheTypeDef, ...matchTypeDef],
-  resolvers: merge(scytheResolvers, matchResolvers)
+  typeDefs: [
+    Query,
+    Mutation,
+    relayTypeDef,
+    scytheTypeDef,
+    playerTypeDef,
+    ...matchTypeDef
+  ],
+  resolvers: merge(
+    relayResolvers,
+    scytheResolvers,
+    playerResolvers,
+    matchResolvers
+  )
 };

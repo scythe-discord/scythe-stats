@@ -1,18 +1,26 @@
 import { gql } from 'apollo-server';
+import { toGlobalId } from 'graphql-relay';
+
+import Schema from '../codegen';
 
 export const typeDef = gql`
-  type Match {
-    id: Int!
+  type Match implements Node {
+    id: ID!
     datePlayed: String!
     numRounds: Int!
     playerResults: [PlayerMatchResult!]!
   }
 
   type PlayerMatchResult {
-    displayName: String!
-    steamId: String
+    player: Player!
     faction: Faction!
     playerMat: PlayerMat!
     coins: Int!
   }
 `;
+
+export const resolvers: Schema.Resolvers = {
+  Match: {
+    id: match => toGlobalId('Match', match.id.toString())
+  }
+};

@@ -1,4 +1,4 @@
-import { gql, IResolvers } from 'apollo-server';
+import { gql } from 'apollo-server';
 import { getRepository, getManager, EntityManager } from 'typeorm';
 
 import Schema from '../codegen';
@@ -164,16 +164,12 @@ const validateMatch = async (
   }
 };
 
-export const resolvers: IResolvers = {
+export const resolvers: Schema.Resolvers = {
   Mutation: {
     logMatch: async (
       _,
-      {
-        numRounds,
-        datePlayed,
-        playerMatchResults: loggedMatchResults
-      }: Schema.MutationLogMatchArgs
-    ): Promise<Schema.Mutation['logMatch']> => {
+      { numRounds, datePlayed, playerMatchResults: loggedMatchResults }
+    ) => {
       await validateMatch(numRounds, loggedMatchResults);
       let match: Match | undefined;
       let playerMatchResults: PlayerMatchResult[] | undefined;
@@ -206,18 +202,15 @@ export const resolvers: IResolvers = {
           }
 
           return {
-            id: match.id,
+            id: match.id.toString(),
             datePlayed: match.datePlayed.toISOString(),
             numRounds: match.numRounds,
-            playerResults: playerMatchResults.map<Schema.PlayerMatchResult>(
-              result => ({
-                displayName: result.player.displayName,
-                steamId: result.player.steamId,
-                faction: result.faction,
-                playerMat: result.playerMat,
-                coins: result.coins
-              })
-            )
+            playerResults: playerMatchResults.map(result => ({
+              player: result.player,
+              faction: result.faction,
+              playerMat: result.playerMat,
+              coins: result.coins
+            }))
           };
         } catch (error) {
           // Wait some random amount of time so quick bursts of logs
