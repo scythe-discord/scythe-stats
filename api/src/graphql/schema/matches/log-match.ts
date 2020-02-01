@@ -183,7 +183,7 @@ export const resolvers: Schema.Resolvers = {
               match = await transactionalEntityManager.save(
                 await transactionalEntityManager.create(Match, {
                   numRounds,
-                  datePlayed: new Date(datePlayed)
+                  datePlayed
                 })
               );
 
@@ -203,7 +203,7 @@ export const resolvers: Schema.Resolvers = {
 
           return {
             id: match.id.toString(),
-            datePlayed: match.datePlayed.toISOString(),
+            datePlayed: match.datePlayed.toString(),
             numRounds: match.numRounds,
             playerResults: playerMatchResults.map(result => ({
               player: result.player,
