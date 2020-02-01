@@ -33,6 +33,18 @@ export type Match = Node & {
   playerResults: Array<PlayerMatchResult>,
 };
 
+export type MatchConnection = {
+   __typename?: 'MatchConnection',
+  edges: Array<MatchEdge>,
+  pageInfo: PageInfo,
+};
+
+export type MatchEdge = {
+   __typename?: 'MatchEdge',
+  cursor: Scalars['String'],
+  node: Match,
+};
+
 export type Mutation = {
    __typename?: 'Mutation',
   _empty?: Maybe<Scalars['String']>,
@@ -52,8 +64,8 @@ export type Node = {
 
 export type PageInfo = {
    __typename?: 'PageInfo',
-  hasNextPage: Scalars['Boolean'],
-  hasPreviousPage: Scalars['Boolean'],
+  hasNextPage?: Maybe<Scalars['Boolean']>,
+  hasPreviousPage?: Maybe<Scalars['Boolean']>,
   startCursor?: Maybe<Scalars['String']>,
   endCursor?: Maybe<Scalars['String']>,
 };
@@ -92,6 +104,7 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>,
   faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
+  matches: MatchConnection,
 };
 
 
@@ -102,6 +115,12 @@ export type QueryFactionArgs = {
 
 export type QueryPlayerMatArgs = {
   name: Scalars['String']
+};
+
+
+export type QueryMatchesArgs = {
+  first: Scalars['Int'],
+  after?: Maybe<Scalars['String']>
 };
 
 
@@ -184,16 +203,18 @@ export type ResolversTypes = ResolversObject<{
   Faction: ResolverTypeWrapper<Faction>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   PlayerMat: ResolverTypeWrapper<PlayerMat>,
-  Mutation: ResolverTypeWrapper<{}>,
-  PlayerMatchResultInput: PlayerMatchResultInput,
+  MatchConnection: ResolverTypeWrapper<Omit<MatchConnection, 'edges'> & { edges: Array<ResolversTypes['MatchEdge']> }>,
+  MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
   Match: ResolverTypeWrapper<Omit<Match, 'playerResults'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']> }>,
   Node: ResolverTypeWrapper<Node>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player'> & { player: ResolversTypes['Player'] }>,
   Player: ResolverTypeWrapper<PlayerModel>,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
-  CacheControlScope: CacheControlScope,
   PageInfo: ResolverTypeWrapper<PageInfo>,
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
+  Mutation: ResolverTypeWrapper<{}>,
+  PlayerMatchResultInput: PlayerMatchResultInput,
+  CacheControlScope: CacheControlScope,
   Upload: ResolverTypeWrapper<Scalars['Upload']>,
 }>;
 
@@ -204,16 +225,18 @@ export type ResolversParentTypes = ResolversObject<{
   Faction: Faction,
   Int: Scalars['Int'],
   PlayerMat: PlayerMat,
-  Mutation: {},
-  PlayerMatchResultInput: PlayerMatchResultInput,
+  MatchConnection: Omit<MatchConnection, 'edges'> & { edges: Array<ResolversParentTypes['MatchEdge']> },
+  MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
   Match: Omit<Match, 'playerResults'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']> },
   Node: Node,
   ID: Scalars['ID'],
   PlayerMatchResult: Omit<PlayerMatchResult, 'player'> & { player: ResolversParentTypes['Player'] },
   Player: PlayerModel,
-  Boolean: Scalars['Boolean'],
-  CacheControlScope: CacheControlScope,
   PageInfo: PageInfo,
+  Boolean: Scalars['Boolean'],
+  Mutation: {},
+  PlayerMatchResultInput: PlayerMatchResultInput,
+  CacheControlScope: CacheControlScope,
   Upload: Scalars['Upload'],
 }>;
 
@@ -234,6 +257,18 @@ export type MatchResolvers<ContextType = any, ParentType extends ResolversParent
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
+export type MatchConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['MatchConnection'] = ResolversParentTypes['MatchConnection']> = ResolversObject<{
+  edges?: Resolver<Array<ResolversTypes['MatchEdge']>, ParentType, ContextType>,
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn,
+}>;
+
+export type MatchEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['MatchEdge'] = ResolversParentTypes['MatchEdge']> = ResolversObject<{
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  node?: Resolver<ResolversTypes['Match'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn,
+}>;
+
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   logMatch?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<MutationLogMatchArgs, 'numRounds' | 'datePlayed' | 'playerMatchResults'>>,
@@ -245,8 +280,8 @@ export type NodeResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
-  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
+  hasNextPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
+  hasPreviousPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
   startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
@@ -277,6 +312,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
+  matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>,
 }>;
 
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
@@ -286,6 +322,8 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export type Resolvers<ContextType = any> = ResolversObject<{
   Faction?: FactionResolvers<ContextType>,
   Match?: MatchResolvers<ContextType>,
+  MatchConnection?: MatchConnectionResolvers<ContextType>,
+  MatchEdge?: MatchEdgeResolvers<ContextType>,
   Mutation?: MutationResolvers<ContextType>,
   Node?: NodeResolvers,
   PageInfo?: PageInfoResolvers<ContextType>,
