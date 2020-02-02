@@ -19,7 +19,7 @@
     "start:bot": "node bot/dist/index.js",
     "graphql:codegen": "yarn --cwd api graphql-codegen --config codegen.yml",
     "typeorm": "yarn --cwd api ts-node ./node_modules/typeorm/cli.js",
-    "install": "yarn --cwd api && yarn --cwd bot"
+    "install": "yarn --cwd api && yarn --cwd bot && yarn --cwd site"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.14.0",
