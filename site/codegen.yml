@@ -10,3 +10,4 @@ generates:
     config:
       withComponent: false
       withHOC: false
+      withHooks: true
