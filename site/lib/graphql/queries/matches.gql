@@ -1,0 +1,17 @@
+query matches($first: Int!, $after: String) {
+  matches(first: $first, after: $after) {
+    edges {
+      node {
+        id
+        datePlayed
+        numRounds
+        playerResults {
+          player {
+            displayName
+          }
+        }
+      }
+      cursor
+    }
+  }
+}

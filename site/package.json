@@ -23,6 +23,10 @@
     "styletron-react": "^5.2.6"
   },
   "devDependencies": {
+    "@graphql-codegen/cli": "^1.12.1",
+    "@graphql-codegen/typescript": "^1.12.1",
+    "@graphql-codegen/typescript-operations": "^1.12.1",
+    "@graphql-codegen/typescript-react-apollo": "^1.12.1",
     "eslint-plugin-baseui": "^9.46.0"
   }
 }
