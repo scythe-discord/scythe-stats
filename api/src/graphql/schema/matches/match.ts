@@ -47,7 +47,7 @@ export const resolvers: Schema.Resolvers = {
           'playerMatchResults.playerMat'
         ],
         order: {
-          datePlayed: 'ASC'
+          datePlayed: 'DESC'
         }
       });
 
