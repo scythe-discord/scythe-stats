@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 import { toGlobalId } from 'graphql-relay';
 
-import Schema from './codegen';
+import Schema from '../codegen';
 
 export const typeDef = gql`
   type Player implements Node {
