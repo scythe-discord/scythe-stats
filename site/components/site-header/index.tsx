@@ -61,9 +61,9 @@ export default () => {
             </Link>
           </SpacedNavigationItem>
           <SpacedNavigationItem>
-            <Link href="/about">
-              <a>About</a>
-            </Link>
+            <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
+              <a>Discord</a>
+            </StyledLink>
           </SpacedNavigationItem>
           <SpacedNavigationItem>
             <StyledLink
