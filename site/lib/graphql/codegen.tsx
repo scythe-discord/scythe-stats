@@ -140,9 +140,16 @@ export type MatchesQuery = (
         & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
         & { playerResults: Array<(
           { __typename?: 'PlayerMatchResult' }
+          & Pick<PlayerMatchResult, 'coins'>
           & { player: (
             { __typename?: 'Player' }
-            & Pick<Player, 'displayName'>
+            & Pick<Player, 'id' | 'displayName' | 'steamId'>
+          ), faction: (
+            { __typename?: 'Faction' }
+            & Pick<Faction, 'id' | 'name'>
+          ), playerMat: (
+            { __typename?: 'PlayerMat' }
+            & Pick<PlayerMat, 'id' | 'name'>
           ) }
         )> }
       ) }
@@ -161,8 +168,19 @@ export const MatchesDocument = gql`
         numRounds
         playerResults {
           player {
+            id
             displayName
+            steamId
           }
+          faction {
+            id
+            name
+          }
+          playerMat {
+            id
+            name
+          }
+          coins
         }
       }
       cursor

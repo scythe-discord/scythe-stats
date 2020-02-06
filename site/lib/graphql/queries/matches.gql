@@ -7,8 +7,19 @@ query matches($first: Int!, $after: String) {
         numRounds
         playerResults {
           player {
+            id
             displayName
+            steamId
           }
+          faction {
+            id
+            name
+          }
+          playerMat {
+            id
+            name
+          }
+          coins
         }
       }
       cursor
