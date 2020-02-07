@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 import { toGlobalId, connectionFromArray } from 'graphql-relay';
-import { getRepository, getManager, EntityManager } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 import { Match } from '../../../db/entities';
 import Schema from '../codegen';

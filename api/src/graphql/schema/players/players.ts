@@ -63,6 +63,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     players: async (_, args) => {
+      const playerRepo = getRepository(Player);
       let players: Player[] = [];
 
       switch (args.orderBy) {
@@ -70,7 +71,6 @@ export const resolvers: Schema.Resolvers = {
           players = await findPlayersOrderedByWins();
           break;
         default:
-          const playerRepo = getRepository(Player);
           players = await playerRepo.find();
           break;
       }

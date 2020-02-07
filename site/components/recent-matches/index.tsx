@@ -21,7 +21,7 @@ const findWinningResult = (playerResults: GQL.PlayerMatchResult[]) => {
 };
 
 const RecentMatches: FunctionComponent = () => {
-  const { loading, data } = GQL.useMatchesQuery({
+  const { data } = GQL.useMatchesQuery({
     variables: {
       first: INITIAL_MATCH_COUNT
     }
