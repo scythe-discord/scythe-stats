@@ -1,0 +1,13 @@
+query topPlayers($first: Int!, $after: String) {
+  players(first: $first, after: $after, orderBy: WINS) {
+    edges {
+      node {
+        id
+        displayName
+        steamId
+        totalWins
+        totalMatches
+      }
+    }
+  }
+}

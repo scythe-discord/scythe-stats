@@ -1,7 +1,7 @@
 import { NextPage } from 'next';
 import { useStyletron } from 'baseui';
 
-import { SiteHeader, RecentMatches } from '../components';
+import { SiteHeader, RecentMatches, TopPlayers } from '../components';
 
 const HomePage: NextPage = () => {
   const [css] = useStyletron();
@@ -17,6 +17,7 @@ const HomePage: NextPage = () => {
         })}
       >
         <RecentMatches />
+        <TopPlayers />
       </div>
     </div>
   );

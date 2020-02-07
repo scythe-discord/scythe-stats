@@ -74,6 +74,7 @@ export type Player = Node & {
   displayName: Scalars['String'],
   steamId?: Maybe<Scalars['String']>,
   totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type PlayerConnection = {
@@ -189,6 +190,26 @@ export type MatchesQuery = (
   ) }
 );
 
+export type TopPlayersQueryVariables = {
+  first: Scalars['Int'],
+  after?: Maybe<Scalars['String']>
+};
+
+
+export type TopPlayersQuery = (
+  { __typename?: 'Query' }
+  & { players: (
+    { __typename?: 'PlayerConnection' }
+    & { edges: Array<(
+      { __typename?: 'PlayerEdge' }
+      & { node: (
+        { __typename?: 'Player' }
+        & Pick<Player, 'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'>
+      ) }
+    )> }
+  ) }
+);
+
 
 export const MatchesDocument = gql`
     query matches($first: Int!, $after: String) {
@@ -247,3 +268,45 @@ export function useMatchesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
 export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
 export type MatchesQueryResult = ApolloReactCommon.QueryResult<MatchesQuery, MatchesQueryVariables>;
+export const TopPlayersDocument = gql`
+    query topPlayers($first: Int!, $after: String) {
+  players(first: $first, after: $after, orderBy: WINS) {
+    edges {
+      node {
+        id
+        displayName
+        steamId
+        totalWins
+        totalMatches
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useTopPlayersQuery__
+ *
+ * To run a query within a React component, call `useTopPlayersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTopPlayersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTopPlayersQuery({
+ *   variables: {
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function useTopPlayersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
+        return ApolloReactHooks.useQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+      }
+export function useTopPlayersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+        }
+export type TopPlayersQueryHookResult = ReturnType<typeof useTopPlayersQuery>;
+export type TopPlayersLazyQueryHookResult = ReturnType<typeof useTopPlayersLazyQuery>;
+export type TopPlayersQueryResult = ApolloReactCommon.QueryResult<TopPlayersQuery, TopPlayersQueryVariables>;

@@ -58,6 +58,7 @@ export const typeDef = gql`
     displayName: String!
     steamId: String
     totalWins: Int!
+    totalMatches: Int!
   }
 
   type PlayerConnection {
@@ -87,6 +88,10 @@ export const resolvers: Schema.Resolvers = {
       const wonMatches = findWonMatches(playerMatches, player);
 
       return wonMatches.length;
+    },
+    totalMatches: async player => {
+      const playerMatches = await findPlayerMatches(player);
+      return playerMatches.length;
     }
   }
 };

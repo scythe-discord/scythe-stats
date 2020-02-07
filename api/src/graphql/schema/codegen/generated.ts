@@ -76,6 +76,7 @@ export type Player = Node & {
   displayName: Scalars['String'],
   steamId?: Maybe<Scalars['String']>,
   totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type PlayerConnection = {
@@ -330,6 +331,7 @@ export type PlayerResolvers<ContextType = any, ParentType extends ResolversParen
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   steamId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
