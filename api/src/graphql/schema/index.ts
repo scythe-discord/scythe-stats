@@ -12,7 +12,7 @@ import {
 import {
   typeDef as playerTypeDef,
   resolvers as playerResolvers
-} from './player';
+} from './players';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
 
 export const Query = gql`
@@ -33,7 +33,7 @@ export default {
     Mutation,
     relayTypeDef,
     scytheTypeDef,
-    playerTypeDef,
+    ...playerTypeDef,
     ...matchTypeDef
   ],
   resolvers: merge(

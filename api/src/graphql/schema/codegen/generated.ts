@@ -75,6 +75,19 @@ export type Player = Node & {
   id: Scalars['ID'],
   displayName: Scalars['String'],
   steamId?: Maybe<Scalars['String']>,
+  totalWins: Scalars['Int'],
+};
+
+export type PlayerConnection = {
+   __typename?: 'PlayerConnection',
+  edges: Array<PlayerEdge>,
+  pageInfo: PageInfo,
+};
+
+export type PlayerEdge = {
+   __typename?: 'PlayerEdge',
+  cursor: Scalars['String'],
+  node: Player,
 };
 
 export type PlayerMat = {
@@ -104,6 +117,8 @@ export type Query = {
   _empty?: Maybe<Scalars['String']>,
   faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
+  player?: Maybe<Player>,
+  playersByWins: PlayerConnection,
   matches: MatchConnection,
 };
 
@@ -115,6 +130,17 @@ export type QueryFactionArgs = {
 
 export type QueryPlayerMatArgs = {
   name: Scalars['String']
+};
+
+
+export type QueryPlayerArgs = {
+  id: Scalars['ID']
+};
+
+
+export type QueryPlayersByWinsArgs = {
+  first: Scalars['Int'],
+  after?: Maybe<Scalars['String']>
 };
 
 
@@ -203,15 +229,17 @@ export type ResolversTypes = ResolversObject<{
   Faction: ResolverTypeWrapper<Faction>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   PlayerMat: ResolverTypeWrapper<PlayerMat>,
+  ID: ResolverTypeWrapper<Scalars['ID']>,
+  Player: ResolverTypeWrapper<PlayerModel>,
+  Node: ResolverTypeWrapper<Node>,
+  PlayerConnection: ResolverTypeWrapper<Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversTypes['PlayerEdge']> }>,
+  PlayerEdge: ResolverTypeWrapper<Omit<PlayerEdge, 'node'> & { node: ResolversTypes['Player'] }>,
+  PageInfo: ResolverTypeWrapper<PageInfo>,
+  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   MatchConnection: ResolverTypeWrapper<Omit<MatchConnection, 'edges'> & { edges: Array<ResolversTypes['MatchEdge']> }>,
   MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
   Match: ResolverTypeWrapper<Omit<Match, 'playerResults'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']> }>,
-  Node: ResolverTypeWrapper<Node>,
-  ID: ResolverTypeWrapper<Scalars['ID']>,
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player'> & { player: ResolversTypes['Player'] }>,
-  Player: ResolverTypeWrapper<PlayerModel>,
-  PageInfo: ResolverTypeWrapper<PageInfo>,
-  Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   Mutation: ResolverTypeWrapper<{}>,
   PlayerMatchResultInput: PlayerMatchResultInput,
   CacheControlScope: CacheControlScope,
@@ -225,15 +253,17 @@ export type ResolversParentTypes = ResolversObject<{
   Faction: Faction,
   Int: Scalars['Int'],
   PlayerMat: PlayerMat,
+  ID: Scalars['ID'],
+  Player: PlayerModel,
+  Node: Node,
+  PlayerConnection: Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversParentTypes['PlayerEdge']> },
+  PlayerEdge: Omit<PlayerEdge, 'node'> & { node: ResolversParentTypes['Player'] },
+  PageInfo: PageInfo,
+  Boolean: Scalars['Boolean'],
   MatchConnection: Omit<MatchConnection, 'edges'> & { edges: Array<ResolversParentTypes['MatchEdge']> },
   MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
   Match: Omit<Match, 'playerResults'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']> },
-  Node: Node,
-  ID: Scalars['ID'],
   PlayerMatchResult: Omit<PlayerMatchResult, 'player'> & { player: ResolversParentTypes['Player'] },
-  Player: PlayerModel,
-  PageInfo: PageInfo,
-  Boolean: Scalars['Boolean'],
   Mutation: {},
   PlayerMatchResultInput: PlayerMatchResultInput,
   CacheControlScope: CacheControlScope,
@@ -275,7 +305,7 @@ export type MutationResolvers<ContextType = any, ParentType extends ResolversPar
 }>;
 
 export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
-  __resolveType: TypeResolveFn<'Match' | 'Player', ParentType, ContextType>,
+  __resolveType: TypeResolveFn<'Player' | 'Match', ParentType, ContextType>,
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
 }>;
 
@@ -291,6 +321,19 @@ export type PlayerResolvers<ContextType = any, ParentType extends ResolversParen
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   steamId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn,
+}>;
+
+export type PlayerConnectionResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerConnection'] = ResolversParentTypes['PlayerConnection']> = ResolversObject<{
+  edges?: Resolver<Array<ResolversTypes['PlayerEdge']>, ParentType, ContextType>,
+  pageInfo?: Resolver<ResolversTypes['PageInfo'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn,
+}>;
+
+export type PlayerEdgeResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerEdge'] = ResolversParentTypes['PlayerEdge']> = ResolversObject<{
+  cursor?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  node?: Resolver<ResolversTypes['Player'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
@@ -312,6 +355,8 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
+  player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>,
+  playersByWins?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByWinsArgs, 'first'>>,
   matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>,
 }>;
 
@@ -328,6 +373,8 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Node?: NodeResolvers,
   PageInfo?: PageInfoResolvers<ContextType>,
   Player?: PlayerResolvers<ContextType>,
+  PlayerConnection?: PlayerConnectionResolvers<ContextType>,
+  PlayerEdge?: PlayerEdgeResolvers<ContextType>,
   PlayerMat?: PlayerMatResolvers<ContextType>,
   PlayerMatchResult?: PlayerMatchResultResolvers<ContextType>,
   Query?: QueryResolvers<ContextType>,
