@@ -73,6 +73,19 @@ export type Player = Node & {
   id: Scalars['ID'],
   displayName: Scalars['String'],
   steamId?: Maybe<Scalars['String']>,
+  totalWins: Scalars['Int'],
+};
+
+export type PlayerConnection = {
+   __typename?: 'PlayerConnection',
+  edges: Array<PlayerEdge>,
+  pageInfo: PageInfo,
+};
+
+export type PlayerEdge = {
+   __typename?: 'PlayerEdge',
+  cursor: Scalars['String'],
+  node: Player,
 };
 
 export type PlayerMat = {
@@ -97,11 +110,18 @@ export type PlayerMatchResultInput = {
   coins: Scalars['Int'],
 };
 
+export enum PlayerOrderBy {
+  Unordered = 'UNORDERED',
+  Wins = 'WINS'
+}
+
 export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
   faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
+  player?: Maybe<Player>,
+  players: PlayerConnection,
   matches: MatchConnection,
 };
 
@@ -113,6 +133,18 @@ export type QueryFactionArgs = {
 
 export type QueryPlayerMatArgs = {
   name: Scalars['String']
+};
+
+
+export type QueryPlayerArgs = {
+  id: Scalars['ID']
+};
+
+
+export type QueryPlayersArgs = {
+  first: Scalars['Int'],
+  after?: Maybe<Scalars['String']>,
+  orderBy?: Maybe<PlayerOrderBy>
 };
 
 

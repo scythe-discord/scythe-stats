@@ -6,18 +6,26 @@ import GQL from '../../lib/graphql';
 
 const INITIAL_MATCH_COUNT = 10;
 
-const findWinningResult = (playerResults: GQL.PlayerMatchResult[]) => {
-  let winningResult: GQL.PlayerMatchResult = playerResults[0];
+const getTableData = (data: GQL.MatchesQuery) => {
+  return data.matches.edges.map(({ node }) => {
+    let winningResult = node.playerResults[0];
 
-  for (let i = 0; i < playerResults.length; i++) {
-    const currResult = playerResults[i];
+    for (let i = 0; i < node.playerResults.length; i++) {
+      const currResult = node.playerResults[i];
 
-    if (currResult.coins > winningResult.coins) {
-      winningResult = currResult;
+      if (currResult.coins > winningResult.coins) {
+        winningResult = currResult;
+      }
     }
-  }
 
-  return winningResult;
+    return [
+      winningResult.player.displayName,
+      winningResult.faction.name,
+      winningResult.playerMat.name,
+      node.numRounds,
+      new Date(node.datePlayed).toLocaleDateString()
+    ];
+  });
 };
 
 const RecentMatches: FunctionComponent = () => {
@@ -27,18 +35,7 @@ const RecentMatches: FunctionComponent = () => {
     }
   });
 
-  const tableData = data
-    ? data.matches.edges.map(({ node }) => {
-        const winningResult = findWinningResult(node.playerResults);
-        return [
-          winningResult.player.displayName,
-          winningResult.faction.name,
-          winningResult.playerMat.name,
-          node.numRounds,
-          new Date(node.datePlayed).toLocaleDateString()
-        ];
-      })
-    : [];
+  const tableData = data ? getTableData(data) : [];
 
   return (
     <HeadingLevel>
