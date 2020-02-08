@@ -21,7 +21,10 @@ const HomePage: NextPage = () => {
           <Heading>Recent Matches</Heading>
           <MatchTable />
         </HeadingLevel>
-        <TopPlayers />
+        <HeadingLevel>
+          <Heading>Top Players</Heading>
+          <TopPlayers />
+        </HeadingLevel>
       </div>
     </div>
   );

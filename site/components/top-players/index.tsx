@@ -1,5 +1,4 @@
 import { FunctionComponent } from 'react';
-import { Heading, HeadingLevel } from 'baseui/heading';
 import { Table } from 'baseui/table';
 
 import GQL from '../../lib/graphql';
@@ -23,10 +22,7 @@ const TopPlayers: FunctionComponent = () => {
   const tableData = data ? getTableData(data) : [];
 
   return (
-    <HeadingLevel>
-      <Heading>Top Players</Heading>
-      <Table columns={['Player', 'Total Wins', 'Win Rate']} data={tableData} />
-    </HeadingLevel>
+    <Table columns={['Player', 'Total Wins', 'Win Rate']} data={tableData} />
   );
 };
 
