@@ -5,7 +5,7 @@ import {
   SiteHeader,
   TopPlayers,
   MatchTable,
-  VerticalTimeline
+  RecentMatches
 } from '../components';
 import { HeadingLevel, Heading } from 'baseui/heading';
 
@@ -24,7 +24,7 @@ const HomePage: NextPage = () => {
       >
         <HeadingLevel>
           <Heading>Recent Matches</Heading>
-          <VerticalTimeline elements={[]} selected={0} />
+          <RecentMatches />
         </HeadingLevel>
         <HeadingLevel>
           <Heading>Recent Matches</Heading>
