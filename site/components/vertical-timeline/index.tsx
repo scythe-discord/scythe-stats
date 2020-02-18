@@ -1,120 +1,69 @@
-import { FunctionComponent, ReactNode, useState } from 'react';
-import { withStyle, useStyletron } from 'baseui';
-import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
-import { format } from 'timeago.js';
+import { Fragment, FunctionComponent, ReactNode } from 'react';
+import { useStyletron } from 'baseui';
+import classNames from 'classnames';
 
-import TimelineCircle from './timeline-circle';
+import TimelineRow from './timeline-row';
 import TimelineLine from './timeline-line';
 
-interface TimelineElement {
+export interface TimelineElement {
   key: string;
-  selectable: boolean;
+  isSelectable: boolean;
   content: ReactNode;
-  onClick: (key: string) => void;
+  date: string;
 }
 
 interface Props {
   elements: TimelineElement[];
   selected: number;
+  className?: string;
+  onClick?: (key: string) => void;
 }
 
-const SELECTED_CIRCLE_SIZE = 50;
-const UNSELECTED_CIRCLE_SIZE = 30;
+const CIRCLE_SIZE = 35;
 const LINE_WIDTH = 3;
-const LINE_HEIGHT = 20;
+const LINE_HEIGHT = 50;
 
-const VerticalTimeline: FunctionComponent<Props> = () => {
+const VISIBLE_HEIGHT = `${CIRCLE_SIZE * 3 + LINE_HEIGHT * 2 + LINE_HEIGHT}px`;
+
+export const VerticalTimeline: FunctionComponent<Props> = ({
+  elements,
+  selected,
+  className,
+  onClick
+}) => {
   const [css] = useStyletron();
-  const [moved, setMoved] = useState(false);
-
-  const timelineSvgCss = css({
-    position: 'relative',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    transition: 'all linear 0.5s'
-  });
-
-  const outerSvgCss = css({
-    position: 'relative',
-    left: '50%',
-    transform: 'translateX(-50%)',
-    transition: 'all linear 0.5s',
-    opacity: '0'
-  });
-
-  const visibleHeight = `${SELECTED_CIRCLE_SIZE +
-    UNSELECTED_CIRCLE_SIZE * 2 +
-    LINE_HEIGHT * 2 +
-    LINE_HEIGHT}px`;
 
   return (
     <div
-      className={css({
-        display: 'flex'
-      })}
+      className={classNames(
+        css({
+          display: 'flex',
+          flexDirection: 'column',
+          overflowY: 'auto',
+          height: VISIBLE_HEIGHT
+        }),
+        className
+      )}
     >
-      <div
-        className={css({
-          position: 'relative',
-          overflow: 'hidden',
-          width: '50px',
-          height: visibleHeight
-        })}
-      >
-        <div
-          className={css({
-            display: 'flex',
-            flexDirection: 'column',
-            position: 'relative',
-            top: moved ? '50px' : 0,
-            transition: 'all linear 0.5s'
-          })}
-        >
-          <TimelineCircle
-            key="hi"
-            isSelected={true}
-            size={UNSELECTED_CIRCLE_SIZE}
-            className={timelineSvgCss}
-          />
-          <TimelineLine
-            width={LINE_WIDTH}
-            height={LINE_HEIGHT}
-            className={timelineSvgCss}
-          />
-          <TimelineCircle
-            key="hi"
-            isSelected={true}
-            size={moved ? SELECTED_CIRCLE_SIZE : UNSELECTED_CIRCLE_SIZE}
-            className={timelineSvgCss}
-          />
-          <TimelineLine
-            width={LINE_WIDTH}
-            height={LINE_HEIGHT}
-            className={timelineSvgCss}
-          />
-          <TimelineCircle
-            key="hi"
-            isSelected={true}
-            size={moved ? UNSELECTED_CIRCLE_SIZE : SELECTED_CIRCLE_SIZE}
-            className={timelineSvgCss}
-          />
-          <TimelineLine
-            width={LINE_WIDTH}
-            height={LINE_HEIGHT}
-            className={timelineSvgCss}
-          />
-          <TimelineCircle
-            key="hi"
-            isSelected={true}
-            size={UNSELECTED_CIRCLE_SIZE}
-            className={timelineSvgCss}
-          />
-        </div>
-      </div>
+      {elements.map(({ key, isSelectable, content, date }, i) => {
+        const isSelected = i === selected;
+        const hasPrev = i > 0;
 
-      <button onClick={() => setMoved(!moved)}>Move</button>
+        return (
+          <Fragment key={key}>
+            {hasPrev && <TimelineRow />}
+            <TimelineRow
+              element={{
+                id: key,
+                isSelected,
+                content,
+                date,
+                onClick: isSelectable ? onClick : undefined
+              }}
+            />
+          </Fragment>
+        );
+      })}
     </div>
   );
 };
-
-export default VerticalTimeline;
