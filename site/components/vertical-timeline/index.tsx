@@ -19,7 +19,7 @@ interface Props {
   onClick?: (key: string) => void;
 }
 
-const CIRCLE_SIZE = 35;
+const CIRCLE_SIZE = 40;
 const LINE_WIDTH = 3;
 const LINE_HEIGHT = 50;
 
@@ -40,6 +40,7 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
           display: 'flex',
           flexDirection: 'column',
           overflowY: 'auto',
+          padding: '5px 0',
           height: VISIBLE_HEIGHT
         }),
         className

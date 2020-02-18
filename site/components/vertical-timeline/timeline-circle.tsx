@@ -33,12 +33,22 @@ const TimelineCircle: FunctionComponent<Props> = ({
         css({
           display: 'block',
           width: `${size}px`,
-          height: `${size}px`
+          height: `${size}px`,
+          overflow: 'visible'
         })
       )}
       onClick={onClickWithId}
     >
-      <circle cx={50} cy={50} r={50} />
+      <circle
+        className={css({
+          fill: 'white',
+          stroke: '#3498db',
+          strokeWidth: '5px'
+        })}
+        cx={50}
+        cy={50}
+        r={50}
+      />
     </svg>
   );
 };

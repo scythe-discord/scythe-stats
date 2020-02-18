@@ -46,13 +46,15 @@ const RecentMatches: FunctionComponent = () => {
           className={css({
             display: 'flex',
             alignItems: 'center',
-            border: '1px solid black'
+            border: '1px solid black',
+            padding: '5px 10px'
           })}
         >
           <span>{playerName} won as</span>
           <img
             src={factionEmblemSrc}
             className={css({
+              margin: '0 5px',
               width: '28px'
             })}
           />

@@ -6,7 +6,7 @@ import TimelineCircle from './timeline-circle';
 import TimelineLine from './timeline-line';
 
 const DATE_TXT_WIDTH = 125;
-const CIRCLE_SIZE = 35;
+const CIRCLE_SIZE = 40;
 const LINE_WIDTH = 3;
 const LINE_HEIGHT = 50;
 
@@ -34,7 +34,8 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
         className={css({
           flex: `0 0 auto`,
           width: `${DATE_TXT_WIDTH}px`,
-          textAlign: 'right'
+          textAlign: 'right',
+          padding: '0 15px 0'
         })}
       >
         {element && format(element.date)}
@@ -57,7 +58,15 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
           <TimelineLine width={LINE_WIDTH} height={LINE_HEIGHT} />
         )}
       </div>
-      {element && element.content}
+      {element && (
+        <div
+          className={css({
+            padding: '0 0 0 15px'
+          })}
+        >
+          {element.content}
+        </div>
+      )}
     </div>
   );
 };
