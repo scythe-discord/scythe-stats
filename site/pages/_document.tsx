@@ -37,6 +37,21 @@ class MyDocument extends Document<Props> {
               key={i}
             />
           ))}
+          <style
+            dangerouslySetInnerHTML={{
+              __html: `
+            html {
+              box-sizing: border-box;
+            }
+            
+            *,
+            *:before,
+            *:after {
+              box-sizing: inherit;
+            }
+          `
+            }}
+          />
         </Head>
         <body>
           <Main />
