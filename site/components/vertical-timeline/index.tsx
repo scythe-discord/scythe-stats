@@ -1,6 +1,7 @@
 import { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
+import { Scrollbars } from 'react-custom-scrollbars';
 
 import TimelineRow from './timeline-row';
 import TimelineLine from './timeline-line';
@@ -19,12 +20,6 @@ interface Props {
   onClick?: (key: string) => void;
 }
 
-const CIRCLE_SIZE = 40;
-const LINE_WIDTH = 3;
-const LINE_HEIGHT = 50;
-
-const VISIBLE_HEIGHT = `${CIRCLE_SIZE * 3 + LINE_HEIGHT * 2 + LINE_HEIGHT}px`;
-
 export const VerticalTimeline: FunctionComponent<Props> = ({
   elements,
   selected,
@@ -34,14 +29,14 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
   const [css] = useStyletron();
 
   return (
-    <div
+    <Scrollbars
+      style={{
+        height: 275
+      }}
+      universal={true}
       className={classNames(
         css({
-          display: 'flex',
-          flexDirection: 'column',
-          overflowY: 'auto',
-          padding: '5px 0',
-          height: VISIBLE_HEIGHT
+          padding: '5px 0'
         }),
         className
       )}
@@ -65,6 +60,6 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
           </Fragment>
         );
       })}
-    </div>
+    </Scrollbars>
   );
 };
