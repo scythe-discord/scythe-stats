@@ -6,7 +6,7 @@ import TimelineCircle from './timeline-circle';
 import TimelineLine from './timeline-line';
 
 const DATE_TXT_WIDTH = 125;
-const CIRCLE_SIZE = 40;
+const CIRCLE_SIZE = 30;
 const LINE_WIDTH = 3;
 const LINE_HEIGHT = 50;
 
@@ -44,7 +44,8 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
         className={css({
           display: 'flex',
           flex: `0 0 ${CIRCLE_SIZE}px`,
-          justifyContent: 'center'
+          justifyContent: 'center',
+          padding: element ? '0' : '5px 0'
         })}
       >
         {element ? (

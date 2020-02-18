@@ -17,7 +17,7 @@ const TimelineLine: FunctionComponent<Props> = ({
 
   return (
     <svg
-      viewBox={`0 0 ${width} ${height}`}
+      viewBox={`0 -${width / 2} ${width} ${height + width}`}
       className={classNames(
         css({
           width: `${width}px`
@@ -32,7 +32,8 @@ const TimelineLine: FunctionComponent<Props> = ({
         y2={height}
         className={css({
           stroke: 'black',
-          strokeWidth: `${width}px`
+          strokeWidth: `${width}px`,
+          strokeLinecap: 'round'
         })}
       />
     </svg>
