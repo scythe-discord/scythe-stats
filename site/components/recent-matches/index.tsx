@@ -5,6 +5,8 @@ import GQL from '../../lib/graphql';
 import { getFactionEmblem } from '../../lib/scythe';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 
+import MatchDetails from '../match-details';
+
 const INITIAL_MATCH_COUNT = 5;
 
 const RecentMatches: FunctionComponent = () => {
@@ -73,21 +75,45 @@ const RecentMatches: FunctionComponent = () => {
     }
   );
 
+  const selectedMatch = data.matches.edges[selected].node;
+
+  const matchDetailsRows = selectedMatch.playerResults.map(
+    ({
+      player: { displayName },
+      faction: { name: factionName },
+      playerMat: { name: playerMatName },
+      coins
+    }) => {
+      return {
+        playerName: displayName,
+        faction: factionName,
+        playerMat: playerMatName,
+        coins
+      };
+    }
+  );
+
   return (
     <div
       className={css({
-        display: 'flex',
         position: 'relative'
       })}
     >
-      <VerticalTimeline
-        elements={timelineElements}
-        selected={selected}
+      <div
         className={css({
+          display: 'flex',
           position: 'relative',
           left: '-125px'
         })}
-      />
+      >
+        <VerticalTimeline elements={timelineElements} selected={selected} />
+        <MatchDetails
+          className={css({
+            margin: '0 0 0 30px'
+          })}
+          rows={matchDetailsRows}
+        />
+      </div>
     </div>
   );
 };

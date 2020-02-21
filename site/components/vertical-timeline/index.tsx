@@ -31,8 +31,10 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
   return (
     <Scrollbars
       style={{
+        width: 600,
         height: 275
       }}
+      autoHide={true}
       universal={true}
       className={classNames(
         css({
