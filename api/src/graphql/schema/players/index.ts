@@ -5,9 +5,9 @@ import {
   resolvers as playerResolvers
 } from './player';
 import {
-  typeDef as playersTypeDef,
-  resolvers as playersResolvers
-} from './players';
+  typeDef as playersByWinsTypeDef,
+  resolvers as playersByWinsResolvers
+} from './playersByWins';
 
-export const typeDef = [playerTypeDef, playersTypeDef];
-export const resolvers = merge(playerResolvers, playersResolvers);
+export const typeDef = [playerTypeDef, playersByWinsTypeDef];
+export const resolvers = merge(playerResolvers, playersByWinsResolvers);
