@@ -6,10 +6,15 @@ import GQL from '../../lib/graphql';
 const INITIAL_PLAYER_COUNT = 5;
 
 const getTableData = (data: GQL.TopPlayersQuery) => {
-  return data.players.edges.map(({ node }) => {
-    const winRate = ((100 * node.totalWins) / node.totalMatches).toFixed(2);
-    return [node.displayName, node.totalWins, `${winRate}%`];
-  });
+  return data.playersByWins.edges.map(
+    ({ node: { displayName, totalWins, totalMatches } }) => {
+      return {
+        displayName,
+        totalWins,
+        totalMatches
+      };
+    }
+  );
 };
 
 const TopPlayers: FunctionComponent = () => {

@@ -111,18 +111,13 @@ export type PlayerMatchResultInput = {
   coins: Scalars['Int'],
 };
 
-export enum PlayerOrderBy {
-  Unordered = 'UNORDERED',
-  Wins = 'WINS'
-}
-
 export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
   faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
   player?: Maybe<Player>,
-  players: PlayerConnection,
+  playersByWins: PlayerConnection,
   matches: MatchConnection,
 };
 
@@ -142,10 +137,9 @@ export type QueryPlayerArgs = {
 };
 
 
-export type QueryPlayersArgs = {
+export type QueryPlayersByWinsArgs = {
   first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>,
-  orderBy?: Maybe<PlayerOrderBy>
+  after?: Maybe<Scalars['String']>
 };
 
 
@@ -198,7 +192,7 @@ export type TopPlayersQueryVariables = {
 
 export type TopPlayersQuery = (
   { __typename?: 'Query' }
-  & { players: (
+  & { playersByWins: (
     { __typename?: 'PlayerConnection' }
     & { edges: Array<(
       { __typename?: 'PlayerEdge' }
@@ -270,7 +264,7 @@ export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
 export type MatchesQueryResult = ApolloReactCommon.QueryResult<MatchesQuery, MatchesQueryVariables>;
 export const TopPlayersDocument = gql`
     query topPlayers($first: Int!, $after: String) {
-  players(first: $first, after: $after, orderBy: WINS) {
+  playersByWins(first: $first, after: $after) {
     edges {
       node {
         id

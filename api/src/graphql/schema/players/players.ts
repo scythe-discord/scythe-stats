@@ -47,34 +47,14 @@ const findPlayersOrderedByWins = async () => {
 
 export const typeDef = gql`
   extend type Query {
-    players(
-      first: Int!
-      after: String
-      orderBy: PlayerOrderBy = UNORDERED
-    ): PlayerConnection!
-  }
-
-  enum PlayerOrderBy {
-    UNORDERED
-    WINS
+    playersByWins(first: Int!, after: String): PlayerConnection!
   }
 `;
 
 export const resolvers: Schema.Resolvers = {
   Query: {
-    players: async (_, args) => {
-      const playerRepo = getRepository(Player);
-      let players: Player[] = [];
-
-      switch (args.orderBy) {
-        case Schema.PlayerOrderBy.Wins:
-          players = await findPlayersOrderedByWins();
-          break;
-        default:
-          players = await playerRepo.find();
-          break;
-      }
-
+    playersByWins: async (_, args) => {
+      const players = await findPlayersOrderedByWins();
       return connectionFromArray(players, args);
     }
   }

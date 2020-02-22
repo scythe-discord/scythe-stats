@@ -113,18 +113,13 @@ export type PlayerMatchResultInput = {
   coins: Scalars['Int'],
 };
 
-export enum PlayerOrderBy {
-  Unordered = 'UNORDERED',
-  Wins = 'WINS'
-}
-
 export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
   faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
   player?: Maybe<Player>,
-  players: PlayerConnection,
+  playersByWins: PlayerConnection,
   matches: MatchConnection,
 };
 
@@ -144,10 +139,9 @@ export type QueryPlayerArgs = {
 };
 
 
-export type QueryPlayersArgs = {
+export type QueryPlayersByWinsArgs = {
   first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>,
-  orderBy?: Maybe<PlayerOrderBy>
+  after?: Maybe<Scalars['String']>
 };
 
 
@@ -239,7 +233,6 @@ export type ResolversTypes = ResolversObject<{
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Player: ResolverTypeWrapper<PlayerModel>,
   Node: ResolverTypeWrapper<Node>,
-  PlayerOrderBy: PlayerOrderBy,
   PlayerConnection: ResolverTypeWrapper<Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversTypes['PlayerEdge']> }>,
   PlayerEdge: ResolverTypeWrapper<Omit<PlayerEdge, 'node'> & { node: ResolversTypes['Player'] }>,
   PageInfo: ResolverTypeWrapper<PageInfo>,
@@ -264,7 +257,6 @@ export type ResolversParentTypes = ResolversObject<{
   ID: Scalars['ID'],
   Player: PlayerModel,
   Node: Node,
-  PlayerOrderBy: PlayerOrderBy,
   PlayerConnection: Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversParentTypes['PlayerEdge']> },
   PlayerEdge: Omit<PlayerEdge, 'node'> & { node: ResolversParentTypes['Player'] },
   PageInfo: PageInfo,
@@ -366,7 +358,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
   player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>,
-  players?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersArgs, 'first' | 'orderBy'>>,
+  playersByWins?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByWinsArgs, 'first'>>,
   matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>,
 }>;
 

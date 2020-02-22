@@ -1,5 +1,5 @@
 query topPlayers($first: Int!, $after: String) {
-  players(first: $first, after: $after, orderBy: WINS) {
+  playersByWins(first: $first, after: $after) {
     edges {
       node {
         id
