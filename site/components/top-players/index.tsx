@@ -1,7 +1,8 @@
 import { FunctionComponent } from 'react';
-import { Table } from 'baseui/table';
+import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
 import GQL from '../../lib/graphql';
+import PlayerRow from './player-row';
 
 const INITIAL_PLAYER_COUNT = 5;
 
@@ -17,17 +18,32 @@ const getTableData = (data: GQL.TopPlayersQuery) => {
   );
 };
 
-const TopPlayers: FunctionComponent = () => {
+interface Props {
+  className?: string;
+}
+
+const TopPlayers: FunctionComponent<Props> = ({ className }) => {
   const { data } = GQL.useTopPlayersQuery({
     variables: {
       first: INITIAL_PLAYER_COUNT
     }
   });
 
-  const tableData = data ? getTableData(data) : [];
+  const rows = data ? getTableData(data) : [];
 
   return (
-    <Table columns={['Player', 'Total Wins', 'Win Rate']} data={tableData} />
+    <StyledTable
+      className={className}
+      $gridTemplateColumns="minmax(auto, 175px) 150px 150px"
+    >
+      <StyledHeadCell>Player</StyledHeadCell>
+      <StyledHeadCell>Total Wins</StyledHeadCell>
+      <StyledHeadCell>Win Rate</StyledHeadCell>
+      {rows.map((row, index) => {
+        const striped = index % 2 === 0;
+        return <PlayerRow {...row} striped={striped} />;
+      })}
+    </StyledTable>
   );
 };
 
