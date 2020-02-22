@@ -19,13 +19,15 @@ const getTableData = (data: GQL.TopPlayersQuery) => {
 };
 
 interface Props {
+  fromDate?: string;
   className?: string;
 }
 
-const TopPlayers: FunctionComponent<Props> = ({ className }) => {
+const TopPlayers: FunctionComponent<Props> = ({ fromDate, className }) => {
   const { data } = GQL.useTopPlayersQuery({
     variables: {
-      first: INITIAL_PLAYER_COUNT
+      first: INITIAL_PLAYER_COUNT,
+      fromDate
     }
   });
 

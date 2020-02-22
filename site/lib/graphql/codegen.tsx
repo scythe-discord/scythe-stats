@@ -77,6 +77,16 @@ export type Player = Node & {
   totalMatches: Scalars['Int'],
 };
 
+
+export type PlayerTotalWinsArgs = {
+  fromDate?: Maybe<Scalars['String']>
+};
+
+
+export type PlayerTotalMatchesArgs = {
+  fromDate?: Maybe<Scalars['String']>
+};
+
 export type PlayerConnection = {
    __typename?: 'PlayerConnection',
   edges: Array<PlayerEdge>,
@@ -139,7 +149,8 @@ export type QueryPlayerArgs = {
 
 export type QueryPlayersByWinsArgs = {
   first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>
+  after?: Maybe<Scalars['String']>,
+  fromDate?: Maybe<Scalars['String']>
 };
 
 
@@ -186,7 +197,8 @@ export type MatchesQuery = (
 
 export type TopPlayersQueryVariables = {
   first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>
+  after?: Maybe<Scalars['String']>,
+  fromDate?: Maybe<Scalars['String']>
 };
 
 
@@ -263,15 +275,15 @@ export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
 export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
 export type MatchesQueryResult = ApolloReactCommon.QueryResult<MatchesQuery, MatchesQueryVariables>;
 export const TopPlayersDocument = gql`
-    query topPlayers($first: Int!, $after: String) {
-  playersByWins(first: $first, after: $after) {
+    query topPlayers($first: Int!, $after: String, $fromDate: String) {
+  playersByWins(first: $first, after: $after, fromDate: $fromDate) {
     edges {
       node {
         id
         displayName
         steamId
-        totalWins
-        totalMatches
+        totalWins(fromDate: $fromDate)
+        totalMatches(fromDate: $fromDate)
       }
     }
   }
@@ -292,6 +304,7 @@ export const TopPlayersDocument = gql`
  *   variables: {
  *      first: // value for 'first'
  *      after: // value for 'after'
+ *      fromDate: // value for 'fromDate'
  *   },
  * });
  */

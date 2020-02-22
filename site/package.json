@@ -19,6 +19,7 @@
     "baseui": "^9.46.0",
     "classnames": "^2.2.6",
     "graphql": "^14.6.0",
+    "moment": "^2.24.0",
     "next": "^9.2.0",
     "next-with-apollo": "^5.0.0",
     "react": "^16.12.0",

@@ -1,12 +1,12 @@
-query topPlayers($first: Int!, $after: String) {
-  playersByWins(first: $first, after: $after) {
+query topPlayers($first: Int!, $after: String, $fromDate: String) {
+  playersByWins(first: $first, after: $after, fromDate: $fromDate) {
     edges {
       node {
         id
         displayName
         steamId
-        totalWins
-        totalMatches
+        totalWins(fromDate: $fromDate)
+        totalMatches(fromDate: $fromDate)
       }
     }
   }

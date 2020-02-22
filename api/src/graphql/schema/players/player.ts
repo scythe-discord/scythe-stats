@@ -1,11 +1,11 @@
 import { gql } from 'apollo-server';
 import { toGlobalId, fromGlobalId } from 'graphql-relay';
-import { getRepository } from 'typeorm';
+import { getRepository, MoreThanOrEqual } from 'typeorm';
 
 import { Match, PlayerMatchResult, Player } from '../../../db/entities';
 import Schema from '../codegen';
 
-const findPlayerMatches = async (player: Player) => {
+const findPlayerMatches = async (player: Player, fromDate?: string | null) => {
   const playerMatchResultRepo = getRepository(PlayerMatchResult);
   const matchRepository = getRepository(Match);
 
@@ -24,6 +24,11 @@ const findPlayerMatches = async (player: Player) => {
   relevantMatches = relevantMatches.map(({ matchId }) => matchId);
 
   return matchRepository.findByIds(relevantMatches, {
+    where: fromDate
+      ? {
+          datePlayed: MoreThanOrEqual(new Date(fromDate))
+        }
+      : {},
     relations: ['playerMatchResults', 'playerMatchResults.player']
   });
 };
@@ -57,8 +62,8 @@ export const typeDef = gql`
     id: ID!
     displayName: String!
     steamId: String
-    totalWins: Int!
-    totalMatches: Int!
+    totalWins(fromDate: String): Int!
+    totalMatches(fromDate: String): Int!
   }
 
   type PlayerConnection {
@@ -83,14 +88,14 @@ export const resolvers: Schema.Resolvers = {
   },
   Player: {
     id: player => toGlobalId('Player', player.id.toString()),
-    totalWins: async player => {
-      const playerMatches = await findPlayerMatches(player);
+    totalWins: async (player, { fromDate }) => {
+      const playerMatches = await findPlayerMatches(player, fromDate);
       const wonMatches = findWonMatches(playerMatches, player);
 
       return wonMatches.length;
     },
-    totalMatches: async player => {
-      const playerMatches = await findPlayerMatches(player);
+    totalMatches: async (player, { fromDate }) => {
+      const playerMatches = await findPlayerMatches(player, fromDate);
       return playerMatches.length;
     }
   }

@@ -79,6 +79,16 @@ export type Player = Node & {
   totalMatches: Scalars['Int'],
 };
 
+
+export type PlayerTotalWinsArgs = {
+  fromDate?: Maybe<Scalars['String']>
+};
+
+
+export type PlayerTotalMatchesArgs = {
+  fromDate?: Maybe<Scalars['String']>
+};
+
 export type PlayerConnection = {
    __typename?: 'PlayerConnection',
   edges: Array<PlayerEdge>,
@@ -141,7 +151,8 @@ export type QueryPlayerArgs = {
 
 export type QueryPlayersByWinsArgs = {
   first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>
+  after?: Maybe<Scalars['String']>,
+  fromDate?: Maybe<Scalars['String']>
 };
 
 
@@ -322,8 +333,8 @@ export type PlayerResolvers<ContextType = any, ParentType extends ResolversParen
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   displayName?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   steamId?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
-  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType, PlayerTotalWinsArgs>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType, PlayerTotalMatchesArgs>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
