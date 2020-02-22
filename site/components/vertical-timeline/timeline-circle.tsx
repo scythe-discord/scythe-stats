@@ -27,29 +27,40 @@ const TimelineCircle: FunctionComponent<Props> = ({
   }, [onClick, id]);
 
   return (
-    <svg
-      viewBox={`0 0 100 100`}
+    <button
       className={classNames(
         css({
-          display: 'block',
-          width: `${size}px`,
-          height: `${size}px`,
-          overflow: 'visible'
+          border: 'none',
+          background: 'transparent',
+          cursor: 'pointer',
+          padding: 0
         })
       )}
       onClick={onClickWithId}
     >
-      <circle
-        className={css({
-          fill: 'white',
-          stroke: '#3498db',
-          strokeWidth: '5px'
-        })}
-        cx={50}
-        cy={50}
-        r={50}
-      />
-    </svg>
+      <svg
+        viewBox={`0 0 100 100`}
+        className={classNames(
+          css({
+            display: 'block',
+            width: `${size}px`,
+            height: `${size}px`,
+            overflow: 'visible'
+          })
+        )}
+      >
+        <circle
+          className={css({
+            fill: 'white',
+            stroke: '#3498db',
+            strokeWidth: '5px'
+          })}
+          cx={50}
+          cy={50}
+          r={50}
+        />
+      </svg>
+    </button>
   );
 };
 

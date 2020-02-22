@@ -1,11 +1,11 @@
-import { FunctionComponent, useState } from 'react';
+import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 
 import GQL from '../../lib/graphql';
-import { getFactionEmblem } from '../../lib/scythe';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 
 import MatchDetails from '../match-details';
+import RecentMatchBanner from './recent-match-banner';
 
 const INITIAL_MATCH_COUNT = 5;
 
@@ -17,13 +17,26 @@ const RecentMatches: FunctionComponent = () => {
       first: INITIAL_MATCH_COUNT
     }
   });
+  const onMatchClick = useCallback(
+    (id: string) => {
+      if (!data) {
+        return;
+      }
+
+      const idx = data.matches.edges.findIndex(({ node }) => {
+        return node.id === id;
+      });
+      setSelected(idx);
+    },
+    [data]
+  );
 
   if (loading || !data) {
     return null;
   }
 
   const timelineElements: TimelineElement[] = data.matches.edges.map(
-    ({ cursor, node }) => {
+    ({ node }) => {
       const { id, datePlayed, numRounds, playerResults } = node;
       let winningResult = playerResults[0];
 
@@ -38,32 +51,18 @@ const RecentMatches: FunctionComponent = () => {
       const {
         faction: { name: factionName },
         playerMat: { name: playerMatName },
-        player: { displayName: playerName }
+        player: { displayName }
       } = winningResult;
 
-      const factionEmblemSrc = getFactionEmblem(factionName);
-
       const content = (
-        <div
-          className={css({
-            display: 'flex',
-            alignItems: 'center',
-            border: '1px solid black',
-            padding: '5px 10px'
-          })}
-        >
-          <span>{playerName} won as</span>
-          <img
-            src={factionEmblemSrc}
-            className={css({
-              margin: '0 5px',
-              width: '28px'
-            })}
-          />
-          <span>
-            {playerMatName} in {numRounds} rounds
-          </span>
-        </div>
+        <RecentMatchBanner
+          id={id}
+          displayName={displayName}
+          factionName={factionName}
+          playerMatName={playerMatName}
+          numRounds={numRounds}
+          onClick={onMatchClick}
+        />
       );
 
       return {
@@ -106,7 +105,11 @@ const RecentMatches: FunctionComponent = () => {
           left: '-125px'
         })}
       >
-        <VerticalTimeline elements={timelineElements} selected={selected} />
+        <VerticalTimeline
+          elements={timelineElements}
+          selected={selected}
+          onClick={onMatchClick}
+        />
         <MatchDetails
           className={css({
             margin: '0 0 0 30px'

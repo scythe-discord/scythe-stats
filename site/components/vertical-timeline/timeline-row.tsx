@@ -16,7 +16,7 @@ interface Props {
     isSelected: boolean;
     content: ReactNode;
     date: string;
-    onClick?: (key: string) => void;
+    onClick?: (id: string) => void;
   };
 }
 
