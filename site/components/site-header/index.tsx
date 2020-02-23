@@ -1,12 +1,12 @@
 import Link from 'next/link';
-import { useStyletron } from 'baseui';
+import { useStyletron, styled } from 'baseui';
 import {
   HeaderNavigation,
   StyledNavigationList,
   StyledNavigationItem,
   ALIGN
 } from 'baseui/header-navigation';
-import { StyledLink } from 'baseui/link';
+import { StyledLink as BaseLink } from 'baseui/link';
 
 import BuyMeACoffee from './buy-me-a-coffee';
 import { ReactNode } from 'react';
@@ -25,11 +25,24 @@ const SpacedNavigationItem = ({ children }: { children: ReactNode }) => {
   );
 };
 
+const StyledLink = styled(BaseLink, () => ({
+  textDecoration: 'none'
+}));
+
 export default () => {
   const [css] = useStyletron();
 
   return (
-    <HeaderNavigation>
+    <HeaderNavigation
+      overrides={{
+        Root: {
+          style: {
+            backgroundColor: 'white',
+            boxShadow: '0 1px 8px rgba(0, 0, 0, .2);'
+          }
+        }
+      }}
+    >
       <div
         className={css({
           display: 'flex',
@@ -51,18 +64,18 @@ export default () => {
         <StyledNavigationList $align={ALIGN.center}></StyledNavigationList>
         <StyledNavigationList $align={ALIGN.right}>
           <SpacedNavigationItem>
-            <Link href="/">
-              <a>Home</a>
+            <Link href="/" passHref={true}>
+              <StyledLink>Home</StyledLink>
             </Link>
           </SpacedNavigationItem>
           <SpacedNavigationItem>
-            <Link href="/stats">
-              <a>Stats</a>
+            <Link href="/stats" passHref={true}>
+              <StyledLink>Stats</StyledLink>
             </Link>
           </SpacedNavigationItem>
           <SpacedNavigationItem>
             <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
-              <a>Discord</a>
+              Discord
             </StyledLink>
           </SpacedNavigationItem>
           <SpacedNavigationItem>
@@ -75,7 +88,7 @@ export default () => {
           </SpacedNavigationItem>
           <StyledNavigationItem
             className={css({
-              fontSize: '24px',
+              fontSize: '20px',
               margin: '0 15px'
             })}
           >

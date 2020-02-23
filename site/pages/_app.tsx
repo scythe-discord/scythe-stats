@@ -4,9 +4,10 @@ import ApolloClient, { InMemoryCache } from 'apollo-boost';
 import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from 'next-with-apollo';
 import { Provider as StyletronProvider } from 'styletron-react';
-import { BaseProvider, LightTheme } from 'baseui';
+import { BaseProvider } from 'baseui';
 
 import { styletron, debug } from '../styletron';
+import Theme from '../lib/theme';
 
 interface Props {
   apollo: ApolloClient<any>;
@@ -21,7 +22,7 @@ class Site extends App<Props> {
           <title>Beloved Pacifist</title>
         </Head>
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
-          <BaseProvider theme={LightTheme}>
+          <BaseProvider theme={Theme}>
             <ApolloProvider client={apollo}>
               <Component {...pageProps} />
             </ApolloProvider>

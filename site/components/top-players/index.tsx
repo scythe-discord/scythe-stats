@@ -1,51 +1,67 @@
-import { FunctionComponent } from 'react';
-import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
+import { FunctionComponent, FC } from 'react';
+import { useStyletron } from 'baseui';
+import { Card } from 'baseui/card';
+import { Label1 } from 'baseui/typography';
+import moment from 'moment';
 
-import GQL from '../../lib/graphql';
-import PlayerRow from './player-row';
+import PlayerTable from './player-table';
 
-const INITIAL_PLAYER_COUNT = 5;
+const StyledLabel: FC = props => (
+  <Label1
+    {...props}
+    overrides={{
+      Block: {
+        style: {
+          margin: '10px 0'
+        }
+      }
+    }}
+  />
+);
 
-const getTableData = (data: GQL.TopPlayersQuery) => {
-  return data.playersByWins.edges.map(
-    ({ node: { displayName, totalWins, totalMatches } }) => {
-      return {
-        displayName,
-        totalWins,
-        totalMatches
-      };
-    }
-  );
-};
-
-interface Props {
-  fromDate?: string;
-  className?: string;
-}
-
-const TopPlayers: FunctionComponent<Props> = ({ fromDate, className }) => {
-  const { data } = GQL.useTopPlayersQuery({
-    variables: {
-      first: INITIAL_PLAYER_COUNT,
-      fromDate
-    }
-  });
-
-  const rows = data ? getTableData(data) : [];
+const TopPlayers: FunctionComponent = () => {
+  const [css] = useStyletron();
 
   return (
-    <StyledTable
-      className={className}
-      $gridTemplateColumns="minmax(auto, 175px) 150px 150px"
+    <Card
+      overrides={{
+        Root: {
+          style: {
+            padding: '15px 25px'
+          }
+        }
+      }}
     >
-      <StyledHeadCell>Player</StyledHeadCell>
-      <StyledHeadCell>Total Wins</StyledHeadCell>
-      <StyledHeadCell>Win Rate</StyledHeadCell>
-      {rows.map((row, index) => {
-        const striped = index % 2 === 0;
-        return <PlayerRow {...row} striped={striped} />;
-      })}
-    </StyledTable>
+      <div
+        className={css({
+          display: 'flex'
+        })}
+      >
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column'
+          })}
+        >
+          <StyledLabel>of all time</StyledLabel>
+          <PlayerTable />
+        </div>
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            marginLeft: '75px'
+          })}
+        >
+          <StyledLabel>this past month</StyledLabel>
+          <PlayerTable
+            fromDate={moment()
+              .subtract(1, 'month')
+              .toISOString()}
+          />
+        </div>
+      </div>
+    </Card>
   );
 };
 

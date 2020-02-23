@@ -6,8 +6,9 @@ import Document, {
   NextScript
 } from 'next/document';
 import { Provider as StyletronProvider } from 'styletron-react';
-import { styletron } from '../styletron';
 import { Sheet, Server } from 'styletron-engine-atomic';
+
+import { styletron } from '../styletron';
 
 interface Props {
   stylesheets: Sheet[];
@@ -28,6 +29,10 @@ class MyDocument extends Document<Props> {
     return (
       <Html>
         <Head>
+          <link
+            href="https://fonts.googleapis.com/css?family=Fira+Sans&display=swap"
+            rel="stylesheet"
+          />
           {this.props.stylesheets.map((sheet, i) => (
             <style
               className="_styletron_hydrate_"
@@ -43,11 +48,20 @@ class MyDocument extends Document<Props> {
             html {
               box-sizing: border-box;
             }
+
+            body {
+              background-color: #fcfcfc;
+              margin: 0;
+            }
             
             *,
             *:before,
             *:after {
               box-sizing: inherit;
+            }
+
+            button {
+              font-family : inherit;
             }
           `
             }}

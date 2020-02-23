@@ -28,7 +28,19 @@ const MatchRow: FC<Props> = ({
 
   return (
     <>
-      <CenteredBodyCell $striped={striped}>{playerName}</CenteredBodyCell>
+      <CenteredBodyCell
+        $striped={striped}
+        overrides={{
+          Root: {
+            style: {
+              paddingBottom: '5px',
+              paddingTop: '5px'
+            }
+          }
+        }}
+      >
+        {playerName}
+      </CenteredBodyCell>
       <CenteredBodyCell $striped={striped}>
         <FactionIcon
           faction={faction}

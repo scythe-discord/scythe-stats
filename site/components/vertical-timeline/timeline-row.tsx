@@ -35,7 +35,7 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
           flex: `0 0 auto`,
           width: `${DATE_TXT_WIDTH}px`,
           textAlign: 'right',
-          padding: '0 15px 0'
+          padding: '0 30px 0 0'
         })}
       >
         {element && format(element.date)}
@@ -62,7 +62,7 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
       {element && (
         <div
           className={css({
-            padding: '0 0 0 15px'
+            padding: '0 0 0 30px'
           })}
         >
           {element.content}

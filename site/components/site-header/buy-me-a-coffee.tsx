@@ -8,7 +8,8 @@ export default () => {
     <StyledLink
       className={css({
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
+        textDecoration: 'none'
       })}
       target="_blank"
       href="https://www.buymeacoffee.com/Qianpou"

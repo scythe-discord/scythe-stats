@@ -4,7 +4,6 @@ import classNames from 'classnames';
 import { Scrollbars } from 'react-custom-scrollbars';
 
 import TimelineRow from './timeline-row';
-import TimelineLine from './timeline-line';
 
 export interface TimelineElement {
   key: string;
@@ -32,7 +31,7 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
     <Scrollbars
       style={{
         width: 600,
-        height: 275
+        height: 500
       }}
       autoHide={true}
       universal={true}

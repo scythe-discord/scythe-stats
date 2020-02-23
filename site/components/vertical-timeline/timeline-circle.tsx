@@ -2,20 +2,17 @@ import { FunctionComponent, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
-const DEFAULT_RADIUS = 30;
-
 interface Props {
   id: string;
   isSelected: boolean;
-  size?: number;
+  size: number;
   className?: string;
   onClick?: (id: string) => void;
 }
 
 const TimelineCircle: FunctionComponent<Props> = ({
   id,
-  isSelected,
-  size = DEFAULT_RADIUS,
+  size,
   className,
   onClick
 }) => {
@@ -34,7 +31,8 @@ const TimelineCircle: FunctionComponent<Props> = ({
           background: 'transparent',
           cursor: 'pointer',
           padding: 0
-        })
+        }),
+        className
       )}
       onClick={onClickWithId}
     >
@@ -53,7 +51,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
           className={css({
             fill: 'white',
             stroke: '#3498db',
-            strokeWidth: '5px'
+            strokeWidth: '15px'
           })}
           cx={50}
           cy={50}

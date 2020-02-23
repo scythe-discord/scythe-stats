@@ -1,6 +1,5 @@
 import { FunctionComponent, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { Button, KIND } from 'baseui/button';
 
 import FactionIcon from '../faction-icon';
 

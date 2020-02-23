@@ -1,5 +1,6 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
+import { Card } from 'baseui/card';
 
 import GQL from '../../lib/graphql';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
@@ -7,7 +8,7 @@ import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 import MatchDetails from '../match-details';
 import RecentMatchBanner from './recent-match-banner';
 
-const INITIAL_MATCH_COUNT = 5;
+const INITIAL_MATCH_COUNT = 10;
 
 const RecentMatches: FunctionComponent = () => {
   const [css] = useStyletron();
@@ -93,16 +94,19 @@ const RecentMatches: FunctionComponent = () => {
   );
 
   return (
-    <div
-      className={css({
-        position: 'relative'
-      })}
+    <Card
+      overrides={{
+        Root: {
+          style: {
+            padding: '25px'
+          }
+        }
+      }}
     >
       <div
         className={css({
           display: 'flex',
-          position: 'relative',
-          left: '-125px'
+          justifyContent: 'space-between'
         })}
       >
         <VerticalTimeline
@@ -112,12 +116,12 @@ const RecentMatches: FunctionComponent = () => {
         />
         <MatchDetails
           className={css({
-            margin: '0 0 0 30px'
+            margin: '0 0 0 50px'
           })}
           rows={matchDetailsRows}
         />
       </div>
-    </div>
+    </Card>
   );
 };
 
