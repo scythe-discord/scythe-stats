@@ -6,6 +6,10 @@ import {
   resolvers as scytheResolvers
 } from './scythe';
 import {
+  typeDef as factionsTypeDef,
+  resolvers as factionsResolvers
+} from './factions';
+import {
   typeDef as matchTypeDef,
   resolvers as matchResolvers
 } from './matches';
@@ -33,12 +37,14 @@ export default {
     Mutation,
     relayTypeDef,
     scytheTypeDef,
+    ...factionsTypeDef,
     ...playerTypeDef,
     ...matchTypeDef
   ],
   resolvers: merge(
     relayResolvers,
     scytheResolvers,
+    factionsResolvers,
     playerResolvers,
     matchResolvers
   )
