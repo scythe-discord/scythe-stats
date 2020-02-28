@@ -9,4 +9,5 @@ generates:
     config:
       useIndexSignature: true
       mappers:
+        Faction: '../../../db/entities#FactionModel'
         Player: '../../../db/entities#PlayerModel'

@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { PlayerModel } from '../../../db/entities';
+import { FactionModel, PlayerModel } from '../../../db/entities';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -126,20 +126,21 @@ export type PlayerMatchResultInput = {
 export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
-  faction?: Maybe<Faction>,
   playerMat?: Maybe<PlayerMat>,
+  faction?: Maybe<Faction>,
+  factions: Array<Faction>,
   player?: Maybe<Player>,
   playersByWins: PlayerConnection,
   matches: MatchConnection,
 };
 
 
-export type QueryFactionArgs = {
+export type QueryPlayerMatArgs = {
   name: Scalars['String']
 };
 
 
-export type QueryPlayerMatArgs = {
+export type QueryFactionArgs = {
   name: Scalars['String']
 };
 
@@ -238,9 +239,9 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 export type ResolversTypes = ResolversObject<{
   Query: ResolverTypeWrapper<{}>,
   String: ResolverTypeWrapper<Scalars['String']>,
-  Faction: ResolverTypeWrapper<Faction>,
-  Int: ResolverTypeWrapper<Scalars['Int']>,
   PlayerMat: ResolverTypeWrapper<PlayerMat>,
+  Int: ResolverTypeWrapper<Scalars['Int']>,
+  Faction: ResolverTypeWrapper<FactionModel>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Player: ResolverTypeWrapper<PlayerModel>,
   Node: ResolverTypeWrapper<Node>,
@@ -251,7 +252,7 @@ export type ResolversTypes = ResolversObject<{
   MatchConnection: ResolverTypeWrapper<Omit<MatchConnection, 'edges'> & { edges: Array<ResolversTypes['MatchEdge']> }>,
   MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
   Match: ResolverTypeWrapper<Omit<Match, 'playerResults'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']> }>,
-  PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player'> & { player: ResolversTypes['Player'] }>,
+  PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player' | 'faction'> & { player: ResolversTypes['Player'], faction: ResolversTypes['Faction'] }>,
   Mutation: ResolverTypeWrapper<{}>,
   PlayerMatchResultInput: PlayerMatchResultInput,
   CacheControlScope: CacheControlScope,
@@ -262,9 +263,9 @@ export type ResolversTypes = ResolversObject<{
 export type ResolversParentTypes = ResolversObject<{
   Query: {},
   String: Scalars['String'],
-  Faction: Faction,
-  Int: Scalars['Int'],
   PlayerMat: PlayerMat,
+  Int: Scalars['Int'],
+  Faction: FactionModel,
   ID: Scalars['ID'],
   Player: PlayerModel,
   Node: Node,
@@ -275,7 +276,7 @@ export type ResolversParentTypes = ResolversObject<{
   MatchConnection: Omit<MatchConnection, 'edges'> & { edges: Array<ResolversParentTypes['MatchEdge']> },
   MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
   Match: Omit<Match, 'playerResults'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']> },
-  PlayerMatchResult: Omit<PlayerMatchResult, 'player'> & { player: ResolversParentTypes['Player'] },
+  PlayerMatchResult: Omit<PlayerMatchResult, 'player' | 'faction'> & { player: ResolversParentTypes['Player'], faction: ResolversParentTypes['Faction'] },
   Mutation: {},
   PlayerMatchResultInput: PlayerMatchResultInput,
   CacheControlScope: CacheControlScope,
@@ -366,8 +367,9 @@ export type PlayerMatchResultResolvers<ContextType = any, ParentType extends Res
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
+  faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
+  factions?: Resolver<Array<ResolversTypes['Faction']>, ParentType, ContextType>,
   player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>,
   playersByWins?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByWinsArgs, 'first'>>,
   matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>,
