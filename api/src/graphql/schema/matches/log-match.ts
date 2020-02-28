@@ -133,6 +133,17 @@ const formPlayerMatchResults = async (
   return playerMatchResults;
 };
 
+const findMatchWinner = (playerMatchResults: PlayerMatchResult[]) => {
+  let winner = playerMatchResults[0];
+  playerMatchResults.forEach(result => {
+    if (result.coins > winner.coins) {
+      winner = result;
+    }
+  });
+
+  return winner;
+};
+
 const validateMatch = async (
   numRounds: number,
   loggedMatchResults: Schema.PlayerMatchResultInput[]
@@ -192,6 +203,9 @@ export const resolvers: Schema.Resolvers = {
                 match,
                 loggedMatchResults
               );
+
+              match.winner = findMatchWinner(playerMatchResults);
+              await transactionalEntityManager.save(match);
             }
           );
 
