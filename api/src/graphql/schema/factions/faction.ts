@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 import { getRepository } from 'typeorm';
 
-import { Faction, Pl } from '../../../db/entities';
+import { Faction, Match } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -13,6 +13,7 @@ export const typeDef = gql`
   type Faction {
     id: Int!
     name: String!
+    totalWins: Int!
   }
 `;
 
@@ -30,6 +31,17 @@ export const resolvers: Schema.Resolvers = {
       const factionRepo = getRepository(Faction);
       const allFactions = await factionRepo.find();
       return allFactions;
+    }
+  },
+  Faction: {
+    totalWins: async faction => {
+      const matchRepo = getRepository(Match);
+      const wins = await matchRepo
+        .createQueryBuilder('match')
+        .innerJoinAndSelect('match.winner', 'winner')
+        .where('winner."factionId" = :factionId', { factionId: faction.id })
+        .getCount();
+      return wins;
     }
   }
 };

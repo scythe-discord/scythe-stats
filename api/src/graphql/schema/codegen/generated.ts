@@ -23,6 +23,7 @@ export type Faction = {
    __typename?: 'Faction',
   id: Scalars['Int'],
   name: Scalars['String'],
+  totalWins: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -289,6 +290,7 @@ export type CacheControlDirectiveResolver<Result, Parent, ContextType = any, Arg
 export type FactionResolvers<ContextType = any, ParentType extends ResolversParentTypes['Faction'] = ResolversParentTypes['Faction']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
