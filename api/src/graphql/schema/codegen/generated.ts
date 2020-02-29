@@ -24,6 +24,7 @@ export type Faction = {
   id: Scalars['Int'],
   name: Scalars['String'],
   totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -291,6 +292,7 @@ export type FactionResolvers<ContextType = any, ParentType extends ResolversPare
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 

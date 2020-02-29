@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 import { getRepository } from 'typeorm';
 
-import { Faction, Match } from '../../../db/entities';
+import { Faction, Match, PlayerMatchResult } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -14,6 +14,7 @@ export const typeDef = gql`
     id: Int!
     name: String!
     totalWins: Int!
+    totalMatches: Int!
   }
 `;
 
@@ -42,6 +43,16 @@ export const resolvers: Schema.Resolvers = {
         .where('winner."factionId" = :factionId', { factionId: faction.id })
         .getCount();
       return wins;
+    },
+    totalMatches: async faction => {
+      const playerMatchResultRepo = getRepository(PlayerMatchResult);
+      const matches = await playerMatchResultRepo
+        .createQueryBuilder('result')
+        .where('result."factionId" = :factionId', {
+          factionId: faction.id
+        })
+        .getCount();
+      return matches;
     }
   }
 };
