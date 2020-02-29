@@ -1,5 +1,6 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
 import { FactionModel, PlayerMatModel, PlayerModel } from '../../../db/entities';
+import { FactionMatComboBase } from '../factions/faction-mat-combo';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -31,6 +32,8 @@ export type FactionMatCombo = {
    __typename?: 'FactionMatCombo',
   faction: Faction,
   playerMat: PlayerMat,
+  totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -256,7 +259,7 @@ export type ResolversTypes = ResolversObject<{
   PlayerMat: ResolverTypeWrapper<PlayerMatModel>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Faction: ResolverTypeWrapper<FactionModel>,
-  FactionMatCombo: ResolverTypeWrapper<Omit<FactionMatCombo, 'faction' | 'playerMat'> & { faction: ResolversTypes['Faction'], playerMat: ResolversTypes['PlayerMat'] }>,
+  FactionMatCombo: ResolverTypeWrapper<FactionMatComboBase>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Player: ResolverTypeWrapper<PlayerModel>,
   Node: ResolverTypeWrapper<Node>,
@@ -281,7 +284,7 @@ export type ResolversParentTypes = ResolversObject<{
   PlayerMat: PlayerMatModel,
   Int: Scalars['Int'],
   Faction: FactionModel,
-  FactionMatCombo: Omit<FactionMatCombo, 'faction' | 'playerMat'> & { faction: ResolversParentTypes['Faction'], playerMat: ResolversParentTypes['PlayerMat'] },
+  FactionMatCombo: FactionMatComboBase,
   ID: Scalars['ID'],
   Player: PlayerModel,
   Node: Node,
@@ -313,6 +316,8 @@ export type FactionResolvers<ContextType = any, ParentType extends ResolversPare
 export type FactionMatComboResolvers<ContextType = any, ParentType extends ResolversParentTypes['FactionMatCombo'] = ResolversParentTypes['FactionMatCombo']> = ResolversObject<{
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
