@@ -1,7 +1,12 @@
 import { gql } from 'apollo-server';
 import { getRepository } from 'typeorm';
 
-import { Faction, PlayerMat, Match } from '../../../db/entities';
+import {
+  Faction,
+  PlayerMat,
+  Match,
+  PlayerMatchResult
+} from '../../../db/entities';
 import Schema from '../codegen';
 
 export interface FactionMatComboBase {
@@ -18,6 +23,7 @@ export const typeDef = gql`
     faction: Faction!
     playerMat: PlayerMat!
     totalWins: Int!
+    totalMatches: Int!
   }
 `;
 
@@ -48,6 +54,19 @@ export const resolvers: Schema.Resolvers = {
         })
         .getCount();
       return wins;
+    },
+    totalMatches: async ({ faction, playerMat }) => {
+      const playerMatchResultRepo = getRepository(PlayerMatchResult);
+      const matches = await playerMatchResultRepo
+        .createQueryBuilder('result')
+        .where('result."factionId" = :factionId', {
+          factionId: faction.id
+        })
+        .andWhere('result."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id
+        })
+        .getCount();
+      return matches;
     }
   }
 };
