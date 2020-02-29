@@ -24,6 +24,8 @@ export const typeDef = gql`
     playerMat: PlayerMat!
     totalWins: Int!
     totalMatches: Int!
+    avgCoinsOnWin: Int!
+    avgRoundsOnWin: Float!
   }
 `;
 
@@ -67,6 +69,34 @@ export const resolvers: Schema.Resolvers = {
         })
         .getCount();
       return matches;
+    },
+    avgCoinsOnWin: async ({ faction, playerMat }) => {
+      const matchRepo = getRepository(Match);
+      const res = await matchRepo
+        .createQueryBuilder('match')
+        .select('AVG(winner.coins)', 'avg')
+        .innerJoin('match.winner', 'winner')
+        .where('winner."factionId" = :factionId', { factionId: faction.id })
+        .andWhere('winner."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id
+        })
+        .getRawOne();
+
+      return Math.floor(parseFloat(res['avg']));
+    },
+    avgRoundsOnWin: async ({ faction, playerMat }) => {
+      const matchRepo = getRepository(Match);
+      const res = await matchRepo
+        .createQueryBuilder('match')
+        .select('AVG(match.numRounds)', 'avg')
+        .innerJoin('match.winner', 'winner')
+        .where('winner."factionId" = :factionId', { factionId: faction.id })
+        .andWhere('winner."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id
+        })
+        .getRawOne();
+
+      return parseFloat(res['avg']);
     }
   }
 };

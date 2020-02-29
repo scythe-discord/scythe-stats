@@ -34,6 +34,8 @@ export type FactionMatCombo = {
   playerMat: PlayerMat,
   totalWins: Scalars['Int'],
   totalMatches: Scalars['Int'],
+  avgCoinsOnWin: Scalars['Int'],
+  avgRoundsOnWin: Scalars['Float'],
 };
 
 export type Match = Node & {
@@ -260,6 +262,7 @@ export type ResolversTypes = ResolversObject<{
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Faction: ResolverTypeWrapper<FactionModel>,
   FactionMatCombo: ResolverTypeWrapper<FactionMatComboBase>,
+  Float: ResolverTypeWrapper<Scalars['Float']>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
   Player: ResolverTypeWrapper<PlayerModel>,
   Node: ResolverTypeWrapper<Node>,
@@ -285,6 +288,7 @@ export type ResolversParentTypes = ResolversObject<{
   Int: Scalars['Int'],
   Faction: FactionModel,
   FactionMatCombo: FactionMatComboBase,
+  Float: Scalars['Float'],
   ID: Scalars['ID'],
   Player: PlayerModel,
   Node: Node,
@@ -318,6 +322,8 @@ export type FactionMatComboResolvers<ContextType = any, ParentType extends Resol
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
