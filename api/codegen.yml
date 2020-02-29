@@ -10,4 +10,5 @@ generates:
       useIndexSignature: true
       mappers:
         Faction: '../../../db/entities#FactionModel'
+        PlayerMat: '../../../db/entities#PlayerMatModel'
         Player: '../../../db/entities#PlayerModel'
