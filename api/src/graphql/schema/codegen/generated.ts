@@ -36,6 +36,7 @@ export type FactionMatCombo = {
   totalMatches: Scalars['Int'],
   avgCoinsOnWin: Scalars['Int'],
   avgRoundsOnWin: Scalars['Float'],
+  leastRoundsForWin: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -324,6 +325,7 @@ export type FactionMatComboResolvers<ContextType = any, ParentType extends Resol
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
+  leastRoundsForWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 

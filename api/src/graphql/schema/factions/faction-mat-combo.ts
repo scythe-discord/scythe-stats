@@ -26,6 +26,7 @@ export const typeDef = gql`
     totalMatches: Int!
     avgCoinsOnWin: Int!
     avgRoundsOnWin: Float!
+    leastRoundsForWin: Int!
   }
 `;
 
@@ -97,6 +98,20 @@ export const resolvers: Schema.Resolvers = {
         .getRawOne();
 
       return parseFloat(res['avg']);
+    },
+    leastRoundsForWin: async ({ faction, playerMat }) => {
+      const matchRepo = getRepository(Match);
+      const res = await matchRepo
+        .createQueryBuilder('match')
+        .select('MIN(match.numRounds)', 'min')
+        .innerJoin('match.winner', 'winner')
+        .where('winner."factionId" = :factionId', { factionId: faction.id })
+        .andWhere('winner."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id
+        })
+        .getRawOne();
+
+      return res['min'];
     }
   }
 };
