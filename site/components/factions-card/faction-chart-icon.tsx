@@ -33,12 +33,13 @@ const FactionChartIcon: FunctionComponent<Props> = ({
 
   return (
     <foreignObject
+      {...props}
       width="28"
       height="28"
       transform="translate(-14)"
-      onClick={onClick}
+      cursor="pointer"
       opacity={isSelected ? 1 : 0.65}
-      {...props}
+      onClick={onClick}
     >
       <FactionIcon faction={faction.name} size={28} />
     </foreignObject>
