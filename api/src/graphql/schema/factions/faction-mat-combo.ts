@@ -83,7 +83,7 @@ export const resolvers: Schema.Resolvers = {
         })
         .getRawOne();
 
-      return Math.floor(parseFloat(res['avg']));
+      return Math.floor(parseFloat(res['avg'])) || 0;
     },
     avgRoundsOnWin: async ({ faction, playerMat }) => {
       const matchRepo = getRepository(Match);
@@ -97,7 +97,7 @@ export const resolvers: Schema.Resolvers = {
         })
         .getRawOne();
 
-      return parseFloat(res['avg']);
+      return parseFloat(res['avg']) || 0;
     },
     leastRoundsForWin: async ({ faction, playerMat }) => {
       const matchRepo = getRepository(Match);
@@ -111,7 +111,7 @@ export const resolvers: Schema.Resolvers = {
         })
         .getRawOne();
 
-      return res['min'];
+      return res['min'] || 0;
     }
   }
 };
