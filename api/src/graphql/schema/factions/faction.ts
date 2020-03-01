@@ -6,7 +6,7 @@ import Schema from '../codegen';
 
 export const typeDef = gql`
   extend type Query {
-    faction(name: String!): Faction
+    faction(id: Int!): Faction!
     factions: [Faction!]!
   }
 
@@ -20,13 +20,13 @@ export const typeDef = gql`
 
 export const resolvers: Schema.Resolvers = {
   Query: {
-    faction: async (_, { name }) => {
+    faction: async (_, { id }) => {
       const factionRepo = getRepository(Faction);
-      const faction = await factionRepo.findOne({
-        name
+      const faction = await factionRepo.findOneOrFail({
+        id
       });
 
-      return faction || null;
+      return faction;
     },
     factions: async () => {
       const factionRepo = getRepository(Faction);

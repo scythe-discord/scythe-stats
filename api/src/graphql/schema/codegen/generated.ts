@@ -158,7 +158,7 @@ export type QueryPlayerMatArgs = {
 
 
 export type QueryFactionArgs = {
-  name: Scalars['String']
+  id: Scalars['Int']
 };
 
 
@@ -408,7 +408,7 @@ export type PlayerMatchResultResolvers<ContextType = any, ParentType extends Res
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
-  faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'name'>>,
+  faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'id'>>,
   factions?: Resolver<Array<ResolversTypes['Faction']>, ParentType, ContextType>,
   factionMatCombos?: Resolver<Array<ResolversTypes['FactionMatCombo']>, ParentType, ContextType, RequireFields<QueryFactionMatCombosArgs, 'factionId'>>,
   player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>,
