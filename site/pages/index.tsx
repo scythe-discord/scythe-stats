@@ -1,8 +1,12 @@
 import { NextPage } from 'next';
 import { useStyletron } from 'baseui';
-import { HeadingLevel, Heading } from 'baseui/heading';
 
-import { SiteHeader, TopPlayers, RecentMatches } from '../components';
+import {
+  SiteHeader,
+  TopPlayers,
+  RecentMatches,
+  FactionsCard
+} from '../components';
 
 const HomePage: NextPage = () => {
   const [css] = useStyletron();
@@ -12,24 +16,28 @@ const HomePage: NextPage = () => {
       <SiteHeader />
       <div
         className={css({
+          display: 'flex',
           padding: '20px',
-          margin: '0 auto',
-          maxWidth: '1280px'
+          width: '100%'
         })}
       >
-        <HeadingLevel>
-          <Heading>Recent Matches</Heading>
-          <RecentMatches />
-        </HeadingLevel>
         <div
           className={css({
-            margin: '75px 0 0'
+            flex: '1 1 auto',
+            margin: '0 50px 0 0'
           })}
         >
-          <HeadingLevel>
-            <Heading>Top Players</Heading>
+          <FactionsCard />
+        </div>
+        <div>
+          <RecentMatches />
+          <div
+            className={css({
+              margin: '50px 0 0'
+            })}
+          >
             <TopPlayers />
-          </HeadingLevel>
+          </div>
         </div>
       </div>
     </div>
