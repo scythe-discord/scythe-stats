@@ -19,7 +19,7 @@ const FactionChartIcon: FunctionComponent<Props> = ({
   ...props
 }) => {
   const onClick = useCallback(() => {
-    if (payload && payload.value) {
+    if (payload && payload.value != null) {
       onClickFaction(payload.value);
     }
   }, [onClickFaction, payload]);
