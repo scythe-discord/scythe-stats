@@ -1,4 +1,10 @@
 query factionStats($factionId: Int!, $numPlayers: Int!) {
+  faction(id: $factionId) {
+    id
+    name
+    totalWins
+    totalMatches
+  }
   factionMatCombos(factionId: $factionId) {
     playerMat {
       id

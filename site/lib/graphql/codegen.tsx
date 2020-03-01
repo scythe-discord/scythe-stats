@@ -140,7 +140,7 @@ export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
   playerMat?: Maybe<PlayerMat>,
-  faction?: Maybe<Faction>,
+  faction: Faction,
   factions: Array<Faction>,
   factionMatCombos: Array<FactionMatCombo>,
   player?: Maybe<Player>,
@@ -155,7 +155,7 @@ export type QueryPlayerMatArgs = {
 
 
 export type QueryFactionArgs = {
-  name: Scalars['String']
+  id: Scalars['Int']
 };
 
 
@@ -191,7 +191,10 @@ export type FactionStatsQueryVariables = {
 
 export type FactionStatsQuery = (
   { __typename?: 'Query' }
-  & { factionMatCombos: Array<(
+  & { faction: (
+    { __typename?: 'Faction' }
+    & Pick<Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>
+  ), factionMatCombos: Array<(
     { __typename?: 'FactionMatCombo' }
     & Pick<FactionMatCombo, 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
     & { playerMat: (
@@ -280,6 +283,12 @@ export type TopPlayersQuery = (
 
 export const FactionStatsDocument = gql`
     query factionStats($factionId: Int!, $numPlayers: Int!) {
+  faction(id: $factionId) {
+    id
+    name
+    totalWins
+    totalMatches
+  }
   factionMatCombos(factionId: $factionId) {
     playerMat {
       id
