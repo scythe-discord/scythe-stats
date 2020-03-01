@@ -1,11 +1,13 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import { Card } from 'baseui/card';
+import { H1 } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 
 import FactionSnippet from './faction-snippet';
 import FactionWinRates from './faction-win-rates';
+import FactionMatStats from './faction-mat-stats';
 
 const TOP_PLAYER_COUNT = 3;
 
@@ -75,6 +77,13 @@ const FactionsCard: FunctionComponent = () => {
           />
         </div>
       </div>
+      <H1>Player Mat Stats</H1>
+      <FactionMatStats
+        className={css({
+          margin: '30px 0'
+        })}
+        factionStats={factionStatsData}
+      />
     </Card>
   );
 };
