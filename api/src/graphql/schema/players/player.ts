@@ -1,57 +1,9 @@
 import { gql } from 'apollo-server';
 import { toGlobalId, fromGlobalId } from 'graphql-relay';
-import { getRepository, MoreThanOrEqual } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 import { Match, PlayerMatchResult, Player } from '../../../db/entities';
 import Schema from '../codegen';
-
-const findPlayerMatches = async (player: Player, fromDate?: string | null) => {
-  const playerMatchResultRepo = getRepository(PlayerMatchResult);
-  const matchRepository = getRepository(Match);
-
-  let relevantMatches = await playerMatchResultRepo
-    .createQueryBuilder('result')
-    .select('result."matchId"')
-    .where('result."playerId" = :playerId', {
-      playerId: player.id
-    })
-    .getRawMany();
-
-  if (!relevantMatches.length) {
-    return [];
-  }
-
-  relevantMatches = relevantMatches.map(({ matchId }) => matchId);
-
-  return matchRepository.findByIds(relevantMatches, {
-    where: fromDate
-      ? {
-          datePlayed: MoreThanOrEqual(new Date(fromDate))
-        }
-      : {},
-    relations: ['playerMatchResults', 'playerMatchResults.player']
-  });
-};
-
-const findWonMatches = (matches: Match[], player: Player) => {
-  const wonMatches: Match[] = [];
-
-  matches.forEach(match => {
-    let winningResult = match.playerMatchResults[0];
-
-    match.playerMatchResults.forEach(result => {
-      if (result.coins > winningResult.coins) {
-        winningResult = result;
-      }
-    });
-
-    if (winningResult.player.id === player.id) {
-      wonMatches.push(match);
-    }
-  });
-
-  return wonMatches;
-};
 
 export const typeDef = gql`
   extend type Query {
@@ -62,8 +14,8 @@ export const typeDef = gql`
     id: ID!
     displayName: String!
     steamId: String
-    totalWins(fromDate: String): Int!
-    totalMatches(fromDate: String): Int!
+    totalWins(factionId: Int, fromDate: String): Int!
+    totalMatches(factionId: Int, fromDate: String): Int!
   }
 
   type PlayerConnection {
@@ -88,15 +40,46 @@ export const resolvers: Schema.Resolvers = {
   },
   Player: {
     id: player => toGlobalId('Player', player.id.toString()),
-    totalWins: async (player, { fromDate }) => {
-      const playerMatches = await findPlayerMatches(player, fromDate);
-      const wonMatches = findWonMatches(playerMatches, player);
+    totalWins: async (player, { factionId, fromDate }) => {
+      const matchRepo = getRepository(Match);
+      let query = matchRepo
+        .createQueryBuilder('match')
+        .innerJoin('match.winner', 'winner')
+        .where('winner."playerId" = :playerId', { playerId: player.id });
 
-      return wonMatches.length;
+      if (factionId) {
+        query = query.andWhere('winner."factionId" = :factionId', {
+          factionId
+        });
+      }
+
+      if (fromDate) {
+        query = query.andWhere('match."datePlayed" >= :fromDate', { fromDate });
+      }
+
+      const wins = await query.getCount();
+      return wins;
     },
-    totalMatches: async (player, { fromDate }) => {
-      const playerMatches = await findPlayerMatches(player, fromDate);
-      return playerMatches.length;
+    totalMatches: async (player, { factionId, fromDate }) => {
+      const playerMatchResultRepo = getRepository(PlayerMatchResult);
+      let query = playerMatchResultRepo
+        .createQueryBuilder('result')
+        .where('result."playerId" = :playerId', { playerId: player.id });
+
+      if (factionId) {
+        query = query.andWhere('result."factionId" = :factionId', {
+          factionId
+        });
+      }
+
+      if (fromDate) {
+        query = query
+          .innerJoin('result.match', 'match')
+          .andWhere('match."datePlayed" >= :fromDate', { fromDate });
+      }
+
+      const matches = await query.getCount();
+      return matches;
     }
   }
 };

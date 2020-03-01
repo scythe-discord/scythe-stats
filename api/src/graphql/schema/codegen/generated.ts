@@ -95,11 +95,13 @@ export type Player = Node & {
 
 
 export type PlayerTotalWinsArgs = {
+  factionId?: Maybe<Scalars['Int']>,
   fromDate?: Maybe<Scalars['String']>
 };
 
 
 export type PlayerTotalMatchesArgs = {
+  factionId?: Maybe<Scalars['Int']>,
   fromDate?: Maybe<Scalars['String']>
 };
 
