@@ -11,17 +11,39 @@ interface Props {
   className?: string;
 }
 
+const getBestPlayerMat = (
+  combos: Pick<
+    GQL.FactionMatCombo,
+    'playerMat' | 'totalWins' | 'totalMatches'
+  >[]
+) => {
+  let bestWinRate = -1;
+  let bestPlayerMat = combos[0].playerMat;
+
+  combos.forEach(({ playerMat, totalMatches, totalWins }) => {
+    const winRate = (100 * totalWins) / totalMatches;
+
+    if (winRate > bestWinRate) {
+      bestWinRate = winRate;
+      bestPlayerMat = playerMat;
+    }
+  });
+
+  return bestPlayerMat;
+};
+
 const SnippetEndEnhancer = styled('span', {
   padding: '0 0 0 30px'
 });
 
 const FactionSnippet: FunctionComponent<Props> = ({
-  factionStats: { faction, playersByWins },
+  factionStats: { faction, factionMatCombos, playersByWins },
   className
 }) => {
   const [css] = useStyletron();
 
   const topPlayer = playersByWins.edges[0].node;
+  const bestPlayerMat = getBestPlayerMat(factionMatCombos);
 
   return (
     <div className={className}>
@@ -71,6 +93,13 @@ const FactionSnippet: FunctionComponent<Props> = ({
           )}
         >
           <ListItemLabel>Total Wins</ListItemLabel>
+        </ListItem>
+        <ListItem
+          endEnhancer={() => (
+            <SnippetEndEnhancer>{bestPlayerMat.name}</SnippetEndEnhancer>
+          )}
+        >
+          <ListItemLabel>Best Player Mat</ListItemLabel>
         </ListItem>
         <ListItem
           endEnhancer={() => (
