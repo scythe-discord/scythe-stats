@@ -1,60 +1,20 @@
 import { gql } from 'apollo-server';
 import { connectionFromArray } from 'graphql-relay';
-import { getRepository, MoreThanOrEqual } from 'typeorm';
-import { values } from 'lodash';
+import { getRepository } from 'typeorm';
 
 import { Match, Player } from '../../../db/entities';
 import Schema from '../codegen';
 
-const findPlayersOrderedByWins = async (fromDate?: string | null) => {
-  const matchRepository = getRepository(Match);
-  const matches = await matchRepository.find({
-    where: fromDate
-      ? {
-          datePlayed: MoreThanOrEqual(new Date(fromDate))
-        }
-      : {},
-    relations: ['playerMatchResults', 'playerMatchResults.player']
-  });
-
-  const playerWinCounts: {
-    [key: number]: {
-      wins: number;
-      player: Player;
-    };
-  } = {};
-
-  matches.forEach(({ playerMatchResults }) => {
-    let winningResult = playerMatchResults[0];
-
-    playerMatchResults.forEach(result => {
-      if (result.coins > winningResult.coins) {
-        winningResult = result;
-      }
-    });
-
-    if (playerWinCounts[winningResult.player.id]) {
-      playerWinCounts[winningResult.player.id].wins++;
-    } else {
-      playerWinCounts[winningResult.player.id] = {
-        wins: 1,
-        player: winningResult.player
-      };
-    }
-  });
-
-  const orderedPlayers = values(playerWinCounts)
-    .sort((a, b) => b.wins - a.wins)
-    .map(({ player }) => player);
-
-  return orderedPlayers;
-};
+interface PlayerWithWinCount extends Player {
+  playerWins: string;
+}
 
 export const typeDef = gql`
   extend type Query {
     playersByWins(
       first: Int!
       after: String
+      factionId: Int
       fromDate: String
     ): PlayerConnection!
   }
@@ -62,9 +22,39 @@ export const typeDef = gql`
 
 export const resolvers: Schema.Resolvers = {
   Query: {
-    playersByWins: async (_, { first, after, fromDate }) => {
-      const players = await findPlayersOrderedByWins(fromDate);
-      return connectionFromArray(players, { first, after });
+    playersByWins: async (_, { first, after, factionId, fromDate }) => {
+      const matchRepository = getRepository(Match);
+      let query = matchRepository
+        .createQueryBuilder('match')
+        .innerJoin('match.winner', 'winner')
+        .innerJoin('winner.player', 'player')
+        .groupBy('player.id')
+        .select('COUNT(player.id)', 'playerWins')
+        .addSelect('player.*');
+
+      if (factionId) {
+        query = query.andWhere('winner."factionId" = :factionId', {
+          factionId
+        });
+      }
+
+      if (fromDate) {
+        query = query.andWhere('match."datePlayed" >= :fromDate', { fromDate });
+      }
+
+      const playersWithWins = (await query.getRawMany()) as PlayerWithWinCount[];
+
+      playersWithWins.sort((a, b) => {
+        const playerWinsA = parseInt(a.playerWins);
+        const playerWinsB = parseInt(b.playerWins);
+        if (playerWinsA === playerWinsB) {
+          return b.id - a.id;
+        }
+
+        return playerWinsB - playerWinsA;
+      });
+
+      return connectionFromArray(playersWithWins, { first, after });
     }
   }
 };

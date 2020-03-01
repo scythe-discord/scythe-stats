@@ -175,6 +175,7 @@ export type QueryPlayerArgs = {
 export type QueryPlayersByWinsArgs = {
   first: Scalars['Int'],
   after?: Maybe<Scalars['String']>,
+  factionId?: Maybe<Scalars['Int']>,
   fromDate?: Maybe<Scalars['String']>
 };
 
