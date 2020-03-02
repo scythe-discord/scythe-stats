@@ -7,14 +7,6 @@ const primitives = {
   primaryFontFamily: PRIMARY_FONT_FAMILY
 };
 
-const overrides = {
-  Card: {
-    Root: {
-      style: {
-        border: '10px solid black'
-      }
-    }
-  }
-};
+const overrides = {};
 
 export default createTheme(primitives, overrides);
