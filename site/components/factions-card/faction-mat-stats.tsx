@@ -37,7 +37,7 @@ const FactionSnippet: FunctionComponent<Props> = ({
   return (
     <StyledTable
       className={className}
-      $gridTemplateColumns="auto 125px 140px 160px 175px auto"
+      $gridTemplateColumns="auto auto auto auto auto auto"
     >
       <StyledHeadCell>Player Mat</StyledHeadCell>
       <StyledHeadCell>Win Rate</StyledHeadCell>

@@ -98,7 +98,7 @@ const RecentMatches: FunctionComponent = () => {
       overrides={{
         Root: {
           style: {
-            padding: '25px'
+            padding: '15px'
           }
         }
       }}
@@ -106,7 +106,7 @@ const RecentMatches: FunctionComponent = () => {
       <div
         className={css({
           display: 'flex',
-          justifyContent: 'space-between'
+          flexDirection: 'column'
         })}
       >
         <VerticalTimeline
@@ -116,7 +116,7 @@ const RecentMatches: FunctionComponent = () => {
         />
         <MatchDetails
           className={css({
-            margin: '0 0 0 50px'
+            margin: '30px 0 0 0'
           })}
           rows={matchDetailsRows}
         />

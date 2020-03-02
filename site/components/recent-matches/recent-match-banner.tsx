@@ -39,7 +39,9 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
       })}
       onClick={onClickWithId}
     >
-      <span>{displayName} won as</span>
+      <span className={css({ whiteSpace: 'nowrap' })}>
+        {displayName} won as
+      </span>
       <FactionIcon
         faction={factionName}
         size={28}
@@ -47,7 +49,7 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
           margin: '0 5px'
         })}
       />
-      <span>
+      <span className={css({ whiteSpace: 'nowrap' })}>
         {playerMatName} in {numRounds} rounds
       </span>
     </button>

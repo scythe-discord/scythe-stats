@@ -20,6 +20,10 @@ class Site extends App<Props> {
       <>
         <Head>
           <title>Beloved Pacifist</title>
+          <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, shrink-to-fit=no"
+          />
         </Head>
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
           <BaseProvider theme={Theme}>

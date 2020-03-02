@@ -34,7 +34,8 @@ const TopPlayers: FunctionComponent = () => {
     >
       <div
         className={css({
-          display: 'flex'
+          display: 'flex',
+          flexDirection: 'column'
         })}
       >
         <div

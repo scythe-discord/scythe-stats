@@ -49,7 +49,7 @@ const FactionsCard: FunctionComponent = () => {
       overrides={{
         Root: {
           style: {
-            padding: '25px'
+            padding: '20px'
           }
         }
       }}
@@ -61,7 +61,7 @@ const FactionsCard: FunctionComponent = () => {
       >
         <FactionSnippet
           className={css({
-            minWidth: '400px'
+            width: '350px'
           })}
           factionStats={factionStatsData}
         />
@@ -78,14 +78,29 @@ const FactionsCard: FunctionComponent = () => {
           />
         </div>
       </div>
-      <H1>Player Mat Stats</H1>
-      <FactionMatStats
-        className={css({
-          margin: '30px 0'
-        })}
-        factionStats={factionStatsData}
-      />
-      <H1>Win Rates (by player count)</H1>
+      <H1
+        overrides={{
+          Block: {
+            style: {
+              margin: '50px 0 30px'
+            }
+          }
+        }}
+      >
+        Player Mat Stats
+      </H1>
+      <FactionMatStats factionStats={factionStatsData} />
+      <H1
+        overrides={{
+          Block: {
+            style: {
+              margin: '50px 0 30px'
+            }
+          }
+        }}
+      >
+        Win Rates (by player count)
+      </H1>
       <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
     </Card>
   );

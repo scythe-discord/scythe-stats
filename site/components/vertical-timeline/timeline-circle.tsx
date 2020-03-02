@@ -51,7 +51,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
           className={css({
             fill: 'white',
             stroke: '#3498db',
-            strokeWidth: '15px'
+            strokeWidth: '10px'
           })}
           cx={50}
           cy={50}

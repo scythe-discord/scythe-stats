@@ -18,7 +18,9 @@ const HomePage: NextPage = () => {
         className={css({
           display: 'flex',
           padding: '20px',
-          width: '100%'
+          margin: '0 auto',
+          width: '100%',
+          maxWidth: '1650px'
         })}
       >
         <div
