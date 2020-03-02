@@ -8,6 +8,7 @@ import GQL from '../../lib/graphql';
 import FactionSnippet from './faction-snippet';
 import FactionWinRates from './faction-win-rates';
 import FactionMatStats from './faction-mat-stats';
+import FactionWinRatesByPlayerCount from './faction-win-rates-player-count';
 
 const TOP_PLAYER_COUNT = 3;
 
@@ -84,6 +85,8 @@ const FactionsCard: FunctionComponent = () => {
         })}
         factionStats={factionStatsData}
       />
+      <H1>Win Rates (by player count)</H1>
+      <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
     </Card>
   );
 };

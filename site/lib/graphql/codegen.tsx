@@ -23,6 +23,7 @@ export type Faction = {
   name: Scalars['String'],
   totalWins: Scalars['Int'],
   totalMatches: Scalars['Int'],
+  statsByPlayerCount: Array<FactionStatsWithPlayerCount>,
 };
 
 export type FactionMatCombo = {
@@ -34,6 +35,13 @@ export type FactionMatCombo = {
   avgCoinsOnWin: Scalars['Int'],
   avgRoundsOnWin: Scalars['Float'],
   leastRoundsForWin: Scalars['Int'],
+};
+
+export type FactionStatsWithPlayerCount = {
+   __typename?: 'FactionStatsWithPlayerCount',
+  playerCount: Scalars['Int'],
+  totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -194,6 +202,10 @@ export type FactionStatsQuery = (
   & { faction: (
     { __typename?: 'Faction' }
     & Pick<Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>
+    & { statsByPlayerCount: Array<(
+      { __typename?: 'FactionStatsWithPlayerCount' }
+      & Pick<FactionStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches'>
+    )> }
   ), factionMatCombos: Array<(
     { __typename?: 'FactionMatCombo' }
     & Pick<FactionMatCombo, 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
@@ -288,6 +300,11 @@ export const FactionStatsDocument = gql`
     name
     totalWins
     totalMatches
+    statsByPlayerCount {
+      playerCount
+      totalWins
+      totalMatches
+    }
   }
   factionMatCombos(factionId: $factionId) {
     playerMat {
