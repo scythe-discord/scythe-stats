@@ -1,9 +1,9 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { Card } from 'baseui/card';
 
 import GQL from '../../lib/graphql';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
+import Card from '../card';
 
 import MatchDetails from '../match-details';
 import RecentMatchBanner from './recent-match-banner';
@@ -94,15 +94,7 @@ const RecentMatches: FunctionComponent = () => {
   );
 
   return (
-    <Card
-      overrides={{
-        Root: {
-          style: {
-            padding: '15px'
-          }
-        }
-      }}
-    >
+    <Card>
       <div
         className={css({
           display: 'flex',

@@ -1,10 +1,10 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { Card } from 'baseui/card';
 import { H1 } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 
+import Card from '../card';
 import FactionSnippet from './faction-snippet';
 import FactionWinRates from './faction-win-rates';
 import FactionMatStats from './faction-mat-stats';
@@ -45,15 +45,7 @@ const FactionsCard: FunctionComponent = () => {
   }
 
   return (
-    <Card
-      overrides={{
-        Root: {
-          style: {
-            padding: '20px'
-          }
-        }
-      }}
-    >
+    <Card>
       <div
         className={css({
           display: 'flex'

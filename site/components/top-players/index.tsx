@@ -1,8 +1,9 @@
 import { FunctionComponent, FC } from 'react';
 import { useStyletron } from 'baseui';
-import { Card } from 'baseui/card';
 import { Label1 } from 'baseui/typography';
 import moment from 'moment';
+
+import Card from '../card';
 
 import PlayerTable from './player-table';
 
@@ -23,15 +24,7 @@ const TopPlayers: FunctionComponent = () => {
   const [css] = useStyletron();
 
   return (
-    <Card
-      overrides={{
-        Root: {
-          style: {
-            padding: '15px 25px'
-          }
-        }
-      }}
-    >
+    <Card>
       <div
         className={css({
           display: 'flex',
