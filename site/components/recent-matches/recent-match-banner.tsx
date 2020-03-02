@@ -1,5 +1,6 @@
-import { FunctionComponent, useCallback } from 'react';
+import { FunctionComponent, useCallback, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
+import { LabelSmall } from 'baseui/typography';
 
 import FactionIcon from '../faction-icon';
 
@@ -11,6 +12,22 @@ interface Props {
   numRounds: number;
   onClick?: (id: string) => void;
 }
+
+const BannerLabel: FunctionComponent<{ children: ReactNode }> = ({
+  children
+}) => (
+  <LabelSmall
+    overrides={{
+      Block: {
+        style: {
+          whiteSpace: 'nowrap'
+        }
+      }
+    }}
+  >
+    {children}
+  </LabelSmall>
+);
 
 const RecentMatchBanner: FunctionComponent<Props> = ({
   id,
@@ -39,9 +56,7 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
       })}
       onClick={onClickWithId}
     >
-      <span className={css({ whiteSpace: 'nowrap' })}>
-        {displayName} won as
-      </span>
+      <BannerLabel>{displayName} won as</BannerLabel>
       <FactionIcon
         faction={factionName}
         size={28}
@@ -49,9 +64,9 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
           margin: '0 5px'
         })}
       />
-      <span className={css({ whiteSpace: 'nowrap' })}>
+      <BannerLabel>
         {playerMatName} in {numRounds} rounds
-      </span>
+      </BannerLabel>
     </button>
   );
 };

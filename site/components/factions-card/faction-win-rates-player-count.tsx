@@ -2,9 +2,9 @@ import { FunctionComponent } from 'react';
 import { useStyletron } from 'baseui';
 import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
 import { Block } from 'baseui/block';
+import { LabelMedium } from 'baseui/typography';
 import {
   LineChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -44,11 +44,15 @@ const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
   const renderLegendContent: LegendValueFormatter = value => {
     if (value === EXPECTED_WIN_RATE_LINE_NAME) {
       return (
-        <span
-          className={css({
-            display: 'inline-flex',
-            alignItems: 'center'
-          })}
+        <LabelMedium
+          overrides={{
+            Block: {
+              style: {
+                display: 'inline-flex',
+                alignItems: 'center'
+              }
+            }
+          }}
         >
           {value}
           <StatefulTooltip
@@ -70,11 +74,23 @@ const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
               <FontAwesomeIcon icon={faInfo} size="xs" />
             </div>
           </StatefulTooltip>
-        </span>
+        </LabelMedium>
       );
     }
 
-    return value;
+    return (
+      <LabelMedium
+        overrides={{
+          Block: {
+            style: {
+              display: 'inline'
+            }
+          }
+        }}
+      >
+        {value}
+      </LabelMedium>
+    );
   };
 
   return (

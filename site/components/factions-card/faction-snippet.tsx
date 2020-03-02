@@ -1,6 +1,6 @@
-import { FunctionComponent } from 'react';
-import { useStyletron, styled } from 'baseui';
-import { H1 } from 'baseui/typography';
+import { FunctionComponent, ReactNode } from 'react';
+import { useStyletron, styled, withStyle } from 'baseui';
+import { H1, LabelMedium } from 'baseui/typography';
 import { ListItem, ListItemLabel } from 'baseui/list';
 
 import GQL from '../../lib/graphql';
@@ -32,9 +32,23 @@ const getBestPlayerMat = (
   return bestPlayerMat;
 };
 
-const SnippetEndEnhancer = styled('span', {
-  padding: '0 0 0 30px'
-});
+const SnippetEndEnhancer: FunctionComponent<{ children: ReactNode }> = ({
+  children
+}) => {
+  return (
+    <LabelMedium
+      overrides={{
+        Block: {
+          style: {
+            padding: '0 0 0 30px'
+          }
+        }
+      }}
+    >
+      {children}
+    </LabelMedium>
+  );
+};
 
 const FactionSnippet: FunctionComponent<Props> = ({
   factionStats: { faction, factionMatCombos, playersByWins },

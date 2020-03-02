@@ -1,5 +1,6 @@
 import { FunctionComponent, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
+import { LabelMedium } from 'baseui/typography';
 import { format } from 'timeago.js';
 
 import TimelineCircle from './timeline-circle';
@@ -30,16 +31,20 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
         alignItems: 'center'
       })}
     >
-      <span
-        className={css({
-          flex: `0 0 auto`,
-          width: `${DATE_TXT_WIDTH}px`,
-          textAlign: 'right',
-          padding: '0 15px 0 0'
-        })}
+      <LabelMedium
+        overrides={{
+          Block: {
+            style: {
+              flex: `0 0 auto`,
+              width: `${DATE_TXT_WIDTH}px`,
+              textAlign: 'right',
+              padding: '0 15px 0 0'
+            }
+          }
+        }}
       >
         {element && format(element.date)}
-      </span>
+      </LabelMedium>
       <div
         className={css({
           display: 'flex',
