@@ -78,41 +78,39 @@ const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height={300}>
-      <LineChart data={data}>
-        <Tooltip
-          formatter={(value, name, b) => {
-            console.log(value, b);
-            const winRate = `${Number(value).toFixed(2)}%`;
-            const capitalizedName = name
-              .split(' ')
-              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
-              .join(' ');
-            return [winRate, capitalizedName];
-          }}
-          labelFormatter={(playerCount: number) => {
-            return `${playerCount} Players`;
-          }}
-        />
-        <CartesianGrid strokeDasharray="5 5" />
-        <XAxis dataKey="playerCount" />
-        <YAxis
-          width={40}
-          tickFormatter={val => {
-            return `${val}%`;
-          }}
-        />
-        <Legend formatter={renderLegendContent} />
-        <Line name={WIN_RATE_LINE_NAME} dataKey="value" strokeWidth={4} />
-        <Line
-          name={EXPECTED_WIN_RATE_LINE_NAME}
-          dataKey="basis"
-          type="basis"
-          dot={false}
-          stroke="#636e72"
-        />
-      </LineChart>
-    </ResponsiveContainer>
+    <LineChart width={850} height={500} data={data}>
+      <Tooltip
+        formatter={(value, name, b) => {
+          console.log(value, b);
+          const winRate = `${Number(value).toFixed(2)}%`;
+          const capitalizedName = name
+            .split(' ')
+            .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+            .join(' ');
+          return [winRate, capitalizedName];
+        }}
+        labelFormatter={(playerCount: number) => {
+          return `${playerCount} Players`;
+        }}
+      />
+      <CartesianGrid strokeDasharray="5 5" />
+      <XAxis dataKey="playerCount" />
+      <YAxis
+        width={40}
+        tickFormatter={val => {
+          return `${val}%`;
+        }}
+      />
+      <Legend formatter={renderLegendContent} />
+      <Line name={WIN_RATE_LINE_NAME} dataKey="value" strokeWidth={4} />
+      <Line
+        name={EXPECTED_WIN_RATE_LINE_NAME}
+        dataKey="basis"
+        type="basis"
+        dot={false}
+        stroke="#636e72"
+      />
+    </LineChart>
   );
 };
 
