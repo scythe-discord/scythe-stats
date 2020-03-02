@@ -9,6 +9,7 @@ import { Provider as StyletronProvider } from 'styletron-react';
 import { Sheet, Server } from 'styletron-engine-atomic';
 
 import { styletron } from '../styletron';
+import { PRIMARY_FONT_FAMILY } from '../lib/theme';
 
 interface Props {
   stylesheets: Sheet[];
@@ -50,6 +51,11 @@ class MyDocument extends Document<Props> {
             }
 
             body {
+              font-family: ${
+                // Make our lives easier such that we don't
+                // have to BaseWeb-ify everything (like other libraries)
+                PRIMARY_FONT_FAMILY
+              };
               background-color: #fcfcfc;
               margin: 0;
             }
@@ -58,10 +64,7 @@ class MyDocument extends Document<Props> {
             *:before,
             *:after {
               box-sizing: inherit;
-            }
-
-            button {
-              font-family : inherit;
+              font-family: inherit;
             }
           `
             }}
