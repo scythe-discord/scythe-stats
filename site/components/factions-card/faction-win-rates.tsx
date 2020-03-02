@@ -72,7 +72,11 @@ const FactionWinRates: FunctionComponent<Props> = ({
             />
           }
         />
-        <YAxis />
+        <YAxis
+          tickFormatter={val => {
+            return `${val}%`;
+          }}
+        />
 
         <Bar dataKey="value" onClick={onClickBar} fill="#0984e3">
           {data.map((_, index) => (
