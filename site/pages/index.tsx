@@ -25,11 +25,16 @@ const HomePage: NextPage = () => {
       >
         <div
           className={css({
+            display: 'flex',
             flex: '1 1 auto',
             margin: '0 50px 0 0'
           })}
         >
-          <FactionsCard />
+          <FactionsCard
+            className={css({
+              flex: '1 1 auto'
+            })}
+          />
         </div>
         <div>
           <RecentMatches />

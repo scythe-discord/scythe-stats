@@ -1,6 +1,7 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
+import classNames from 'classnames';
 
 import GQL from '../../lib/graphql';
 
@@ -12,7 +13,11 @@ import FactionWinRatesByPlayerCount from './faction-win-rates-player-count';
 
 const TOP_PLAYER_COUNT = 3;
 
-const FactionsCard: FunctionComponent = () => {
+interface Props {
+  className?: string;
+}
+
+const FactionsCard: FunctionComponent<Props> = ({ className }) => {
   const [css] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
   const onClickFaction = useCallback(
@@ -45,69 +50,94 @@ const FactionsCard: FunctionComponent = () => {
   }
 
   return (
-    <Card>
+    <Card
+      className={classNames(
+        css({
+          display: 'flex'
+        }),
+        className
+      )}
+    >
       <div
         className={css({
-          display: 'flex'
+          display: 'flex',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
+          flex: '1 1 auto'
         })}
       >
-        <FactionSnippet
-          className={css({
-            flex: '1 1 auto'
-          })}
-          factionStats={factionStatsData}
-        />
         <div
           className={css({
             display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            margin: '0 0 0 50px',
             flex: '0 0 auto'
           })}
         >
-          <LabelMedium
+          <FactionSnippet
+            className={css({
+              flex: '1 1 auto'
+            })}
+            factionStats={factionStatsData}
+          />
+          <div
+            className={css({
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              margin: '0 0 0 50px'
+            })}
+          >
+            <LabelMedium
+              overrides={{
+                Block: {
+                  style: {
+                    margin: '0 0 10px'
+                  }
+                }
+              }}
+            >
+              faction win rates
+            </LabelMedium>
+            <FactionWinRates
+              factions={factionsData.factions}
+              selectedFactionIdx={selectedFactionIdx}
+              onClickFaction={onClickFaction}
+            />
+          </div>
+        </div>
+        <div
+          className={css({
+            display: 'flex',
+            flexDirection: 'column'
+          })}
+        >
+          <H1
             overrides={{
               Block: {
                 style: {
-                  margin: '0 0 10px'
+                  margin: '50px 0 30px'
                 }
               }
             }}
           >
-            faction win rates
-          </LabelMedium>
-          <FactionWinRates
-            factions={factionsData.factions}
-            selectedFactionIdx={selectedFactionIdx}
-            onClickFaction={onClickFaction}
-          />
+            Player Mat Stats
+          </H1>
+          <FactionMatStats factionStats={factionStatsData} />
+        </div>
+        <div>
+          <H1
+            overrides={{
+              Block: {
+                style: {
+                  margin: '50px 0 30px'
+                }
+              }
+            }}
+          >
+            Win Rates (by player count)
+          </H1>
+          <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
         </div>
       </div>
-      <H1
-        overrides={{
-          Block: {
-            style: {
-              margin: '50px 0 30px'
-            }
-          }
-        }}
-      >
-        Player Mat Stats
-      </H1>
-      <FactionMatStats factionStats={factionStatsData} />
-      <H1
-        overrides={{
-          Block: {
-            style: {
-              margin: '50px 0 30px'
-            }
-          }
-        }}
-      >
-        Win Rates (by player count)
-      </H1>
-      <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
     </Card>
   );
 };

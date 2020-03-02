@@ -1,20 +1,29 @@
-import { FunctionComponent } from 'react';
-import { Card as BaseUICard, CardProps } from 'baseui/card';
+import { FunctionComponent, ReactNode } from 'react';
+import { useStyletron } from 'baseui';
+import classNames from 'classnames';
 
-const Card: FunctionComponent<CardProps> = props => {
+interface Props {
+  className?: string;
+  children: ReactNode;
+}
+
+const Card: FunctionComponent<Props> = ({ className, children }) => {
+  const [css] = useStyletron();
+
   return (
-    <BaseUICard
-      overrides={{
-        Root: {
-          style: {
-            border: 'none',
-            padding: '20px',
-            boxShadow: 'rgba(0, 0, 0, 0.15) 0 2px 8px'
-          }
-        }
-      }}
-      {...props}
-    />
+    <div
+      className={classNames(
+        css({
+          background: '#fff',
+          border: 'none',
+          padding: '35px',
+          boxShadow: 'rgba(0, 0, 0, 0.15) 0 2px 8px'
+        }),
+        className
+      )}
+    >
+      {children}
+    </div>
   );
 };
 
