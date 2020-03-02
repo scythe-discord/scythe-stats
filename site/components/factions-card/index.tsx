@@ -1,6 +1,6 @@
 import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { H1 } from 'baseui/typography';
+import { H1, LabelMedium } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 
@@ -59,10 +59,24 @@ const FactionsCard: FunctionComponent = () => {
         />
         <div
           className={css({
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
             margin: '0 0 0 50px',
             flex: '1 1 auto'
           })}
         >
+          <LabelMedium
+            overrides={{
+              Block: {
+                style: {
+                  margin: '0 0 10px'
+                }
+              }
+            }}
+          >
+            faction win rates
+          </LabelMedium>
           <FactionWinRates
             factions={factionsData.factions}
             selectedFactionIdx={selectedFactionIdx}
