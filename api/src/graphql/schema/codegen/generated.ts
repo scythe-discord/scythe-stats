@@ -26,6 +26,7 @@ export type Faction = {
   name: Scalars['String'],
   totalWins: Scalars['Int'],
   totalMatches: Scalars['Int'],
+  statsByPlayerCount: Array<FactionStatsWithPlayerCount>,
 };
 
 export type FactionMatCombo = {
@@ -37,6 +38,13 @@ export type FactionMatCombo = {
   avgCoinsOnWin: Scalars['Int'],
   avgRoundsOnWin: Scalars['Float'],
   leastRoundsForWin: Scalars['Int'],
+};
+
+export type FactionStatsWithPlayerCount = {
+   __typename?: 'FactionStatsWithPlayerCount',
+  playerCount: Scalars['Int'],
+  totalWins: Scalars['Int'],
+  totalMatches: Scalars['Int'],
 };
 
 export type Match = Node & {
@@ -143,7 +151,7 @@ export type Query = {
    __typename?: 'Query',
   _empty?: Maybe<Scalars['String']>,
   playerMat?: Maybe<PlayerMat>,
-  faction?: Maybe<Faction>,
+  faction: Faction,
   factions: Array<Faction>,
   factionMatCombos: Array<FactionMatCombo>,
   player?: Maybe<Player>,
@@ -265,6 +273,7 @@ export type ResolversTypes = ResolversObject<{
   PlayerMat: ResolverTypeWrapper<PlayerMatModel>,
   Int: ResolverTypeWrapper<Scalars['Int']>,
   Faction: ResolverTypeWrapper<FactionModel>,
+  FactionStatsWithPlayerCount: ResolverTypeWrapper<FactionStatsWithPlayerCount>,
   FactionMatCombo: ResolverTypeWrapper<FactionMatComboBase>,
   Float: ResolverTypeWrapper<Scalars['Float']>,
   ID: ResolverTypeWrapper<Scalars['ID']>,
@@ -291,6 +300,7 @@ export type ResolversParentTypes = ResolversObject<{
   PlayerMat: PlayerMatModel,
   Int: Scalars['Int'],
   Faction: FactionModel,
+  FactionStatsWithPlayerCount: FactionStatsWithPlayerCount,
   FactionMatCombo: FactionMatComboBase,
   Float: Scalars['Float'],
   ID: Scalars['ID'],
@@ -318,6 +328,7 @@ export type FactionResolvers<ContextType = any, ParentType extends ResolversPare
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  statsByPlayerCount?: Resolver<Array<ResolversTypes['FactionStatsWithPlayerCount']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
@@ -329,6 +340,13 @@ export type FactionMatComboResolvers<ContextType = any, ParentType extends Resol
   avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   leastRoundsForWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn,
+}>;
+
+export type FactionStatsWithPlayerCountResolvers<ContextType = any, ParentType extends ResolversParentTypes['FactionStatsWithPlayerCount'] = ResolversParentTypes['FactionStatsWithPlayerCount']> = ResolversObject<{
+  playerCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
@@ -408,7 +426,7 @@ export type PlayerMatchResultResolvers<ContextType = any, ParentType extends Res
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   playerMat?: Resolver<Maybe<ResolversTypes['PlayerMat']>, ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'name'>>,
-  faction?: Resolver<Maybe<ResolversTypes['Faction']>, ParentType, ContextType, RequireFields<QueryFactionArgs, 'id'>>,
+  faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType, RequireFields<QueryFactionArgs, 'id'>>,
   factions?: Resolver<Array<ResolversTypes['Faction']>, ParentType, ContextType>,
   factionMatCombos?: Resolver<Array<ResolversTypes['FactionMatCombo']>, ParentType, ContextType, RequireFields<QueryFactionMatCombosArgs, 'factionId'>>,
   player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>,
@@ -423,6 +441,7 @@ export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTyp
 export type Resolvers<ContextType = any> = ResolversObject<{
   Faction?: FactionResolvers<ContextType>,
   FactionMatCombo?: FactionMatComboResolvers<ContextType>,
+  FactionStatsWithPlayerCount?: FactionStatsWithPlayerCountResolvers<ContextType>,
   Match?: MatchResolvers<ContextType>,
   MatchConnection?: MatchConnectionResolvers<ContextType>,
   MatchEdge?: MatchEdgeResolvers<ContextType>,

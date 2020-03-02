@@ -15,6 +15,7 @@ export const typeDef = gql`
     name: String!
     totalWins: Int!
     totalMatches: Int!
+    statsByPlayerCount: [FactionStatsWithPlayerCount!]!
   }
 `;
 
