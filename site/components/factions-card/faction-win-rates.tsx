@@ -73,6 +73,7 @@ const FactionWinRates: FunctionComponent<Props> = ({
           }
         />
         <YAxis
+          width={40}
           tickFormatter={val => {
             return `${val}%`;
           }}
