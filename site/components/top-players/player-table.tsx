@@ -34,10 +34,7 @@ const PlayerTable: FunctionComponent<Props> = ({ fromDate, className }) => {
   const rows = data ? getTableData(data) : [];
 
   return (
-    <StyledTable
-      className={className}
-      $gridTemplateColumns="minmax(auto, 175px) 150px 150px"
-    >
+    <StyledTable className={className} $gridTemplateColumns="auto auto auto">
       <StyledHeadCell>Player</StyledHeadCell>
       <StyledHeadCell>Total Wins</StyledHeadCell>
       <StyledHeadCell>Win Rate</StyledHeadCell>
