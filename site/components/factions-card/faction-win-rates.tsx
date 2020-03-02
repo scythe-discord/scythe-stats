@@ -1,7 +1,6 @@
 import { FunctionComponent, useCallback } from 'react';
 import {
   BarChart,
-  ResponsiveContainer,
   XAxis,
   YAxis,
   Bar,
@@ -42,54 +41,54 @@ const FactionWinRates: FunctionComponent<Props> = ({
   });
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
-      <BarChart
-        barCategoryGap="15%"
-        margin={{ top: 5, right: 5, bottom: 10, left: 5 }}
-        data={data}
-      >
-        <Tooltip
-          cursor={{
-            fill: '#ededed'
-          }}
-          formatter={value => {
-            const winRate = `${Number(value).toFixed(2)}%`;
-            return [winRate, 'Win Rate'];
-          }}
-          labelFormatter={(idx: number) => {
-            const faction = factions[idx];
-            return faction.name;
-          }}
-        />
-        <CartesianGrid strokeDasharray="5 5" />
-        <XAxis
-          dataKey="idx"
-          tick={
-            <FactionChartIcon
-              factions={factions}
-              selectedFactionIdx={selectedFactionIdx}
-              onClickFaction={onClickFaction}
-            />
-          }
-        />
-        <YAxis
-          width={40}
-          tickFormatter={val => {
-            return `${val}%`;
-          }}
-        />
+    <BarChart
+      barCategoryGap="15%"
+      margin={{ top: 5, right: 5, bottom: 10, left: 5 }}
+      width={450}
+      height={350}
+      data={data}
+    >
+      <Tooltip
+        cursor={{
+          fill: '#ededed'
+        }}
+        formatter={value => {
+          const winRate = `${Number(value).toFixed(2)}%`;
+          return [winRate, 'Win Rate'];
+        }}
+        labelFormatter={(idx: number) => {
+          const faction = factions[idx];
+          return faction.name;
+        }}
+      />
+      <CartesianGrid strokeDasharray="5 5" />
+      <XAxis
+        dataKey="idx"
+        tick={
+          <FactionChartIcon
+            factions={factions}
+            selectedFactionIdx={selectedFactionIdx}
+            onClickFaction={onClickFaction}
+          />
+        }
+      />
+      <YAxis
+        width={40}
+        tickFormatter={val => {
+          return `${val}%`;
+        }}
+      />
 
-        <Bar dataKey="value" onClick={onClickBar} fill="#0984e3">
-          {data.map((_, index) => (
-            <Cell
-              cursor="pointer"
-              opacity={index === selectedFactionIdx ? 1 : 0.5}
-              key={`cell-${index}`}
-            />
-          ))}
-        </Bar>
-      </BarChart>
-    </ResponsiveContainer>
+      <Bar dataKey="value" onClick={onClickBar} fill="#0984e3">
+        {data.map((_, index) => (
+          <Cell
+            cursor="pointer"
+            opacity={index === selectedFactionIdx ? 1 : 0.5}
+            key={`cell-${index}`}
+          />
+        ))}
+      </Bar>
+    </BarChart>
   );
 };
 

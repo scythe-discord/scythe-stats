@@ -53,7 +53,7 @@ const FactionsCard: FunctionComponent = () => {
       >
         <FactionSnippet
           className={css({
-            width: '350px'
+            flex: '1 1 auto'
           })}
           factionStats={factionStatsData}
         />
@@ -63,7 +63,7 @@ const FactionsCard: FunctionComponent = () => {
             flexDirection: 'column',
             alignItems: 'center',
             margin: '0 0 0 50px',
-            flex: '1 1 auto'
+            flex: '0 0 auto'
           })}
         >
           <LabelMedium
