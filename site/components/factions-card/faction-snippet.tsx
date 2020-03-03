@@ -1,5 +1,5 @@
 import { FunctionComponent, ReactNode } from 'react';
-import { useStyletron, styled, withStyle } from 'baseui';
+import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
 import { ListItem, ListItemLabel } from 'baseui/list';
 
