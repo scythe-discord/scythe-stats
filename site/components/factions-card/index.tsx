@@ -112,6 +112,7 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
                 order: 1,
                 flex: '1 1 325px',
                 minWidth: 0,
+                height: 'auto',
                 margin: '0 0 0 50px'
               }
             })}
