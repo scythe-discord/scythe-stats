@@ -89,7 +89,7 @@ const FactionSnippet: FunctionComponent<Props> = ({
       <ul
         className={css({
           padding: 0,
-          margin: '50px 0 0'
+          margin: '30px 0 0'
         })}
       >
         <ListItem

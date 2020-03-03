@@ -2,14 +2,24 @@ import { FunctionComponent, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
 import classNames from 'classnames';
+import dynamic from 'next/dynamic';
 
 import GQL from '../../lib/graphql';
 
 import Card from '../card';
 import FactionSnippet from './faction-snippet';
-import FactionWinRates from './faction-win-rates';
 import FactionMatStats from './faction-mat-stats';
-import FactionWinRatesByPlayerCount from './faction-win-rates-player-count';
+
+const FactionWinRates = dynamic(() => import('./faction-win-rates'), {
+  ssr: false
+});
+
+const FactionWinRatesByPlayerCount = dynamic(
+  () => import('./faction-win-rates-player-count'),
+  {
+    ssr: false
+  }
+);
 
 const TOP_PLAYER_COUNT = 3;
 
@@ -63,7 +73,8 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
-          flex: '1 1 auto'
+          flex: '1 1 auto',
+          minWidth: 0
         })}
       >
         <div
@@ -82,6 +93,8 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
             className={css({
               display: 'flex',
               flexDirection: 'column',
+              flex: '1 1 325px',
+              minWidth: 0,
               alignItems: 'center',
               margin: '0 0 0 50px'
             })}

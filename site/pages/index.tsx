@@ -27,12 +27,14 @@ const HomePage: NextPage = () => {
           className={css({
             display: 'flex',
             flex: '1 1 auto',
-            margin: '0 50px 0 0'
+            margin: '0 50px 0 0',
+            minWidth: 0
           })}
         >
           <FactionsCard
             className={css({
-              flex: '1 1 auto'
+              flex: '1 1 auto',
+              minWidth: 0
             })}
           />
         </div>
