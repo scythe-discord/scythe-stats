@@ -1,33 +1,14 @@
-import Link from 'next/link';
-import { useStyletron, styled } from 'baseui';
+import { useStyletron } from 'baseui';
 import {
   HeaderNavigation,
   StyledNavigationList,
   StyledNavigationItem,
   ALIGN
 } from 'baseui/header-navigation';
-import { StyledLink as BaseLink } from 'baseui/link';
+import { Block } from 'baseui/block';
 
-import BuyMeACoffee from './buy-me-a-coffee';
-import { ReactNode } from 'react';
-
-const SpacedNavigationItem = ({ children }: { children: ReactNode }) => {
-  const [css] = useStyletron();
-
-  return (
-    <StyledNavigationItem
-      className={css({
-        margin: '0 15px'
-      })}
-    >
-      {children}
-    </StyledNavigationItem>
-  );
-};
-
-const StyledLink = styled(BaseLink, () => ({
-  textDecoration: 'none'
-}));
+import StandardNavItems from './standard-nav-items';
+import CondensedNavItems from './condensed-nav-items';
 
 export default () => {
   const [css] = useStyletron();
@@ -62,37 +43,16 @@ export default () => {
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center}></StyledNavigationList>
-        <StyledNavigationList $align={ALIGN.right}>
-          <SpacedNavigationItem>
-            <Link href="/" passHref={true}>
-              <StyledLink>Home</StyledLink>
-            </Link>
-          </SpacedNavigationItem>
-          <SpacedNavigationItem>
-            <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
-              Discord
-            </StyledLink>
-          </SpacedNavigationItem>
-          <SpacedNavigationItem>
-            <StyledLink
-              href="https://github.com/shibrady/scythe-stats"
-              target="_blank"
-            >
-              Contribute
-            </StyledLink>
-          </SpacedNavigationItem>
-          <StyledNavigationItem
-            className={css({
-              fontSize: '20px',
-              margin: '0 15px'
-            })}
-          >
-            /
-          </StyledNavigationItem>
-          <StyledNavigationItem>
-            <BuyMeACoffee />
-          </StyledNavigationItem>
-        </StyledNavigationList>
+        <Block display={['flex', 'flex', 'none']}>
+          <StyledNavigationList $align={ALIGN.right}>
+            <CondensedNavItems />
+          </StyledNavigationList>
+        </Block>
+        <Block display={['none', 'none', 'flex']}>
+          <StyledNavigationList $align={ALIGN.right}>
+            <StandardNavItems />
+          </StyledNavigationList>
+        </Block>
       </div>
     </HeaderNavigation>
   );
