@@ -28,7 +28,7 @@ interface Props {
 }
 
 const FactionsCard: FunctionComponent<Props> = ({ className }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
   const onClickFaction = useCallback(
     (idx: number) => setSelectedFactionIdx(idx),
@@ -80,23 +80,40 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
         <div
           className={css({
             display: 'flex',
-            flex: '0 0 auto'
+            flex: '0 0 auto',
+            flexDirection: 'column',
+
+            [theme.mediaQuery.medium]: {
+              flexDirection: 'row'
+            }
           })}
         >
           <FactionSnippet
             className={css({
-              flex: '1 1 auto'
+              order: 1,
+
+              [theme.mediaQuery.medium]: {
+                flex: '1 1 auto',
+                order: 0
+              }
             })}
             factionStats={factionStatsData}
           />
           <div
             className={css({
               display: 'flex',
+              height: '300px',
               flexDirection: 'column',
-              flex: '1 1 325px',
-              minWidth: 0,
+              order: 0,
               alignItems: 'center',
-              margin: '0 0 0 50px'
+              margin: '0 0 50px 0',
+
+              [theme.mediaQuery.medium]: {
+                order: 1,
+                flex: '1 1 325px',
+                minWidth: 0,
+                margin: '0 0 0 50px'
+              }
             })}
           >
             <LabelMedium
@@ -148,7 +165,21 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
           >
             Win Rates (by player count)
           </H1>
-          <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
+          <div
+            className={css({
+              height: '300px',
+
+              [theme.mediaQuery.medium]: {
+                height: '400px'
+              },
+
+              [theme.mediaQuery.large]: {
+                height: '500px'
+              }
+            })}
+          >
+            <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
+          </div>
         </div>
       </div>
     </Card>
