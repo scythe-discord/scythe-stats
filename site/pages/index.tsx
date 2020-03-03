@@ -9,7 +9,7 @@ import {
 } from '../components';
 
 const HomePage: NextPage = () => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   return (
     <div>
@@ -17,18 +17,28 @@ const HomePage: NextPage = () => {
       <div
         className={css({
           display: 'flex',
-          padding: '20px',
+          flexDirection: 'column',
+          padding: '20px 0',
           margin: '0 auto',
           width: '100%',
-          maxWidth: '1650px'
+
+          [theme.mediaQuery.large]: {
+            flexDirection: 'row',
+            padding: '20px',
+            maxWidth: '1650px'
+          }
         })}
       >
         <div
           className={css({
             display: 'flex',
             flex: '1 1 auto',
-            margin: '0 50px 0 0',
-            minWidth: 0
+            margin: '20px 0',
+            minWidth: 0,
+
+            [theme.mediaQuery.large]: {
+              margin: '0 50px 0 0'
+            }
           })}
         >
           <FactionsCard

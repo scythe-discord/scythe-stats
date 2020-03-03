@@ -11,7 +11,7 @@ import RecentMatchBanner from './recent-match-banner';
 const INITIAL_MATCH_COUNT = 10;
 
 const RecentMatches: FunctionComponent = () => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
   const { loading, data } = GQL.useMatchesQuery({
     variables: {
@@ -98,7 +98,14 @@ const RecentMatches: FunctionComponent = () => {
       <div
         className={css({
           display: 'flex',
-          flexDirection: 'column'
+          flexDirection: 'row',
+          justifyContent: 'center',
+          flexWrap: 'wrap',
+
+          [theme.mediaQuery.large]: {
+            flexDirection: 'column',
+            flexWrap: 'nowrap'
+          }
         })}
       >
         <VerticalTimeline
