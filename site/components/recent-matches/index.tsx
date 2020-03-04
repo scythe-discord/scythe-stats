@@ -37,7 +37,7 @@ const RecentMatches: FunctionComponent = () => {
   }
 
   const timelineElements: TimelineElement[] = data.matches.edges.map(
-    ({ node }) => {
+    ({ node }, idx) => {
       const { id, datePlayed, numRounds, playerResults } = node;
       let winningResult = playerResults[0];
 
@@ -62,6 +62,7 @@ const RecentMatches: FunctionComponent = () => {
           factionName={factionName}
           playerMatName={playerMatName}
           numRounds={numRounds}
+          isSelected={idx === selected}
           onClick={onMatchClick}
         />
       );

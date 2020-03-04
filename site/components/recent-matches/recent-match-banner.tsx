@@ -10,6 +10,7 @@ interface Props {
   factionName: string;
   playerMatName: string;
   numRounds: number;
+  isSelected: boolean;
   onClick?: (id: string) => void;
 }
 
@@ -35,9 +36,11 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
   factionName,
   playerMatName,
   numRounds,
+  isSelected,
   onClick
 }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
+  console.log(theme);
   const onClickWithId = useCallback(() => {
     if (onClick) {
       onClick(id);
@@ -49,10 +52,19 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
       className={css({
         display: 'flex',
         alignItems: 'center',
-        background: 'white',
+        backgroundColor: isSelected ? '#b8dbff' : theme.colors.background,
         cursor: 'pointer',
         border: '1px solid black',
-        padding: '5px 15px'
+        padding: '5px 15px',
+        transition: `background-color ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`,
+
+        [':hover']: {
+          backgroundColor: '#daecff'
+        },
+
+        [':active']: {
+          backgroundColor: '#b8dbff'
+        }
       })}
       onClick={onClickWithId}
     >
