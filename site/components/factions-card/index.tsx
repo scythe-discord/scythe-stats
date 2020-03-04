@@ -72,7 +72,6 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
         className={css({
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
           flex: '1 1 auto',
           minWidth: 0
         })}
@@ -154,7 +153,15 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
           </H1>
           <FactionMatStats factionStats={factionStatsData} />
         </div>
-        <div>
+        <div
+          className={css({
+            [theme.mediaQuery.large]: {
+              display: 'flex',
+              flexDirection: 'column',
+              flex: '1 1 auto'
+            }
+          })}
+        >
           <H1
             overrides={{
               Block: {
@@ -175,7 +182,7 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
               },
 
               [theme.mediaQuery.large]: {
-                height: '500px'
+                flex: '1 1 auto'
               }
             })}
           >
