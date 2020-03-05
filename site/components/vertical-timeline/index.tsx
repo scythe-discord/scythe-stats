@@ -1,7 +1,7 @@
 import { Fragment, FunctionComponent, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
-import { Scrollbars } from 'react-custom-scrollbars';
+import PerfectScrollbar from 'react-perfect-scrollbar';
 
 import TimelineRow from './timeline-row';
 
@@ -28,16 +28,12 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
   const [css] = useStyletron();
 
   return (
-    <Scrollbars
-      style={{
-        width: 550,
-        height: 450
-      }}
-      autoHide={true}
-      universal={true}
+    <PerfectScrollbar
       className={classNames(
         css({
-          padding: '5px 0'
+          padding: '5px 0',
+          width: '550px',
+          maxHeight: '450px'
         }),
         className
       )}
@@ -61,6 +57,6 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
           </Fragment>
         );
       })}
-    </Scrollbars>
+    </PerfectScrollbar>
   );
 };
