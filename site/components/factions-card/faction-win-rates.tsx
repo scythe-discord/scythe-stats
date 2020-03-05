@@ -79,7 +79,7 @@ const FactionWinRates: FunctionComponent<Props> = ({
           }}
         />
 
-        <Bar dataKey="value" onClick={onClickBar} fill="#0984e3">
+        <Bar dataKey="value" onClick={onClickBar} fill="#419fff">
           {data.map((_, index) => (
             <Cell
               cursor="pointer"
