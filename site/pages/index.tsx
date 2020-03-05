@@ -1,6 +1,7 @@
 import { NextComponentType } from 'next';
 import { useStyletron } from 'baseui';
 import { ApolloPageContext } from 'next-with-apollo';
+import moment from 'moment';
 
 import {
   SiteHeader,
@@ -8,17 +9,21 @@ import {
   RecentMatches,
   FactionsCard
 } from '../components';
-import {
-  FactionStatsDocument,
-  FactionStatsQuery,
-  FactionStatsQueryVariables
-} from '../lib/graphql/codegen';
+import GQL from '../lib/graphql';
 
-const HomePage: NextComponentType<
-  ApolloPageContext,
-  FactionStatsQuery,
-  FactionStatsQuery
-> = factionStats => {
+interface Props {
+  factionStats: GQL.FactionStatsQuery;
+  recentMatches: GQL.MatchesQuery;
+  topPlayersAllTime: GQL.TopPlayersQuery;
+  topPlayersMonthly: GQL.TopPlayersQuery;
+}
+
+const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
+  factionStats,
+  recentMatches,
+  topPlayersMonthly,
+  topPlayersAllTime
+}) => {
   const [css, theme] = useStyletron();
 
   return (
@@ -60,13 +65,16 @@ const HomePage: NextComponentType<
           />
         </div>
         <div>
-          <RecentMatches />
+          <RecentMatches recentMatches={recentMatches} />
           <div
             className={css({
               margin: '50px 0 0'
             })}
           >
-            <TopPlayers />
+            <TopPlayers
+              topPlayersAllTime={topPlayersAllTime}
+              topPlayersMonthly={topPlayersMonthly}
+            />
           </div>
         </div>
       </div>
@@ -76,17 +84,53 @@ const HomePage: NextComponentType<
 
 HomePage.getInitialProps = async ctx => {
   const apolloClient = ctx.apolloClient;
-  const { data } = await apolloClient.query<
-    FactionStatsQuery,
-    FactionStatsQueryVariables
+
+  const { data: factionStats } = await apolloClient.query<
+    GQL.FactionStatsQuery,
+    GQL.FactionStatsQueryVariables
   >({
-    query: FactionStatsDocument,
+    query: GQL.FactionStatsDocument,
     variables: {
       numTopPlayers: 1
     }
   });
+  const { data: recentMatches } = await apolloClient.query<
+    GQL.MatchesQuery,
+    GQL.MatchesQueryVariables
+  >({
+    query: GQL.MatchesDocument,
+    variables: {
+      first: 10
+    }
+  });
+  const { data: topPlayersAllTime } = await apolloClient.query<
+    GQL.TopPlayersQuery,
+    GQL.TopPlayersQueryVariables
+  >({
+    query: GQL.TopPlayersDocument,
+    variables: {
+      first: 5
+    }
+  });
+  const { data: topPlayersMonthly } = await apolloClient.query<
+    GQL.TopPlayersQuery,
+    GQL.TopPlayersQueryVariables
+  >({
+    query: GQL.TopPlayersDocument,
+    variables: {
+      first: 5,
+      fromDate: moment()
+        .subtract(1, 'month')
+        .toISOString()
+    }
+  });
 
-  return data;
+  return {
+    factionStats,
+    recentMatches,
+    topPlayersAllTime,
+    topPlayersMonthly
+  };
 };
 
 export default HomePage;

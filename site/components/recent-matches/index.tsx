@@ -8,35 +8,24 @@ import Card from '../card';
 import MatchDetails from '../match-details';
 import RecentMatchBanner from './recent-match-banner';
 
-const INITIAL_MATCH_COUNT = 10;
+interface Props {
+  recentMatches: GQL.MatchesQuery;
+}
 
-const RecentMatches: FunctionComponent = () => {
+const RecentMatches: FunctionComponent<Props> = ({ recentMatches }) => {
   const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
-  const { loading, data } = GQL.useMatchesQuery({
-    variables: {
-      first: INITIAL_MATCH_COUNT
-    }
-  });
   const onMatchClick = useCallback(
     (id: string) => {
-      if (!data) {
-        return;
-      }
-
-      const idx = data.matches.edges.findIndex(({ node }) => {
+      const idx = recentMatches.matches.edges.findIndex(({ node }) => {
         return node.id === id;
       });
       setSelected(idx);
     },
-    [data]
+    [recentMatches]
   );
 
-  if (loading || !data) {
-    return null;
-  }
-
-  const timelineElements: TimelineElement[] = data.matches.edges.map(
+  const timelineElements: TimelineElement[] = recentMatches.matches.edges.map(
     ({ node }, idx) => {
       const { id, datePlayed, numRounds, playerResults } = node;
       let winningResult = playerResults[0];
@@ -76,7 +65,7 @@ const RecentMatches: FunctionComponent = () => {
     }
   );
 
-  const selectedMatch = data.matches.edges[selected].node;
+  const selectedMatch = recentMatches.matches.edges[selected].node;
 
   const matchDetailsRows = selectedMatch.playerResults.map(
     ({

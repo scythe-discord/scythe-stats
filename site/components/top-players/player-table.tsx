@@ -4,34 +4,35 @@ import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 import GQL from '../../lib/graphql';
 import PlayerRow from './player-row';
 
-const INITIAL_PLAYER_COUNT = 5;
-
-const getTableData = (data: GQL.TopPlayersQuery) => {
-  return data.playersByWins.edges.map(
-    ({ node: { displayName, totalWins, totalMatches } }) => {
-      return {
-        displayName,
-        totalWins,
-        totalMatches
-      };
-    }
-  );
+const getTableData = (
+  players: Array<
+    Pick<
+      GQL.Player,
+      'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'
+    >
+  >
+) => {
+  return players.map(({ displayName, totalWins, totalMatches }) => {
+    return {
+      displayName,
+      totalWins,
+      totalMatches
+    };
+  });
 };
 
 interface Props {
-  fromDate?: string;
+  players: Array<
+    Pick<
+      GQL.Player,
+      'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'
+    >
+  >;
   className?: string;
 }
 
-const PlayerTable: FunctionComponent<Props> = ({ fromDate, className }) => {
-  const { data } = GQL.useTopPlayersQuery({
-    variables: {
-      first: INITIAL_PLAYER_COUNT,
-      fromDate
-    }
-  });
-
-  const rows = data ? getTableData(data) : [];
+const PlayerTable: FunctionComponent<Props> = ({ players, className }) => {
+  const rows = getTableData(players);
 
   return (
     <StyledTable className={className} $gridTemplateColumns="auto auto auto">

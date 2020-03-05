@@ -1,7 +1,8 @@
 import { FunctionComponent, FC } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, Label1 } from 'baseui/typography';
-import moment from 'moment';
+
+import GQL from '../../lib/graphql';
 
 import Card from '../card';
 import PlayerTable from './player-table';
@@ -19,12 +20,30 @@ const StyledLabel: FC = props => (
   />
 );
 
-const TopPlayers: FunctionComponent = () => {
+interface Props {
+  topPlayersAllTime: GQL.TopPlayersQuery;
+  topPlayersMonthly: GQL.TopPlayersQuery;
+}
+
+const TopPlayers: FunctionComponent<Props> = ({
+  topPlayersAllTime,
+  topPlayersMonthly
+}) => {
   const [css] = useStyletron();
 
   return (
     <Card>
-      <H1>Top Players</H1>
+      <H1
+        overrides={{
+          Block: {
+            style: {
+              marginTop: 0
+            }
+          }
+        }}
+      >
+        Top Players
+      </H1>
       <div
         className={css({
           display: 'flex',
@@ -38,7 +57,11 @@ const TopPlayers: FunctionComponent = () => {
           })}
         >
           <StyledLabel>of all time</StyledLabel>
-          <PlayerTable />
+          <PlayerTable
+            players={topPlayersAllTime.playersByWins.edges.map(({ node }) => ({
+              ...node
+            }))}
+          />
         </div>
         <div
           className={css({
@@ -49,9 +72,9 @@ const TopPlayers: FunctionComponent = () => {
         >
           <StyledLabel>this past month</StyledLabel>
           <PlayerTable
-            fromDate={moment()
-              .subtract(1, 'month')
-              .toISOString()}
+            players={topPlayersMonthly.playersByWins.edges.map(({ node }) => ({
+              ...node
+            }))}
           />
         </div>
       </div>
