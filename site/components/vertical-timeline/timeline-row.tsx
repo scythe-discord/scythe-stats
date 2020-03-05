@@ -67,7 +67,7 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
       {element && (
         <div
           className={css({
-            padding: '0 0 0 20px'
+            padding: '0 0 0 15px'
           })}
         >
           {element.content}
