@@ -19,7 +19,7 @@ export default () => {
         Root: {
           style: {
             backgroundColor: 'white',
-            boxShadow: '0 1px 8px rgba(0, 0, 0, .2);'
+            boxShadow: '0 1px 8px rgba(0, 0, 0, .2)'
           }
         }
       }}
