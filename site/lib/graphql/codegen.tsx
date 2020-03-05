@@ -229,26 +229,6 @@ export type FactionStatsQuery = (
   )> }
 );
 
-export type FactionTopPlayersQueryVariables = {
-  factionId: Scalars['Int'],
-  numPlayers: Scalars['Int']
-};
-
-
-export type FactionTopPlayersQuery = (
-  { __typename?: 'Query' }
-  & { playersByWins: (
-    { __typename?: 'PlayerConnection' }
-    & { edges: Array<(
-      { __typename?: 'PlayerEdge' }
-      & { node: (
-        { __typename?: 'Player' }
-        & Pick<Player, 'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'>
-      ) }
-    )> }
-  ) }
-);
-
 export type MatchesQueryVariables = {
   first: Scalars['Int'],
   after?: Maybe<Scalars['String']>
@@ -366,48 +346,6 @@ export function useFactionStatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQuer
 export type FactionStatsQueryHookResult = ReturnType<typeof useFactionStatsQuery>;
 export type FactionStatsLazyQueryHookResult = ReturnType<typeof useFactionStatsLazyQuery>;
 export type FactionStatsQueryResult = ApolloReactCommon.QueryResult<FactionStatsQuery, FactionStatsQueryVariables>;
-export const FactionTopPlayersDocument = gql`
-    query factionTopPlayers($factionId: Int!, $numPlayers: Int!) {
-  playersByWins(first: $numPlayers, factionId: $factionId) {
-    edges {
-      node {
-        id
-        displayName
-        steamId
-        totalWins
-        totalMatches
-      }
-    }
-  }
-}
-    `;
-
-/**
- * __useFactionTopPlayersQuery__
- *
- * To run a query within a React component, call `useFactionTopPlayersQuery` and pass it any options that fit your needs.
- * When your component renders, `useFactionTopPlayersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
- * you can use to render your UI.
- *
- * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
- *
- * @example
- * const { data, loading, error } = useFactionTopPlayersQuery({
- *   variables: {
- *      factionId: // value for 'factionId'
- *      numPlayers: // value for 'numPlayers'
- *   },
- * });
- */
-export function useFactionTopPlayersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-        return ApolloReactHooks.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
-      }
-export function useFactionTopPlayersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
-        }
-export type FactionTopPlayersQueryHookResult = ReturnType<typeof useFactionTopPlayersQuery>;
-export type FactionTopPlayersLazyQueryHookResult = ReturnType<typeof useFactionTopPlayersLazyQuery>;
-export type FactionTopPlayersQueryResult = ApolloReactCommon.QueryResult<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>;
 export const MatchesDocument = gql`
     query matches($first: Int!, $after: String) {
   matches(first: $first, after: $after) {
