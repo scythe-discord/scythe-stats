@@ -1,35 +1,32 @@
-query factionStats($factionId: Int!, $numPlayers: Int!) {
-  faction(id: $factionId) {
+query factionStats($numTopPlayers: Int!) {
+  factions {
     id
     name
     totalWins
     totalMatches
+    topPlayers(first: $numTopPlayers) {
+      player {
+        id
+        displayName
+        steamId
+      }
+      totalWins
+    }
     statsByPlayerCount {
       playerCount
       totalWins
       totalMatches
     }
-  }
-  factionMatCombos(factionId: $factionId) {
-    playerMat {
-      id
-      name
-    }
-    totalWins
-    totalMatches
-    avgCoinsOnWin
-    avgRoundsOnWin
-    leastRoundsForWin
-  }
-  playersByWins(first: $numPlayers, factionId: $factionId) {
-    edges {
-      node {
+    factionMatCombos {
+      playerMat {
         id
-        displayName
-        steamId
-        totalWins(factionId: $factionId)
-        totalMatches(factionId: $factionId)
+        name
       }
+      totalWins
+      totalMatches
+      avgCoinsOnWin
+      avgRoundsOnWin
+      leastRoundsForWin
     }
   }
 }

@@ -15,10 +15,6 @@ export interface FactionMatComboBase {
 }
 
 export const typeDef = gql`
-  extend type Query {
-    factionMatCombos(factionId: Int!): [FactionMatCombo!]!
-  }
-
   type FactionMatCombo {
     faction: Faction!
     playerMat: PlayerMat!
@@ -31,20 +27,6 @@ export const typeDef = gql`
 `;
 
 export const resolvers: Schema.Resolvers = {
-  Query: {
-    factionMatCombos: async (_, { factionId }) => {
-      const factionRepo = getRepository(Faction);
-      const playerMatRepo = getRepository(PlayerMat);
-
-      const faction = await factionRepo.findOneOrFail(factionId);
-      const playerMats = await playerMatRepo.find();
-
-      return playerMats.map(playerMat => ({
-        faction,
-        playerMat
-      }));
-    }
-  },
   FactionMatCombo: {
     totalWins: async ({ faction, playerMat }) => {
       const matchRepo = getRepository(Match);

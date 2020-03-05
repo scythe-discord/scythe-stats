@@ -1,5 +1,6 @@
-import { NextPage } from 'next';
+import { NextComponentType } from 'next';
 import { useStyletron } from 'baseui';
+import { ApolloPageContext } from 'next-with-apollo';
 
 import {
   SiteHeader,
@@ -7,8 +8,17 @@ import {
   RecentMatches,
   FactionsCard
 } from '../components';
+import {
+  FactionStatsDocument,
+  FactionStatsQuery,
+  FactionStatsQueryVariables
+} from '../lib/graphql/codegen';
 
-const HomePage: NextPage = () => {
+const HomePage: NextComponentType<
+  ApolloPageContext,
+  FactionStatsQuery,
+  FactionStatsQuery
+> = factionStats => {
   const [css, theme] = useStyletron();
 
   return (
@@ -42,6 +52,7 @@ const HomePage: NextPage = () => {
           })}
         >
           <FactionsCard
+            factionStats={factionStats}
             className={css({
               flex: '1 1 auto',
               minWidth: 0
@@ -61,6 +72,21 @@ const HomePage: NextPage = () => {
       </div>
     </div>
   );
+};
+
+HomePage.getInitialProps = async ctx => {
+  const apolloClient = ctx.apolloClient;
+  const { data } = await apolloClient.query<
+    FactionStatsQuery,
+    FactionStatsQueryVariables
+  >({
+    query: FactionStatsDocument,
+    variables: {
+      numTopPlayers: 1
+    }
+  });
+
+  return data;
 };
 
 export default HomePage;

@@ -1,8 +1,0 @@
-query factions {
-  factions {
-    id
-    name
-    totalWins
-    totalMatches
-  }
-}

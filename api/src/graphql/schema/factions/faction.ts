@@ -1,7 +1,12 @@
 import { gql } from 'apollo-server';
 import { getRepository } from 'typeorm';
 
-import { Faction, Match, PlayerMatchResult } from '../../../db/entities';
+import {
+  Faction,
+  Match,
+  PlayerMatchResult,
+  PlayerMat
+} from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -10,12 +15,19 @@ export const typeDef = gql`
     factions: [Faction!]!
   }
 
+  type PlayerFactionStats {
+    player: Player!
+    totalWins: Int!
+  }
+
   type Faction {
     id: Int!
     name: String!
     totalWins: Int!
     totalMatches: Int!
     statsByPlayerCount: [FactionStatsWithPlayerCount!]!
+    factionMatCombos: [FactionMatCombo!]!
+    topPlayers(first: Int!): [PlayerFactionStats!]!
   }
 `;
 
@@ -54,6 +66,33 @@ export const resolvers: Schema.Resolvers = {
         })
         .getCount();
       return matches;
+    },
+    factionMatCombos: async faction => {
+      const playerMatRepo = getRepository(PlayerMat);
+      const playerMats = await playerMatRepo.find();
+      return playerMats.map(playerMat => ({
+        faction,
+        playerMat
+      }));
+    },
+    topPlayers: async ({ id: factionId }, { first }) => {
+      const matchRepository = getRepository(Match);
+      const playersWithWins = await matchRepository
+        .createQueryBuilder('match')
+        .innerJoin('match.winner', 'winner')
+        .innerJoin('winner.player', 'player')
+        .where('winner."factionId" = :factionId', { factionId })
+        .groupBy('player.id')
+        .select('COUNT(player.id)', 'totalWins')
+        .addSelect('player.*')
+        .orderBy('"totalWins"', 'DESC')
+        .limit(first)
+        .getRawMany();
+
+      return playersWithWins.map(({ totalWins, ...playerDetails }) => ({
+        player: playerDetails,
+        totalWins
+      }));
     }
   }
 };

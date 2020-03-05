@@ -6,12 +6,21 @@ import GQL from '../../lib/graphql';
 import FactionMatStatsRow from './faction-mat-stats-row';
 
 interface Props {
-  factionStats: GQL.FactionStatsQuery;
+  factionMatCombos: Array<
+    Pick<
+      GQL.FactionMatCombo,
+      | 'totalWins'
+      | 'totalMatches'
+      | 'avgCoinsOnWin'
+      | 'avgRoundsOnWin'
+      | 'leastRoundsForWin'
+    > & { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> }
+  >;
   className?: string;
 }
 
 const FactionSnippet: FunctionComponent<Props> = ({
-  factionStats: { factionMatCombos },
+  factionMatCombos,
   className
 }) => {
   const rows = factionMatCombos.map(

@@ -21,43 +21,23 @@ const FactionWinRatesByPlayerCount = dynamic(
   }
 );
 
-const TOP_PLAYER_COUNT = 3;
-
 interface Props {
+  factionStats: GQL.FactionStatsQuery;
   className?: string;
 }
 
-const FactionsCard: FunctionComponent<Props> = ({ className }) => {
+const FactionsCard: FunctionComponent<Props> = ({
+  factionStats,
+  className
+}) => {
   const [css, theme] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
   const onClickFaction = useCallback(
     (idx: number) => setSelectedFactionIdx(idx),
     []
   );
-  const {
-    data: factionsData,
-    loading: factionsLoading
-  } = GQL.useFactionsQuery();
-  const {
-    data: factionStatsData,
-    loading: factionStatsLoading
-  } = GQL.useFactionStatsQuery({
-    variables: {
-      factionId: factionsData
-        ? factionsData.factions[selectedFactionIdx].id
-        : 1,
-      numPlayers: TOP_PLAYER_COUNT
-    }
-  });
 
-  if (
-    factionsLoading ||
-    factionStatsLoading ||
-    !factionsData ||
-    !factionStatsData
-  ) {
-    return null;
-  }
+  const selectedFaction = factionStats.factions[selectedFactionIdx];
 
   return (
     <Card
@@ -96,7 +76,9 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
                 order: 0
               }
             })}
-            factionStats={factionStatsData}
+            faction={selectedFaction}
+            factionMatCombos={selectedFaction.factionMatCombos}
+            topPlayerStats={selectedFaction.topPlayers[0]}
           />
           <div
             className={css({
@@ -128,7 +110,7 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
               faction win rates
             </LabelMedium>
             <FactionWinRates
-              factions={factionsData.factions}
+              factions={factionStats.factions}
               selectedFactionIdx={selectedFactionIdx}
               onClickFaction={onClickFaction}
             />
@@ -151,7 +133,9 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
           >
             Player Mat Stats
           </H1>
-          <FactionMatStats factionStats={factionStatsData} />
+          <FactionMatStats
+            factionMatCombos={selectedFaction.factionMatCombos}
+          />
         </div>
         <div
           className={css({
@@ -186,7 +170,9 @@ const FactionsCard: FunctionComponent<Props> = ({ className }) => {
               }
             })}
           >
-            <FactionWinRatesByPlayerCount faction={factionStatsData.faction} />
+            <FactionWinRatesByPlayerCount
+              factionStatsByPlayerCount={selectedFaction.statsByPlayerCount}
+            />
           </div>
         </div>
       </div>

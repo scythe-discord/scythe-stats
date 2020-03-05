@@ -40,7 +40,6 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
   onClick
 }) => {
   const [css, theme] = useStyletron();
-  console.log(theme);
   const onClickWithId = useCallback(() => {
     if (onClick) {
       onClick(id);

@@ -23,14 +23,19 @@ const WIN_RATE_LINE_NAME = 'win rate';
 const EXPECTED_WIN_RATE_LINE_NAME = 'expected win rate';
 
 interface Props {
-  faction: GQL.Faction;
+  factionStatsByPlayerCount: Array<
+    Pick<
+      GQL.FactionStatsWithPlayerCount,
+      'playerCount' | 'totalWins' | 'totalMatches'
+    >
+  >;
 }
 
 const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
-  faction
+  factionStatsByPlayerCount
 }) => {
   const [css] = useStyletron();
-  const data = faction.statsByPlayerCount.map(
+  const data = factionStatsByPlayerCount.map(
     ({ playerCount, totalMatches, totalWins }) => {
       const winRate = (100 * totalWins) / totalMatches;
 
@@ -98,8 +103,7 @@ const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
     <ResponsiveContainer width="100%" height="100%">
       <LineChart data={data}>
         <Tooltip
-          formatter={(value, name, b) => {
-            console.log(value, b);
+          formatter={(value, name) => {
             const winRate = `${Number(value).toFixed(2)}%`;
             const capitalizedName = name
               .split(' ')

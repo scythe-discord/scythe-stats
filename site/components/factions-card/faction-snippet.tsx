@@ -7,7 +7,20 @@ import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
 
 interface Props {
-  factionStats: GQL.FactionStatsQuery;
+  faction: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>;
+  topPlayerStats: Pick<GQL.PlayerFactionStats, 'totalWins'> & {
+    player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+  };
+  factionMatCombos: Array<
+    Pick<
+      GQL.FactionMatCombo,
+      | 'totalWins'
+      | 'totalMatches'
+      | 'avgCoinsOnWin'
+      | 'avgRoundsOnWin'
+      | 'leastRoundsForWin'
+    > & { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> }
+  >;
   className?: string;
 }
 
@@ -51,12 +64,14 @@ const SnippetEndEnhancer: FunctionComponent<{ children: ReactNode }> = ({
 };
 
 const FactionSnippet: FunctionComponent<Props> = ({
-  factionStats: { faction, factionMatCombos, playersByWins },
+  faction,
+  factionMatCombos,
+  topPlayerStats,
   className
 }) => {
   const [css] = useStyletron();
 
-  const topPlayer = playersByWins.edges[0].node;
+  const topPlayer = topPlayerStats.player;
   const bestPlayerMat = getBestPlayerMat(factionMatCombos);
 
   return (
@@ -118,7 +133,7 @@ const FactionSnippet: FunctionComponent<Props> = ({
         <ListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>
-              {topPlayer.displayName} ({topPlayer.totalWins} Wins)
+              {topPlayer.displayName} ({topPlayerStats.totalWins} Wins)
             </SnippetEndEnhancer>
           )}
         >

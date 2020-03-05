@@ -37,6 +37,11 @@ class Site extends App<Props> {
   }
 }
 
+Site.getInitialProps = async appContext => {
+  const appProps = await App.getInitialProps(appContext);
+  return { ...appProps };
+};
+
 export default withApollo(({ initialState }) => {
   return new ApolloClient({
     uri: 'http://localhost:4000/graphql',
