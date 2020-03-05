@@ -4,8 +4,12 @@ import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
 
 interface Props {
-  // Deceivingly optional prop - will be supplied by recharts
+  // Deceivingly optional props - will be supplied by recharts
   payload?: any;
+  // ... where the last two optional props are actually just here to be removed
+  // because React doesn't recognize these attributes
+  visibleTicksCount?: any;
+  verticalAnchor?: any;
   factions: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>[];
   selectedFactionIdx: number;
   onClickFaction: (idx: number) => void;
@@ -16,6 +20,10 @@ const FactionChartIcon: FunctionComponent<Props> = ({
   factions,
   selectedFactionIdx,
   onClickFaction,
+  // eslint-disable-next-line
+  visibleTicksCount,
+  // eslint-disable-next-line
+  verticalAnchor,
   ...props
 }) => {
   const onClick = useCallback(() => {
