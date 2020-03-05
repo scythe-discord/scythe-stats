@@ -27,7 +27,7 @@ const MatchList: FunctionComponent<Props> = ({ rows, className }) => {
       <StyledHeadCell>Coins</StyledHeadCell>
       {rows.map((row, index) => {
         const striped = index % 2 === 0;
-        return <MatchRow {...row} striped={striped} />;
+        return <MatchRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>
   );

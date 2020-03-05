@@ -56,7 +56,7 @@ const FactionSnippet: FunctionComponent<Props> = ({
       <StyledHeadCell>Fastest Game</StyledHeadCell>
       {rows.map((row, index) => {
         const striped = index % 2 === 0;
-        return <FactionMatStatsRow {...row} striped={striped} />;
+        return <FactionMatStatsRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>
   );

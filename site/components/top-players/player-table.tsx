@@ -41,7 +41,7 @@ const PlayerTable: FunctionComponent<Props> = ({ players, className }) => {
       <StyledHeadCell>Win Rate</StyledHeadCell>
       {rows.map((row, index) => {
         const striped = index % 2 === 0;
-        return <PlayerRow {...row} striped={striped} />;
+        return <PlayerRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>
   );
