@@ -3,6 +3,8 @@ import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
 import { getFactionEmblem } from '../../lib/scythe';
+import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
+import { Block } from 'baseui/block';
 
 interface Props {
   faction: string;
@@ -19,15 +21,22 @@ const FactionIcon: FC<Props> = ({ faction, size, className }) => {
   }
 
   return (
-    <img
-      src={emblemSrc}
-      className={classNames(
-        css({
-          width: `${size}px` || '16px'
-        }),
-        className
-      )}
-    />
+    <StatefulTooltip
+      placement={PLACEMENT.bottom}
+      ignoreBoundary={true}
+      content={() => <Block>{faction}</Block>}
+    >
+      <img
+        src={emblemSrc}
+        className={classNames(
+          css({
+            width: `${size}px` || '16px',
+            cursor: 'pointer'
+          }),
+          className
+        )}
+      />
+    </StatefulTooltip>
   );
 };
 
