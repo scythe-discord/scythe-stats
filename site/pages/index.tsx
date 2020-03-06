@@ -48,7 +48,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
           className={css({
             display: 'flex',
             flex: '1 1 auto',
-            margin: '20px 0',
+            margin: '25px 0',
             minWidth: 0,
 
             [theme.mediaQuery.large]: {
