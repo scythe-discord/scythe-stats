@@ -53,8 +53,11 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
         alignItems: 'center',
         backgroundColor: isSelected ? '#daecff' : theme.colors.background,
         cursor: 'pointer',
-        border: '1px solid black',
-        padding: '5px 15px',
+        border: `${isSelected ? '2px' : '1px'} solid #212121`,
+        // Decrease padding when selected to preserve the same dimensions
+        padding: `${isSelected ? '4px' : '5px'} ${
+          isSelected ? '14px' : '15px'
+        }`,
         transition: `background-color ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`,
 
         [':hover']: {
