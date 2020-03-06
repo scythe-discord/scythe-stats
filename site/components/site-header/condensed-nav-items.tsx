@@ -52,33 +52,35 @@ export default () => {
         size={DRAWER_SIZE.auto}
         autoFocus={false}
       >
-        <ul
-          className={css({
-            padding: '0'
-          })}
-        >
-          <SpacedNavigationItem>
-            <Link href="/" passHref={true}>
-              <StyledLink>Home</StyledLink>
-            </Link>
-          </SpacedNavigationItem>
-          <SpacedNavigationItem>
-            <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
-              Discord
-            </StyledLink>
-          </SpacedNavigationItem>
-          <SpacedNavigationItem>
-            <StyledLink
-              href="https://github.com/shibrady/scythe-stats"
-              target="_blank"
-            >
-              Contribute
-            </StyledLink>
-          </SpacedNavigationItem>
-          <SpacedNavigationItem>
-            <BuyMeACoffee />
-          </SpacedNavigationItem>
-        </ul>
+        <nav>
+          <ul
+            className={css({
+              padding: '0'
+            })}
+          >
+            <SpacedNavigationItem>
+              <Link href="/" passHref={true}>
+                <StyledLink>Home</StyledLink>
+              </Link>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
+              <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
+                Discord
+              </StyledLink>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
+              <StyledLink
+                href="https://github.com/shibrady/scythe-stats"
+                target="_blank"
+              >
+                Contribute
+              </StyledLink>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
+              <BuyMeACoffee />
+            </SpacedNavigationItem>
+          </ul>
+        </nav>
       </Drawer>
     </>
   );
