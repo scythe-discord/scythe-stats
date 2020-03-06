@@ -51,18 +51,18 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
       className={css({
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: isSelected ? '#b8dbff' : theme.colors.background,
+        backgroundColor: isSelected ? '#daecff' : theme.colors.background,
         cursor: 'pointer',
         border: '1px solid black',
         padding: '5px 15px',
         transition: `background-color ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`,
 
         [':hover']: {
-          backgroundColor: '#daecff'
+          backgroundColor: '#ebf5ff'
         },
 
         [':active']: {
-          backgroundColor: '#b8dbff'
+          backgroundColor: '#daecff'
         }
       })}
       onClick={onClickWithId}
