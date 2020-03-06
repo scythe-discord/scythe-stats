@@ -105,6 +105,11 @@ const RecentMatches: FunctionComponent<Props> = ({ recentMatches }) => {
         />
         <MatchDetails
           className={css({
+            // Intended to style the table such that changes in height
+            // (more or less players) do not shift container sizes
+            // Height reflects a max 7 player game
+            gridTemplateRows: '45px',
+            minHeight: '315px',
             margin: '30px 0 0 0'
           })}
           rows={matchDetailsRows}

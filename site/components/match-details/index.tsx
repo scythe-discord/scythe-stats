@@ -1,7 +1,13 @@
 import { FunctionComponent } from 'react';
+import { withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
 import MatchRow from './match-row';
+
+const CenteredHeadCell = withStyle(StyledHeadCell, {
+  display: 'flex',
+  alignItems: 'center'
+});
 
 interface MatchDetailsRow {
   playerName: string;
@@ -15,16 +21,16 @@ interface Props {
   className?: string;
 }
 
-const MatchList: FunctionComponent<Props> = ({ rows, className }) => {
+const MatchDetails: FunctionComponent<Props> = ({ rows, className }) => {
   return (
     <StyledTable
       className={className}
       $gridTemplateColumns="minmax(auto, 175px) 150px 150px auto"
     >
-      <StyledHeadCell>Player</StyledHeadCell>
-      <StyledHeadCell>Faction</StyledHeadCell>
-      <StyledHeadCell>Player Mat</StyledHeadCell>
-      <StyledHeadCell>Coins</StyledHeadCell>
+      <CenteredHeadCell>Player</CenteredHeadCell>
+      <CenteredHeadCell>Faction</CenteredHeadCell>
+      <CenteredHeadCell>Player Mat</CenteredHeadCell>
+      <CenteredHeadCell>Coins</CenteredHeadCell>
       {rows.map((row, index) => {
         const striped = index % 2 === 0;
         return <MatchRow key={index} {...row} striped={striped} />;
@@ -33,4 +39,4 @@ const MatchList: FunctionComponent<Props> = ({ rows, className }) => {
   );
 };
 
-export default MatchList;
+export default MatchDetails;
