@@ -1,4 +1,4 @@
-import { createTheme, lightThemePrimitives } from 'baseui';
+import { LightTheme, createTheme, lightThemePrimitives } from 'baseui';
 
 export const PRIMARY_FONT_FAMILY = 'Fira Sans, Helvetica, sans-serif, serif';
 
@@ -26,7 +26,10 @@ const primitives = {
 };
 
 const overrides = {
-  ...responsiveThemeOverrides
+  ...responsiveThemeOverrides,
+  colors: {
+    linkVisited: LightTheme.colors.linkText
+  }
 };
 
 export default createTheme(primitives, overrides);
