@@ -110,7 +110,7 @@ const RecentMatches: FunctionComponent<Props> = ({ recentMatches }) => {
             // Height reflects a max 7 player game
             gridTemplateRows: '45px',
             minHeight: '315px',
-            margin: '30px 0 0 0'
+            margin: '40px 0 0 0'
           })}
           rows={matchDetailsRows}
         />
