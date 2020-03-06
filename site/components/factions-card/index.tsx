@@ -72,7 +72,7 @@ const FactionsCard: FunctionComponent<Props> = ({
               order: 1,
 
               [theme.mediaQuery.medium]: {
-                flex: '1 1 auto',
+                flex: '0 1 400px',
                 order: 0
               }
             })}
