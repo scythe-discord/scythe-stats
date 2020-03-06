@@ -52,7 +52,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
             minWidth: 0,
 
             [theme.mediaQuery.large]: {
-              margin: '0 50px 0 0'
+              margin: '0 25px 0 0'
             }
           })}
         >
@@ -68,7 +68,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
           <RecentMatches recentMatches={recentMatches} />
           <div
             className={css({
-              margin: '50px 0 0'
+              margin: '25px 0'
             })}
           >
             <TopPlayers
