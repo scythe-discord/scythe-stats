@@ -68,7 +68,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
           <RecentMatches recentMatches={recentMatches} />
           <div
             className={css({
-              margin: '25px 0'
+              margin: '25px 0 0'
             })}
           >
             <TopPlayers
