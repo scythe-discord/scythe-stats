@@ -25,6 +25,10 @@ class Site extends App<Props> {
             name="viewport"
             content="width=device-width, initial-scale=1, shrink-to-fit=no"
           />
+          <meta
+            name="description"
+            content="View faction and player mat stats, recent matches, and more. Join our Discord for games and discussion. From the acclaimed board game Scythe."
+          />
         </Head>
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
           <BaseProvider theme={Theme}>
