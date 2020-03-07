@@ -1,17 +1,17 @@
 import { ReactNode, FC, useState, useCallback } from 'react';
-import Link from 'next/link';
-import { useStyletron, styled } from 'baseui';
+import { useStyletron, withStyle } from 'baseui';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { Menu } from 'baseui/icon';
 import { ListItem } from 'baseui/list';
 import { Button, KIND, SIZE } from 'baseui/button';
 import { Drawer, SIZE as DRAWER_SIZE, ANCHOR } from 'baseui/drawer';
+import Link from 'next/link';
 
 import BuyMeACoffee from './buy-me-a-coffee';
 
-const StyledLink = styled(BaseLink, () => ({
+const StyledLink = withStyle(BaseLink as any, {
   textDecoration: 'none'
-}));
+});
 
 const SpacedNavigationItem: FC<{
   children: ReactNode;

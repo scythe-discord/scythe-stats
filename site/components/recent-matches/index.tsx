@@ -1,18 +1,18 @@
-import { FunctionComponent, useState, useCallback } from 'react';
+import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 
 import GQL from '../../lib/graphql';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 import Card from '../card';
-
 import MatchDetails from '../match-details';
+
 import RecentMatchBanner from './recent-match-banner';
 
 interface Props {
   recentMatches: GQL.MatchesQuery;
 }
 
-const RecentMatches: FunctionComponent<Props> = ({ recentMatches }) => {
+const RecentMatches: FC<Props> = ({ recentMatches }) => {
   const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
   const onMatchClick = useCallback(

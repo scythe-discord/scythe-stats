@@ -1,25 +1,9 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
 import GQL from '../../lib/graphql';
-import PlayerRow from './player-row';
 
-const getTableData = (
-  players: Array<
-    Pick<
-      GQL.Player,
-      'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'
-    >
-  >
-) => {
-  return players.map(({ displayName, totalWins, totalMatches }) => {
-    return {
-      displayName,
-      totalWins,
-      totalMatches
-    };
-  });
-};
+import PlayerRow from './player-row';
 
 interface Props {
   players: Array<
@@ -31,8 +15,14 @@ interface Props {
   className?: string;
 }
 
-const PlayerTable: FunctionComponent<Props> = ({ players, className }) => {
-  const rows = getTableData(players);
+const PlayerTable: FC<Props> = ({ players, className }) => {
+  const rows = players.map(({ displayName, totalWins, totalMatches }) => {
+    return {
+      displayName,
+      totalWins,
+      totalMatches
+    };
+  });
 
   return (
     <StyledTable className={className} $gridTemplateColumns="auto auto auto">

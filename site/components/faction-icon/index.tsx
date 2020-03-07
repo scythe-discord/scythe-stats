@@ -1,10 +1,10 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
+import { Block } from 'baseui/block';
+import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
 import classNames from 'classnames';
 
 import { getFactionEmblem } from '../../lib/scythe';
-import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
-import { Block } from 'baseui/block';
 
 interface Props {
   faction: string;

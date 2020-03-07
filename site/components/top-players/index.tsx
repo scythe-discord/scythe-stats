@@ -1,5 +1,6 @@
-import { FunctionComponent, FC } from 'react';
+import { FC } from 'react';
 import { useStyletron } from 'baseui';
+import { BlockProps } from 'baseui/block';
 import { H1, Label1 } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
@@ -7,7 +8,7 @@ import GQL from '../../lib/graphql';
 import Card from '../card';
 import PlayerTable from './player-table';
 
-const StyledLabel: FC = props => (
+const StyledLabel: FC<BlockProps> = props => (
   <Label1
     {...props}
     overrides={{
@@ -25,10 +26,7 @@ interface Props {
   topPlayersMonthly: GQL.TopPlayersQuery;
 }
 
-const TopPlayers: FunctionComponent<Props> = ({
-  topPlayersAllTime,
-  topPlayersMonthly
-}) => {
+const TopPlayers: FC<Props> = ({ topPlayersAllTime, topPlayersMonthly }) => {
   const [css] = useStyletron();
 
   return (

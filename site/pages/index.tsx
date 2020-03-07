@@ -1,6 +1,6 @@
 import { NextComponentType } from 'next';
-import { useStyletron } from 'baseui';
 import { ApolloPageContext } from 'next-with-apollo';
+import { useStyletron } from 'baseui';
 import moment from 'moment';
 
 import {

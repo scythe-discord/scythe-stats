@@ -1,22 +1,10 @@
-import { FunctionComponent, useCallback, ReactNode } from 'react';
+import { FC, useCallback, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import { LabelSmall } from 'baseui/typography';
 
 import FactionIcon from '../faction-icon';
 
-interface Props {
-  id: string;
-  displayName: string;
-  factionName: string;
-  playerMatName: string;
-  numRounds: number;
-  isSelected: boolean;
-  onClick?: (id: string) => void;
-}
-
-const BannerLabel: FunctionComponent<{ children: ReactNode }> = ({
-  children
-}) => (
+const BannerLabel: FC<{ children: ReactNode }> = ({ children }) => (
   <LabelSmall
     overrides={{
       Block: {
@@ -30,7 +18,17 @@ const BannerLabel: FunctionComponent<{ children: ReactNode }> = ({
   </LabelSmall>
 );
 
-const RecentMatchBanner: FunctionComponent<Props> = ({
+interface Props {
+  id: string;
+  displayName: string;
+  factionName: string;
+  playerMatName: string;
+  numRounds: number;
+  isSelected: boolean;
+  onClick?: (id: string) => void;
+}
+
+const RecentMatchBanner: FC<Props> = ({
   id,
   displayName,
   factionName,
@@ -51,7 +49,9 @@ const RecentMatchBanner: FunctionComponent<Props> = ({
       className={css({
         display: 'flex',
         alignItems: 'center',
-        backgroundColor: isSelected ? '#daecff' : theme.colors.background,
+        backgroundColor: isSelected
+          ? '#daecff'
+          : theme.colors.backgroundPrimary,
         cursor: 'pointer',
         border: `${isSelected ? '2px' : '1px'} solid #212121`,
         // Decrease padding when selected to preserve the same dimensions

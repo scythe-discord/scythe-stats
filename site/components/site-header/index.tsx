@@ -28,9 +28,9 @@ export default () => {
         className={css({
           display: 'flex',
           flex: '1 1 auto',
-          padding: '0 20px',
+          padding: '0 20px 0 0',
           margin: '0 auto',
-          maxWidth: '1500px'
+          maxWidth: '1650px'
         })}
       >
         <StyledNavigationList $align={ALIGN.left}>

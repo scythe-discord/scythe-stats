@@ -1,28 +1,10 @@
-import { FunctionComponent, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
 import { ListItem, ListItemLabel } from 'baseui/list';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
-
-interface Props {
-  faction: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>;
-  topPlayerStats: Pick<GQL.PlayerFactionStats, 'totalWins'> & {
-    player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
-  };
-  factionMatCombos: Array<
-    Pick<
-      GQL.FactionMatCombo,
-      | 'totalWins'
-      | 'totalMatches'
-      | 'avgCoinsOnWin'
-      | 'avgRoundsOnWin'
-      | 'leastRoundsForWin'
-    > & { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> }
-  >;
-  className?: string;
-}
 
 const getBestPlayerMat = (
   combos: Pick<
@@ -45,9 +27,7 @@ const getBestPlayerMat = (
   return bestPlayerMat;
 };
 
-const SnippetEndEnhancer: FunctionComponent<{ children: ReactNode }> = ({
-  children
-}) => {
+const SnippetEndEnhancer: FC<{ children: ReactNode }> = ({ children }) => {
   return (
     <LabelMedium
       overrides={{
@@ -63,7 +43,25 @@ const SnippetEndEnhancer: FunctionComponent<{ children: ReactNode }> = ({
   );
 };
 
-const FactionSnippet: FunctionComponent<Props> = ({
+interface Props {
+  faction: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>;
+  topPlayerStats: Pick<GQL.PlayerFactionStats, 'totalWins'> & {
+    player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+  };
+  factionMatCombos: Array<
+    Pick<
+      GQL.FactionMatCombo,
+      | 'totalWins'
+      | 'totalMatches'
+      | 'avgCoinsOnWin'
+      | 'avgRoundsOnWin'
+      | 'leastRoundsForWin'
+    > & { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> }
+  >;
+  className?: string;
+}
+
+const FactionSnippet: FC<Props> = ({
   faction,
   factionMatCombos,
   topPlayerStats,

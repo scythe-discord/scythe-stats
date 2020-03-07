@@ -1,13 +1,13 @@
-import { FunctionComponent, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import {
+  ResponsiveContainer,
   BarChart,
-  XAxis,
-  YAxis,
   Bar,
   Cell,
+  XAxis,
+  YAxis,
   CartesianGrid,
-  Tooltip,
-  ResponsiveContainer
+  Tooltip
 } from 'recharts';
 
 import GQL from '../../lib/graphql';
@@ -20,7 +20,7 @@ interface Props {
   onClickFaction: (idx: number) => void;
 }
 
-const FactionWinRates: FunctionComponent<Props> = ({
+const FactionWinRates: FC<Props> = ({
   factions,
   selectedFactionIdx,
   onClickFaction

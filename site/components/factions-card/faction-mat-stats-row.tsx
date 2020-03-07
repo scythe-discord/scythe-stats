@@ -2,6 +2,11 @@ import { FC } from 'react';
 import { withStyle } from 'baseui';
 import { StyledBodyCell } from 'baseui/table-grid';
 
+const CenteredBodyCell = withStyle(StyledBodyCell, {
+  display: 'flex',
+  alignItems: 'center'
+});
+
 interface Props {
   striped: boolean;
   playerMatName: string;
@@ -11,11 +16,6 @@ interface Props {
   avgRoundsOnWin: number;
   leastRoundsForWin: number;
 }
-
-const CenteredBodyCell = withStyle(StyledBodyCell, {
-  display: 'flex',
-  alignItems: 'center'
-});
 
 const FactionMatStatsRow: FC<Props> = ({
   striped,

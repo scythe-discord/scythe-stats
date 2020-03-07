@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
@@ -7,15 +7,14 @@ interface Props {
   children: ReactNode;
 }
 
-const Card: FunctionComponent<Props> = ({ className, children }) => {
-  const [css] = useStyletron();
+const Card: FC<Props> = ({ className, children }) => {
+  const [css, theme] = useStyletron();
 
   return (
     <div
       className={classNames(
         css({
-          background: '#fff',
-          border: 'none',
+          background: theme.colors.backgroundPrimary,
           padding: '35px',
           boxShadow: 'rgba(0, 0, 0, 0.15) 0 2px 8px'
         }),

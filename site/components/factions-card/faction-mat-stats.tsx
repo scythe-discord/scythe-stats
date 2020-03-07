@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
 import GQL from '../../lib/graphql';
@@ -19,10 +19,7 @@ interface Props {
   className?: string;
 }
 
-const FactionSnippet: FunctionComponent<Props> = ({
-  factionMatCombos,
-  className
-}) => {
+const FactionMatStats: FC<Props> = ({ factionMatCombos, className }) => {
   const rows = factionMatCombos.map(
     ({
       playerMat,
@@ -62,4 +59,4 @@ const FactionSnippet: FunctionComponent<Props> = ({
   );
 };
 
-export default FactionSnippet;
+export default FactionMatStats;

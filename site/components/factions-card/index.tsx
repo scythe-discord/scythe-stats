@@ -1,15 +1,16 @@
-import { FunctionComponent, useState, useCallback } from 'react';
+import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
-import classNames from 'classnames';
 import dynamic from 'next/dynamic';
+import classNames from 'classnames';
 
 import GQL from '../../lib/graphql';
-
 import Card from '../card';
+
 import FactionSnippet from './faction-snippet';
 import FactionMatStats from './faction-mat-stats';
 
+// Responsive chart containers don't play well with SSR
 const FactionWinRates = dynamic(() => import('./faction-win-rates'), {
   ssr: false
 });
@@ -26,10 +27,7 @@ interface Props {
   className?: string;
 }
 
-const FactionsCard: FunctionComponent<Props> = ({
-  factionStats,
-  className
-}) => {
+const FactionsCard: FC<Props> = ({ factionStats, className }) => {
   const [css, theme] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
   const onClickFaction = useCallback(

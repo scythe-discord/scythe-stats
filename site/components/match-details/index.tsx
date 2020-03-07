@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
@@ -21,11 +21,11 @@ interface Props {
   className?: string;
 }
 
-const MatchDetails: FunctionComponent<Props> = ({ rows, className }) => {
+const MatchDetails: FC<Props> = ({ rows, className }) => {
   return (
     <StyledTable
       className={className}
-      $gridTemplateColumns="minmax(auto, 175px) 150px 150px auto"
+      $gridTemplateColumns="auto 150px 150px 75px"
     >
       <CenteredHeadCell>Player</CenteredHeadCell>
       <CenteredHeadCell>Faction</CenteredHeadCell>

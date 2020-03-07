@@ -1,18 +1,18 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { useStyletron } from 'baseui';
 import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
 import { Block } from 'baseui/block';
 import { LabelMedium } from 'baseui/typography';
 import {
+  ResponsiveContainer,
   LineChart,
+  Line,
   XAxis,
   YAxis,
   CartesianGrid,
   Tooltip,
-  Line,
   Legend,
-  LegendValueFormatter,
-  ResponsiveContainer
+  LegendValueFormatter
 } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
@@ -31,7 +31,7 @@ interface Props {
   >;
 }
 
-const FactionWinRatesByPlayerCount: FunctionComponent<Props> = ({
+const FactionWinRatesByPlayerCount: FC<Props> = ({
   factionStatsByPlayerCount
 }) => {
   const [css] = useStyletron();

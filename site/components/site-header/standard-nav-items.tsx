@@ -1,9 +1,11 @@
 import { ReactNode } from 'react';
-import Link from 'next/link';
-import { useStyletron, styled } from 'baseui';
+import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
+import Link from 'next/link';
 import classNames from 'classnames';
+
+import BuyMeACoffee from './buy-me-a-coffee';
 
 const SpacedNavigationItem = ({
   className,
@@ -32,9 +34,9 @@ const SpacedNavigationItem = ({
   );
 };
 
-const StyledLink = styled(BaseLink, () => ({
+const StyledLink = withStyle(BaseLink as any, {
   textDecoration: 'none'
-}));
+});
 
 export default () => {
   const [css] = useStyletron();
@@ -67,30 +69,7 @@ export default () => {
         /
       </SpacedNavigationItem>
       <StyledNavigationItem>
-        <StyledLink
-          className={css({
-            display: 'flex',
-            alignItems: 'center',
-            textDecoration: 'none'
-          })}
-          target="_blank"
-          href="https://www.buymeacoffee.com/Qianpou"
-        >
-          <span
-            className={css({
-              marginRight: '15px'
-            })}
-          >
-            Buy me a coffee
-          </span>
-          <img
-            src="https://cdn.buymeacoffee.com/buttons/bmc-new-btn-logo.svg"
-            alt="Buy me a coffee"
-            className={css({
-              width: '20px'
-            })}
-          />
-        </StyledLink>
+        <BuyMeACoffee />
       </StyledNavigationItem>
     </>
   );

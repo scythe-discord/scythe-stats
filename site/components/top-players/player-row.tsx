@@ -2,6 +2,11 @@ import { FC } from 'react';
 import { withStyle } from 'baseui';
 import { StyledBodyCell } from 'baseui/table-grid';
 
+const CenteredBodyCell = withStyle(StyledBodyCell, {
+  display: 'flex',
+  alignItems: 'center'
+});
+
 interface Props {
   striped: boolean;
   displayName: string;
@@ -9,12 +14,7 @@ interface Props {
   totalMatches: number;
 }
 
-const CenteredBodyCell = withStyle(StyledBodyCell, {
-  display: 'flex',
-  alignItems: 'center'
-});
-
-const MatchRow: FC<Props> = ({
+const PlayerRow: FC<Props> = ({
   striped,
   displayName,
   totalWins,
@@ -31,4 +31,4 @@ const MatchRow: FC<Props> = ({
   );
 };
 
-export default MatchRow;
+export default PlayerRow;
