@@ -152,15 +152,34 @@ const validateMatch = async (
     throw new Error(`Match cannot be recorded with 0 rounds played`);
   }
 
-  if (loggedMatchResults.length < 2) {
-    throw new Error('Match requires more than 1 player');
+  if (loggedMatchResults.length < 2 || loggedMatchResults.length > 7) {
+    throw new Error('Match must have between 2 and 7 (inclusive) players');
   }
+
+  const seenFactions: { [key: string]: boolean } = {};
+  const seenPlayerMats: { [key: string]: boolean } = {};
+  const seenPlayers: { [key: string]: boolean } = {};
 
   for (let i = 0; i < loggedMatchResults.length; i++) {
     const {
       faction: factionName,
-      playerMat: playerMatName
+      playerMat: playerMatName,
+      displayName
     } = loggedMatchResults[i];
+
+    if (
+      seenFactions[factionName] ||
+      seenPlayerMats[playerMatName] ||
+      seenPlayers[displayName]
+    ) {
+      throw new Error(
+        'Match cannot contain duplicate factions, player mats, or players'
+      );
+    }
+
+    seenFactions[factionName] = true;
+    seenPlayerMats[playerMatName] = true;
+    seenPlayers[displayName] = true;
 
     const factionRepo = getRepository(Faction);
     const playerMatRepo = getRepository(PlayerMat);
@@ -181,7 +200,12 @@ export const resolvers: Schema.Resolvers = {
       _,
       { numRounds, datePlayed, playerMatchResults: loggedMatchResults }
     ) => {
-      await validateMatch(numRounds, loggedMatchResults);
+      try {
+        await validateMatch(numRounds, loggedMatchResults);
+      } catch (error) {
+        throw new Error(`Failed to log match from ${datePlayed}: ${error}`);
+      }
+
       let match: Match | undefined;
       let playerMatchResults: PlayerMatchResult[] | undefined;
 
