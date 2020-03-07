@@ -7,3 +7,6 @@ export const VANILLA_LOG_CHANNEL_ID =
 
 export const GRAPHQL_SERVER_URL =
   process.env.GRAPHQL_SERVER_URL || 'http://localhost:4000/';
+
+export const GRAPHQL_SERVER_BASIC_AUTH =
+  process.env.GRAPHQL_SERVER_BASIC_AUTH || '';

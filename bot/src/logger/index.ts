@@ -1,7 +1,11 @@
 import { Message } from 'discord.js';
-import { request } from 'graphql-request';
+import { GraphQLClient } from 'graphql-request';
 
-import { GAME_LOG_PREFIX, GRAPHQL_SERVER_URL } from '../common/config';
+import {
+  GAME_LOG_PREFIX,
+  GRAPHQL_SERVER_URL,
+  GRAPHQL_SERVER_BASIC_AUTH
+} from '../common/config';
 
 import { extractGameLog } from './extract';
 
@@ -28,7 +32,19 @@ export const handleLogRequest = async (message: Message): Promise<void> => {
   }
 
   try {
-    const data = await request(GRAPHQL_SERVER_URL, LOG_MATCH_QUERY, {
+    const gqlClient = new GraphQLClient(
+      GRAPHQL_SERVER_URL,
+      GRAPHQL_SERVER_BASIC_AUTH
+        ? {
+            headers: {
+              authorization: `Basic ${Buffer.from(
+                GRAPHQL_SERVER_BASIC_AUTH
+              ).toString('base64')}`
+            }
+          }
+        : undefined
+    );
+    const data = await gqlClient.request(LOG_MATCH_QUERY, {
       numRounds: playerMatchResults.numRounds,
       datePlayed: message.createdAt.toISOString(),
       playerMatchResults: playerMatchResults.playerScores

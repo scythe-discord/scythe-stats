@@ -198,8 +198,13 @@ export const resolvers: Schema.Resolvers = {
   Mutation: {
     logMatch: async (
       _,
-      { numRounds, datePlayed, playerMatchResults: loggedMatchResults }
+      { numRounds, datePlayed, playerMatchResults: loggedMatchResults },
+      context
     ) => {
+      if (process.env.NODE_ENV === 'production' && !context.isAdmin) {
+        throw new Error('You do not have permission to log matches');
+      }
+
       try {
         await validateMatch(numRounds, loggedMatchResults);
       } catch (error) {
