@@ -42,7 +42,8 @@ const FactionWinRates: FC<Props> = ({
   });
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    // id is specified because it's otherwise "undefined", for some reason
+    <ResponsiveContainer id="faction-win-rates" width="100%" height="100%">
       <BarChart
         barCategoryGap="15%"
         margin={{ top: 5, right: 5, bottom: 10, left: 5 }}

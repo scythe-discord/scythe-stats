@@ -100,7 +100,12 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
   };
 
   return (
-    <ResponsiveContainer width="100%" height="100%">
+    // id is specified because it's otherwise "undefined", for some reason
+    <ResponsiveContainer
+      id="faction-win-rates-player-count"
+      width="100%"
+      height="100%"
+    >
       <LineChart data={data}>
         <Tooltip
           formatter={(value, name) => {
