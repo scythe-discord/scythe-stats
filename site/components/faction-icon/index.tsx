@@ -28,6 +28,7 @@ const FactionIcon: FC<Props> = ({ faction, size, className }) => {
     >
       <img
         src={emblemSrc}
+        alt={faction}
         className={classNames(
           css({
             width: `${size}px` || '16px',
