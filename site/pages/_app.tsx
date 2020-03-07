@@ -31,6 +31,7 @@ class Site extends App<Props> {
             name="description"
             content="View faction and player mat stats, recent matches, and more. Join our Discord for games and discussion. From the acclaimed board game Scythe."
           />
+          <html lang="en" />
         </Head>
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
           <BaseProvider theme={Theme}>
