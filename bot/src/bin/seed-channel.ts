@@ -6,10 +6,12 @@ import {
   VANILLA_LOG_CHANNEL_ID,
   GAME_LOG_PREFIX
 } from '../common/config';
+import { delay } from '../common/utils';
 import { handleLogRequest } from '../logger';
 
 // How many messages to read at a time
 const REQUEST_LIMIT = 5;
+const BATCH_DELAY = 1000;
 
 const client = new Client();
 
@@ -60,6 +62,8 @@ client.on('ready', async () => {
       console.error('Failed to fetch log messages:', error);
       return;
     }
+
+    await delay(BATCH_DELAY);
   } while (lastSeenMessage !== null);
 
   client.destroy();
