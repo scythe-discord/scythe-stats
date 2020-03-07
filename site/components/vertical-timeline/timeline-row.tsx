@@ -16,6 +16,7 @@ interface Props {
     id: string;
     isSelected: boolean;
     content: ReactNode;
+    rawContentDescriptor: string;
     date: string;
     onClick?: (id: string) => void;
   };
@@ -59,6 +60,7 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
             size={CIRCLE_SIZE}
             onClick={element.onClick}
             isSelected={element.isSelected}
+            rawContentDescriptor={element.rawContentDescriptor}
           />
         ) : (
           <TimelineLine width={LINE_WIDTH} height={LINE_HEIGHT} />

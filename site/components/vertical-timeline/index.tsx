@@ -9,6 +9,7 @@ export interface TimelineElement {
   key: string;
   isSelectable: boolean;
   content: ReactNode;
+  rawContentDescriptor: string;
   date: string;
 }
 
@@ -38,25 +39,28 @@ export const VerticalTimeline: FunctionComponent<Props> = ({
         className
       )}
     >
-      {elements.map(({ key, isSelectable, content, date }, i) => {
-        const isSelected = i === selected;
-        const hasPrev = i > 0;
+      {elements.map(
+        ({ key, isSelectable, content, rawContentDescriptor, date }, i) => {
+          const isSelected = i === selected;
+          const hasPrev = i > 0;
 
-        return (
-          <Fragment key={key}>
-            {hasPrev && <TimelineRow />}
-            <TimelineRow
-              element={{
-                id: key,
-                isSelected,
-                content,
-                date,
-                onClick: isSelectable ? onClick : undefined
-              }}
-            />
-          </Fragment>
-        );
-      })}
+          return (
+            <Fragment key={key}>
+              {hasPrev && <TimelineRow />}
+              <TimelineRow
+                element={{
+                  id: key,
+                  isSelected,
+                  content,
+                  rawContentDescriptor,
+                  date,
+                  onClick: isSelectable ? onClick : undefined
+                }}
+              />
+            </Fragment>
+          );
+        }
+      )}
     </PerfectScrollbar>
   );
 };

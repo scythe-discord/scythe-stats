@@ -56,10 +56,13 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
         />
       );
 
+      const rawContentDescriptor = `${displayName} won as ${factionName} ${playerMatName} in ${numRounds} rounds`;
+
       return {
         key: id,
         isSelectable: true,
         content,
+        rawContentDescriptor,
         date: datePlayed
       };
     }

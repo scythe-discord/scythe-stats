@@ -6,6 +6,7 @@ interface Props {
   id: string;
   isSelected: boolean;
   size: number;
+  rawContentDescriptor: string;
   className?: string;
   onClick?: (id: string) => void;
 }
@@ -15,6 +16,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
   size,
   className,
   isSelected,
+  rawContentDescriptor,
   onClick
 }) => {
   const [css, theme] = useStyletron();
@@ -35,6 +37,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
         }),
         className
       )}
+      aria-label={rawContentDescriptor}
       onClick={onClickWithId}
     >
       <svg
