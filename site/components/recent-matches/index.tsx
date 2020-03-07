@@ -104,17 +104,7 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
   );
 
   return (
-    <Card
-      className={css({
-        display: 'flex',
-        flexDirection: 'column',
-        alignItems: 'center',
-
-        [theme.mediaQuery.large]: {
-          alignItems: 'stretch'
-        }
-      })}
-    >
+    <Card>
       <div
         className={css({
           display: 'flex',
@@ -149,7 +139,12 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
         overrides={{
           Block: {
             style: {
-              margin: '25px 0 0'
+              textAlign: 'center',
+              margin: '25px 0 0',
+
+              [theme.mediaQuery.large]: {
+                textAlign: 'left'
+              }
             }
           }
         }}
