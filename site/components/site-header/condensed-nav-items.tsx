@@ -42,9 +42,11 @@ export default () => {
 
   return (
     <>
-      <Button onClick={onMenuClick} kind={KIND.tertiary} size={SIZE.mini}>
-        <Menu size={24} />
-      </Button>
+      <li>
+        <Button onClick={onMenuClick} kind={KIND.tertiary} size={SIZE.mini}>
+          <Menu size={24} />
+        </Button>
+      </li>
       <Drawer
         onClose={onDrawerClose}
         isOpen={isDrawerOpen}
