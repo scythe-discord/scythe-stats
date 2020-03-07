@@ -49,7 +49,11 @@ export default () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <StyledLink href="https://discord.gg/dcRcxy2" target="_blank">
+        <StyledLink
+          href="https://discord.gg/dcRcxy2"
+          target="_blank"
+          rel="noopener"
+        >
           Discord
         </StyledLink>
       </SpacedNavigationItem>
@@ -57,6 +61,7 @@ export default () => {
         <StyledLink
           href="https://github.com/shibrady/scythe-stats"
           target="_blank"
+          rel="noopener"
         >
           Contribute
         </StyledLink>

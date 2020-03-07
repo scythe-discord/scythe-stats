@@ -92,6 +92,7 @@ export default () => {
       })}
       target="_blank"
       href="https://www.buymeacoffee.com/Qianpou"
+      rel="noopener"
     >
       <span
         className={css({
