@@ -1,5 +1,7 @@
 import { FC, useState, useCallback } from 'react';
-import { useStyletron } from 'baseui';
+import { useStyletron, withStyle } from 'baseui';
+import { LabelMedium } from 'baseui/typography';
+import { StyledLink } from 'baseui/link';
 
 import GQL from '../../lib/graphql';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
@@ -7,6 +9,21 @@ import Card from '../card';
 import MatchDetails from '../match-details';
 
 import RecentMatchBanner from './recent-match-banner';
+
+const DiscordLink = withStyle(StyledLink as any, {
+  // Some attempt at mimicking Discord blurple
+  color: '#304eb6',
+  textDecoration: 'none',
+  ':visited': {
+    color: '#304eb6'
+  },
+  ':hover': {
+    color: '#8da0e1'
+  },
+  ':active, :focus': {
+    color: '#8da0e1'
+  }
+});
 
 interface Props {
   recentMatches: GQL.MatchesQuery;
@@ -87,7 +104,17 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
   );
 
   return (
-    <Card>
+    <Card
+      className={css({
+        display: 'flex',
+        flexDirection: 'column',
+        alignItems: 'center',
+
+        [theme.mediaQuery.large]: {
+          alignItems: 'stretch'
+        }
+      })}
+    >
       <div
         className={css({
           display: 'flex',
@@ -113,11 +140,29 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
             // Height reflects a max 7 player game
             gridTemplateRows: '45px',
             minHeight: '315px',
-            margin: '40px 0 0 0'
+            margin: '40px 0 0'
           })}
           rows={matchDetailsRows}
         />
       </div>
+      <LabelMedium
+        overrides={{
+          Block: {
+            style: {
+              margin: '25px 0 0'
+            }
+          }
+        }}
+      >
+        Looking for more matches?{' '}
+        <DiscordLink
+          href="https://discord.gg/dcRcxy2"
+          target="_blank"
+          rel="noopener"
+        >
+          Join our Discord!
+        </DiscordLink>
+      </LabelMedium>
     </Card>
   );
 };
