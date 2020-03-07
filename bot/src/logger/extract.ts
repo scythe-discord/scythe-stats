@@ -3,6 +3,12 @@ import { PlayerScore } from '../common/scythe';
 const GAME_SUMMARY_IDX = 1;
 const SCORES_START_IDX = 3;
 
+// A crude, hardcoded way to temporarily address significant players
+// with multiple recorded display names
+const PLAYER_REMAPPINGS: { [key: string]: string } = {
+  'Mr. Derp': 'Mr. Der'
+};
+
 const getNumRounds = (gameSummaryLog: string): number | null => {
   const numRoundsMatch = gameSummaryLog.match(/(?<rounds>\d+) Rounds/);
 
@@ -39,7 +45,9 @@ const getPlayerScore = (playerScoreLog: string): PlayerScore | null => {
   const { displayName, steamId } = playerDetailsMatch.groups;
 
   return {
-    displayName,
+    displayName: PLAYER_REMAPPINGS[displayName]
+      ? PLAYER_REMAPPINGS[displayName]
+      : displayName,
     steamId,
     faction,
     playerMat,
