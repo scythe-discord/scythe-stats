@@ -31,14 +31,11 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
       <SiteHeader />
       <div
         className={css({
-          display: 'flex',
-          flexDirection: 'column',
           padding: '20px 0',
           margin: '0 auto',
           width: '100%',
 
           [theme.mediaQuery.large]: {
-            flexDirection: 'row',
             padding: '20px',
             maxWidth: '1650px'
           }
@@ -47,34 +44,45 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
         <div
           className={css({
             display: 'flex',
-            flex: '1 1 auto',
-            margin: '25px 0',
-            minWidth: 0,
+            flexDirection: 'column',
 
             [theme.mediaQuery.large]: {
-              margin: '0 25px 0 0'
+              flexDirection: 'row'
             }
           })}
         >
-          <FactionsCard
-            factionStats={factionStats}
-            className={css({
-              flex: '1 1 auto',
-              minWidth: 0
-            })}
-          />
-        </div>
-        <div>
-          <RecentMatches recentMatches={recentMatches} />
           <div
             className={css({
-              margin: '25px 0 0'
+              display: 'flex',
+              flex: '1 1 auto',
+              margin: '25px 0',
+              minWidth: 0,
+
+              [theme.mediaQuery.large]: {
+                margin: '0 25px 0 0'
+              }
             })}
           >
-            <TopPlayers
-              topPlayersAllTime={topPlayersAllTime}
-              topPlayersMonthly={topPlayersMonthly}
+            <FactionsCard
+              factionStats={factionStats}
+              className={css({
+                flex: '1 1 auto',
+                minWidth: 0
+              })}
             />
+          </div>
+          <div>
+            <RecentMatches recentMatches={recentMatches} />
+            <div
+              className={css({
+                margin: '25px 0 0'
+              })}
+            >
+              <TopPlayers
+                topPlayersAllTime={topPlayersAllTime}
+                topPlayersMonthly={topPlayersMonthly}
+              />
+            </div>
           </div>
         </div>
       </div>
