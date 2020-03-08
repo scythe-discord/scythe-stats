@@ -1,4 +1,4 @@
-import { FunctionComponent, useCallback } from 'react';
+import { FC, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
@@ -11,7 +11,7 @@ interface Props {
   onClick?: (id: string) => void;
 }
 
-const TimelineCircle: FunctionComponent<Props> = ({
+const TimelineCircle: FC<Props> = ({
   id,
   size,
   className,
@@ -34,7 +34,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
           background: 'transparent',
           cursor: 'pointer',
           padding: 0,
-          margin: 0,
+          margin: 0
         }),
         className
       )}

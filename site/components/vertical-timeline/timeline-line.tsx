@@ -1,4 +1,4 @@
-import { FunctionComponent } from 'react';
+import { FC } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
@@ -8,11 +8,7 @@ interface Props {
   className?: string;
 }
 
-const TimelineLine: FunctionComponent<Props> = ({
-  width,
-  height,
-  className
-}) => {
+const TimelineLine: FC<Props> = ({ width, height, className }) => {
   const [css] = useStyletron();
 
   return (

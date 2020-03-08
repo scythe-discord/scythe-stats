@@ -1,4 +1,4 @@
-import { Fragment, FunctionComponent, ReactNode } from 'react';
+import { Fragment, FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 import PerfectScrollbar from 'react-perfect-scrollbar';
@@ -20,7 +20,7 @@ interface Props {
   onClick?: (key: string) => void;
 }
 
-export const VerticalTimeline: FunctionComponent<Props> = ({
+export const VerticalTimeline: FC<Props> = ({
   elements,
   selected,
   className,

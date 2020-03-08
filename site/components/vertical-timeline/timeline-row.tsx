@@ -1,4 +1,4 @@
-import { FunctionComponent, ReactNode } from 'react';
+import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import { LabelMedium } from 'baseui/typography';
 import { format } from 'timeago.js';
@@ -22,7 +22,7 @@ interface Props {
   };
 }
 
-const TimelineRow: FunctionComponent<Props> = ({ element }) => {
+const TimelineRow: FC<Props> = ({ element }) => {
   const [css] = useStyletron();
 
   return (
