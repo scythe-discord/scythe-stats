@@ -1,6 +1,6 @@
 import { FC, useState, useCallback } from 'react';
 import { useStyletron, withStyle } from 'baseui';
-import { LabelMedium } from 'baseui/typography';
+import { LabelMedium, H1 } from 'baseui/typography';
 import { StyledLink } from 'baseui/link';
 
 import GQL from '../../lib/graphql';
@@ -105,6 +105,17 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
 
   return (
     <Card>
+      <H1
+        overrides={{
+          Block: {
+            style: {
+              marginTop: 0
+            }
+          }
+        }}
+      >
+        Recent Matches
+      </H1>
       <div
         className={css({
           display: 'flex',
