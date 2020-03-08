@@ -23,9 +23,12 @@ by me as a byproduct of trying some random handful of things (and in some parts,
 New features will be coming to the site as (and if) we collect enough data for this stuff to be interesting.
 The current site remains somewhat minimal for the sake of showing what information I currently think is worth showing.
 
-### Is this logging open to abuse?
+### You don't protect your logging with x/y/z!
 
 Yes - these logs are collected from Discord with no verification that players' matches occurred or
-played out in the way they did. I have no reasonable way of telling right from wrong, and so
-I do not intend on being able to control malicious intent (although moderators in the Discord
+played out in the way they did. I have no reasonable way of telling right from wrong (if someone does, let me know),
+and so I do not intend on being able to control malicious intent in the meantime (although moderators in the Discord
 would probably ban/delete those with malicious intent).
+
+
+(it's a fun board game with a site developed by free time - if you want to be malicious, well...)
