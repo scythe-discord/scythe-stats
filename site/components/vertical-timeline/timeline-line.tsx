@@ -20,7 +20,8 @@ const TimelineLine: FunctionComponent<Props> = ({
       viewBox={`0 -${width / 2} ${width} ${height + width}`}
       className={classNames(
         css({
-          width: `${width}px`
+          width: `${width}px`,
+          height: `${height + 2}px`
         }),
         className
       )}

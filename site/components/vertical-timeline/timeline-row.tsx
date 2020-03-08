@@ -7,7 +7,7 @@ import TimelineCircle from './timeline-circle';
 import TimelineLine from './timeline-line';
 
 const DATE_TXT_WIDTH = 125;
-const CIRCLE_SIZE = 20;
+const CIRCLE_SIZE = 25;
 const LINE_WIDTH = 2;
 const LINE_HEIGHT = 50;
 
@@ -29,7 +29,7 @@ const TimelineRow: FunctionComponent<Props> = ({ element }) => {
     <div
       className={css({
         display: 'flex',
-        alignItems: 'center'
+        alignItems: element ? 'center' : 'stretch'
       })}
     >
       <LabelMedium

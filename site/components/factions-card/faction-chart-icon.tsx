@@ -44,18 +44,21 @@ const FactionChartIcon: FC<Props> = ({
   const isSelected = selectedFactionIdx === payload.value;
 
   return (
-    <foreignObject
-      {...props}
-      width={ICON_SIZE}
-      height={ICON_SIZE}
+    <g 
       // Crude way to center the icon on its tick
-      transform="translate(-14)"
-      cursor="pointer"
+      transform="translate(-14)" 
       opacity={isSelected ? 1 : 0.65}
-      onClick={onClick}
+      cursor="pointer"
     >
-      <FactionIcon faction={faction.name} size={ICON_SIZE} />
-    </foreignObject>
+      <foreignObject
+        {...props}
+        width={ICON_SIZE}
+        height={ICON_SIZE}
+        onClick={onClick}
+      >
+        <FactionIcon faction={faction.name} size={ICON_SIZE} />
+      </foreignObject>
+    </g>
   );
 };
 

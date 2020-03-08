@@ -33,7 +33,8 @@ const TimelineCircle: FunctionComponent<Props> = ({
           border: 'none',
           background: 'transparent',
           cursor: 'pointer',
-          padding: 0
+          padding: 0,
+          margin: 0,
         }),
         className
       )}
@@ -59,7 +60,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
           })}
           cx={50}
           cy={50}
-          r={50}
+          r={45}
         />
         {
           <circle
@@ -70,7 +71,7 @@ const TimelineCircle: FunctionComponent<Props> = ({
             })}
             cx={50}
             cy={50}
-            r={30}
+            r={25}
           />
         }
       </svg>
