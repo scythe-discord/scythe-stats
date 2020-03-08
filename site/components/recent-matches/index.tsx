@@ -1,6 +1,6 @@
 import { FC, useState, useCallback } from 'react';
 import { useStyletron, withStyle } from 'baseui';
-import { LabelMedium, H1 } from 'baseui/typography';
+import { H1, LabelSmall } from 'baseui/typography';
 import { StyledLink } from 'baseui/link';
 
 import GQL from '../../lib/graphql';
@@ -146,7 +146,7 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
           rows={matchDetailsRows}
         />
       </div>
-      <LabelMedium
+      <LabelSmall
         overrides={{
           Block: {
             style: {
@@ -168,7 +168,7 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
         >
           Join our Discord!
         </DiscordLink>
-      </LabelMedium>
+      </LabelSmall>
     </Card>
   );
 };
