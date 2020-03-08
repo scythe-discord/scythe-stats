@@ -44,9 +44,9 @@ const FactionChartIcon: FC<Props> = ({
   const isSelected = selectedFactionIdx === payload.value;
 
   return (
-    <g 
+    <g
       // Crude way to center the icon on its tick
-      transform="translate(-14)" 
+      transform="translate(-14)"
       opacity={isSelected ? 1 : 0.65}
       cursor="pointer"
     >
