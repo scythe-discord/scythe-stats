@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
 import { BlockProps } from 'baseui/block';
-import { H1, Label1 } from 'baseui/typography';
+import { HeadingLarge, Label1 } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 
@@ -31,7 +31,8 @@ const TopPlayers: FC<Props> = ({ topPlayersAllTime, topPlayersMonthly }) => {
 
   return (
     <Card>
-      <H1
+      <HeadingLarge
+        as="h1"
         overrides={{
           Block: {
             style: {
@@ -41,7 +42,7 @@ const TopPlayers: FC<Props> = ({ topPlayersAllTime, topPlayersMonthly }) => {
         }}
       >
         Top Players
-      </H1>
+      </HeadingLarge>
       <div
         className={css({
           display: 'flex',

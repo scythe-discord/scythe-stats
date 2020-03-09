@@ -1,6 +1,6 @@
 import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { H1, LabelMedium } from 'baseui/typography';
+import { HeadingLarge, LabelMedium } from 'baseui/typography';
 import dynamic from 'next/dynamic';
 import classNames from 'classnames';
 
@@ -120,17 +120,18 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             flexDirection: 'column'
           })}
         >
-          <H1
+          <HeadingLarge
+            as="h1"
             overrides={{
               Block: {
                 style: {
-                  margin: '50px 0 30px'
+                  margin: '30px 0'
                 }
               }
             }}
           >
             Player Mat Stats
-          </H1>
+          </HeadingLarge>
           <FactionMatStats
             factionMatCombos={selectedFaction.factionMatCombos}
           />
@@ -144,17 +145,18 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             }
           })}
         >
-          <H1
+          <HeadingLarge
+            as="h1"
             overrides={{
               Block: {
                 style: {
-                  margin: '50px 0 30px'
+                  margin: '30px 0'
                 }
               }
             }}
           >
             Win Rates (by player count)
-          </H1>
+          </HeadingLarge>
           <div
             className={css({
               height: '300px',
