@@ -51,7 +51,7 @@ Site.getInitialProps = async appContext => {
 
 export default withApollo(({ initialState }) => {
   return new ApolloClient({
-    uri: 'http://localhost:4000/graphql',
+    uri: process.env.GRAPHQL_API_URL || 'http://localhost:4000/graphql',
     cache: new InMemoryCache().restore(initialState || {})
   });
 })(Site);
