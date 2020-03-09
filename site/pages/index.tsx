@@ -31,9 +31,13 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
       <SiteHeader />
       <div
         className={css({
-          padding: '20px 0',
+          padding: 0,
           margin: '0 auto',
           width: '100%',
+
+          [theme.mediaQuery.medium]: {
+            padding: '20px 0'
+          },
 
           [theme.mediaQuery.large]: {
             padding: '20px',
@@ -55,7 +59,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
             className={css({
               display: 'flex',
               flex: '1 1 auto',
-              margin: '25px 0',
+              margin: '0 0 25px',
               minWidth: 0,
 
               [theme.mediaQuery.large]: {
