@@ -249,11 +249,13 @@ export const resolvers: Schema.Resolvers = {
             datePlayed: match.datePlayed.toString(),
             numRounds: match.numRounds,
             playerResults: playerMatchResults.map(result => ({
+              id: result.id,
               player: result.player,
               faction: result.faction,
               playerMat: result.playerMat,
               coins: result.coins
-            }))
+            })),
+            winner: match.winner
           };
         } catch (error) {
           // Wait some random amount of time so quick bursts of logs
