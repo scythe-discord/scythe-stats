@@ -44,16 +44,10 @@ const RecentMatches: FC<Props> = ({ recentMatches }) => {
 
   const timelineElements: TimelineElement[] = recentMatches.matches.edges.map(
     ({ node }, idx) => {
-      const { id, datePlayed, numRounds, playerResults } = node;
-      let winningResult = playerResults[0];
-
-      for (let i = 0; i < playerResults.length; i++) {
-        const currResult = playerResults[i];
-
-        if (currResult.coins > winningResult.coins) {
-          winningResult = currResult;
-        }
-      }
+      const { id, datePlayed, numRounds, playerResults, winner } = node;
+      // Although hypothetically this never fails to find a winner
+      const winningResult =
+        playerResults.find(({ id }) => id === winner.id) || playerResults[0];
 
       const {
         faction: { name: factionName },

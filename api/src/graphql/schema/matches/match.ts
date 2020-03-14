@@ -15,6 +15,7 @@ export const typeDef = gql`
     datePlayed: String!
     numRounds: Int!
     playerResults: [PlayerMatchResult!]!
+    winner: PlayerMatchResult!
   }
 
   type MatchConnection {
@@ -28,6 +29,7 @@ export const typeDef = gql`
   }
 
   type PlayerMatchResult {
+    id: Int!
     player: Player!
     faction: Faction!
     playerMat: PlayerMat!
@@ -44,7 +46,11 @@ export const resolvers: Schema.Resolvers = {
           'playerMatchResults',
           'playerMatchResults.player',
           'playerMatchResults.faction',
-          'playerMatchResults.playerMat'
+          'playerMatchResults.playerMat',
+          'winner',
+          'winner.player',
+          'winner.faction',
+          'winner.playerMat'
         ],
         order: {
           datePlayed: 'DESC'
@@ -55,6 +61,7 @@ export const resolvers: Schema.Resolvers = {
         id: toGlobalId('Match', match.id.toString()),
         datePlayed: match.datePlayed.toISOString(),
         playerResults: match.playerMatchResults,
+        winner: match.winner,
         numRounds: match.numRounds
       }));
 

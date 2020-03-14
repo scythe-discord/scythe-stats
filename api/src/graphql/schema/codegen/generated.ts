@@ -60,6 +60,7 @@ export type Match = Node & {
   datePlayed: Scalars['String'],
   numRounds: Scalars['Int'],
   playerResults: Array<PlayerMatchResult>,
+  winner: PlayerMatchResult,
 };
 
 export type MatchConnection = {
@@ -146,6 +147,7 @@ export type PlayerMat = {
 
 export type PlayerMatchResult = {
    __typename?: 'PlayerMatchResult',
+  id: Scalars['Int'],
   player: Player,
   faction: Faction,
   playerMat: PlayerMat,
@@ -293,7 +295,7 @@ export type ResolversTypes = ResolversObject<{
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>,
   MatchConnection: ResolverTypeWrapper<Omit<MatchConnection, 'edges'> & { edges: Array<ResolversTypes['MatchEdge']> }>,
   MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
-  Match: ResolverTypeWrapper<Omit<Match, 'playerResults'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']> }>,
+  Match: ResolverTypeWrapper<Omit<Match, 'playerResults' | 'winner'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']>, winner: ResolversTypes['PlayerMatchResult'] }>,
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversTypes['Player'], faction: ResolversTypes['Faction'], playerMat: ResolversTypes['PlayerMat'] }>,
   Mutation: ResolverTypeWrapper<{}>,
   PlayerMatchResultInput: PlayerMatchResultInput,
@@ -321,7 +323,7 @@ export type ResolversParentTypes = ResolversObject<{
   Boolean: Scalars['Boolean'],
   MatchConnection: Omit<MatchConnection, 'edges'> & { edges: Array<ResolversParentTypes['MatchEdge']> },
   MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
-  Match: Omit<Match, 'playerResults'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']> },
+  Match: Omit<Match, 'playerResults' | 'winner'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']>, winner: ResolversParentTypes['PlayerMatchResult'] },
   PlayerMatchResult: Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversParentTypes['Player'], faction: ResolversParentTypes['Faction'], playerMat: ResolversParentTypes['PlayerMat'] },
   Mutation: {},
   PlayerMatchResultInput: PlayerMatchResultInput,
@@ -366,6 +368,7 @@ export type MatchResolvers<ContextType = any, ParentType extends ResolversParent
   datePlayed?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   numRounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   playerResults?: Resolver<Array<ResolversTypes['PlayerMatchResult']>, ParentType, ContextType>,
+  winner?: Resolver<ResolversTypes['PlayerMatchResult'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
 }>;
 
@@ -433,6 +436,7 @@ export type PlayerMatResolvers<ContextType = any, ParentType extends ResolversPa
 }>;
 
 export type PlayerMatchResultResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerMatchResult'] = ResolversParentTypes['PlayerMatchResult']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   player?: Resolver<ResolversTypes['Player'], ParentType, ContextType>,
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,

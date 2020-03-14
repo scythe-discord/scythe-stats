@@ -57,6 +57,7 @@ export type Match = Node & {
   datePlayed: Scalars['String'],
   numRounds: Scalars['Int'],
   playerResults: Array<PlayerMatchResult>,
+  winner: PlayerMatchResult,
 };
 
 export type MatchConnection = {
@@ -143,6 +144,7 @@ export type PlayerMat = {
 
 export type PlayerMatchResult = {
    __typename?: 'PlayerMatchResult',
+  id: Scalars['Int'],
   player: Player,
   faction: Faction,
   playerMat: PlayerMat,
@@ -247,7 +249,7 @@ export type MatchesQuery = (
         & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
         & { playerResults: Array<(
           { __typename?: 'PlayerMatchResult' }
-          & Pick<PlayerMatchResult, 'coins'>
+          & Pick<PlayerMatchResult, 'id' | 'coins'>
           & { player: (
             { __typename?: 'Player' }
             & Pick<Player, 'id' | 'displayName' | 'steamId'>
@@ -258,7 +260,10 @@ export type MatchesQuery = (
             { __typename?: 'PlayerMat' }
             & Pick<PlayerMat, 'id' | 'name'>
           ) }
-        )> }
+        )>, winner: (
+          { __typename?: 'PlayerMatchResult' }
+          & Pick<PlayerMatchResult, 'id'>
+        ) }
       ) }
     )> }
   ) }
@@ -355,6 +360,7 @@ export const MatchesDocument = gql`
         datePlayed
         numRounds
         playerResults {
+          id
           player {
             id
             displayName
@@ -369,6 +375,9 @@ export const MatchesDocument = gql`
             name
           }
           coins
+        }
+        winner {
+          id
         }
       }
       cursor

@@ -6,6 +6,7 @@ query matches($first: Int!, $after: String) {
         datePlayed
         numRounds
         playerResults {
+          id
           player {
             id
             displayName
@@ -20,6 +21,9 @@ query matches($first: Int!, $after: String) {
             name
           }
           coins
+        }
+        winner {
+          id
         }
       }
       cursor
