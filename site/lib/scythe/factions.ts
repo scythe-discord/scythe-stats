@@ -1,11 +1,13 @@
+import { PUBLIC_ASSETS_URL } from '../env';
+
 const FACTION_EMBLEMS: { [key: string]: string } = {
-  Polania: '/factions/polania-icon.png',
-  Saxony: '/factions/saxony-icon.png',
-  Crimean: '/factions/crimean-icon.png',
-  Nordic: '/factions/nordic-icon.png',
-  Rusviet: '/factions/rusviet-icon.png',
-  Albion: '/factions/albion-icon.png',
-  Togawa: '/factions/togawa-icon.png'
+  Polania: `${PUBLIC_ASSETS_URL}/faction-icons/polania.png`,
+  Saxony: `${PUBLIC_ASSETS_URL}/faction-icons/saxony.png`,
+  Crimean: `${PUBLIC_ASSETS_URL}/faction-icons/crimean.png`,
+  Nordic: `${PUBLIC_ASSETS_URL}/faction-icons/nordic.png`,
+  Rusviet: `${PUBLIC_ASSETS_URL}/faction-icons/rusviet.png`,
+  Albion: `${PUBLIC_ASSETS_URL}/faction-icons/albion.png`,
+  Togawa: `${PUBLIC_ASSETS_URL}/faction-icons/togawa.png`
 };
 
 export const getFactionEmblem = (factionName: string) =>
