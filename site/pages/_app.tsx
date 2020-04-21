@@ -9,6 +9,7 @@ import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import { styletron, debug } from '../styletron';
 import Theme from '../lib/theme';
+import { GRAPHQL_API_URL } from '../lib/env';
 
 interface Props {
   apollo: ApolloClient<any>;
@@ -51,7 +52,7 @@ Site.getInitialProps = async appContext => {
 
 export default withApollo(({ initialState }) => {
   return new ApolloClient({
-    uri: process.env.GRAPHQL_API_URL || 'http://localhost:4000/graphql',
+    uri: GRAPHQL_API_URL,
     cache: new InMemoryCache().restore(initialState || {})
   });
 })(Site);

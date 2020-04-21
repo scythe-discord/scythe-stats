@@ -3,7 +3,7 @@ import { GraphQLClient } from 'graphql-request';
 
 import {
   GAME_LOG_PREFIX,
-  GRAPHQL_SERVER_URL,
+  GRAPHQL_API_URL,
   GRAPHQL_SERVER_BASIC_AUTH
 } from '../common/config';
 
@@ -33,7 +33,7 @@ export const handleLogRequest = async (message: Message): Promise<void> => {
 
   try {
     const gqlClient = new GraphQLClient(
-      GRAPHQL_SERVER_URL,
+      GRAPHQL_API_URL,
       GRAPHQL_SERVER_BASIC_AUTH
         ? {
             headers: {
