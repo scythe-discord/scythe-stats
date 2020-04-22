@@ -34,7 +34,7 @@ interface Props {
 const FactionWinRatesByPlayerCount: FC<Props> = ({
   factionStatsByPlayerCount
 }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
   const data = factionStatsByPlayerCount.map(
     ({ playerCount, totalMatches, totalWins }) => {
       const winRate = (100 * totalWins) / totalMatches;
@@ -72,7 +72,7 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
             <div
               className={css({
                 display: 'inline-flex',
-                color: '#212121',
+                color: theme.colors.primary600,
                 cursor: 'pointer',
                 margin: '0 7px'
               })}

@@ -25,7 +25,11 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
   const [css, theme] = useStyletron();
 
   return (
-    <div>
+    <div
+      className={css({
+        backgroundColor: theme.colors.primary50
+      })}
+    >
       <SiteHeader />
       <div
         className={css({

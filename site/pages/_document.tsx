@@ -56,7 +56,6 @@ class MyDocument extends Document<Props> {
                 // have to BaseWeb-ify everything (like other libraries)
                 PRIMARY_FONT_FAMILY
               };
-              background-color: #fcfcfc;
               margin: 0;
             }
             

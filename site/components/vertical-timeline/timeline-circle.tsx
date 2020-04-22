@@ -65,7 +65,7 @@ const TimelineCircle: FC<Props> = ({
         {
           <circle
             className={css({
-              fill: isSelected ? '#419fff' : 'white',
+              fill: isSelected ? '#419fff' : theme.colors.primaryB,
               stroke: 'none',
               transition: `fill ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`
             })}

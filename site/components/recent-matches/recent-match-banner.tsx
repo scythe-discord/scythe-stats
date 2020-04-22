@@ -53,7 +53,9 @@ const RecentMatchBanner: FC<Props> = ({
           ? '#daecff'
           : theme.colors.backgroundPrimary,
         cursor: 'pointer',
-        border: `${isSelected ? '2px' : '1px'} solid #212121`,
+        border: `${isSelected ? '2px' : '1px'} solid ${
+          theme.colors.primary600
+        }`,
         // Decrease padding when selected to preserve the same dimensions
         padding: `${isSelected ? '4px' : '5px'} ${
           isSelected ? '14px' : '15px'
