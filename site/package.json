@@ -22,6 +22,7 @@
     "@types/styletron-engine-atomic": "^1.1.0",
     "@types/styletron-react": "^5.0.2",
     "@types/styletron-standard": "^2.0.0",
+    "@types/url-join": "^4.0.0",
     "@zeit/next-css": "^1.0.1",
     "apollo-boost": "^0.4.7",
     "baseui": "^9.60.1",
@@ -36,7 +37,8 @@
     "recharts": "^2.0.0-beta.1",
     "styletron-engine-atomic": "^1.4.6",
     "styletron-react": "^5.2.7",
-    "timeago.js": "^4.0.2"
+    "timeago.js": "^4.0.2",
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.12.1",
