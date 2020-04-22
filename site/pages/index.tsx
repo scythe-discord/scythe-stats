@@ -13,14 +13,12 @@ import GQL from '../lib/graphql';
 
 interface Props {
   factionStats: GQL.FactionStatsQuery;
-  recentMatches: GQL.MatchesQuery;
   topPlayersAllTime: GQL.TopPlayersQuery;
   topPlayersMonthly: GQL.TopPlayersQuery;
 }
 
 const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
   factionStats,
-  recentMatches,
   topPlayersMonthly,
   topPlayersAllTime
 }) => {
@@ -76,7 +74,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
             />
           </div>
           <div>
-            <RecentMatches recentMatches={recentMatches} />
+            <RecentMatches />
             <div
               className={css({
                 margin: '25px 0 0'
@@ -106,15 +104,6 @@ HomePage.getInitialProps = async ctx => {
       numTopPlayers: 1
     }
   });
-  const { data: recentMatches } = await apolloClient.query<
-    GQL.MatchesQuery,
-    GQL.MatchesQueryVariables
-  >({
-    query: GQL.MatchesDocument,
-    variables: {
-      first: 10
-    }
-  });
   const { data: topPlayersAllTime } = await apolloClient.query<
     GQL.TopPlayersQuery,
     GQL.TopPlayersQueryVariables
@@ -139,7 +128,6 @@ HomePage.getInitialProps = async ctx => {
 
   return {
     factionStats,
-    recentMatches,
     topPlayersAllTime,
     topPlayersMonthly
   };
