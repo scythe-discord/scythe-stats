@@ -32,7 +32,7 @@ const DiscordLink = withStyle(StyledLink as any, {
 const RecentMatches: FC = () => {
   const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
-  const { data: recentMatches, loading } = GQL.useMatchesQuery({
+  const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
     variables: {
       first: 10
@@ -53,9 +53,52 @@ const RecentMatches: FC = () => {
     [recentMatches]
   );
 
+  const onLoadMore = useCallback(
+    (page: number) => {
+      if (!recentMatches || page === 0) {
+        return;
+      }
+
+      const {
+        matches: {
+          pageInfo: { hasNextPage, endCursor }
+        }
+      } = recentMatches;
+
+      if (!hasNextPage || !endCursor) {
+        return;
+      }
+
+      fetchMore({
+        variables: {
+          after: endCursor
+        },
+        updateQuery: (prev, { fetchMoreResult }) => {
+          if (!fetchMoreResult) {
+            return prev;
+          }
+
+          return {
+            ...prev,
+            matches: {
+              ...prev.matches,
+              edges: [...prev.matches.edges, ...fetchMoreResult.matches.edges],
+              pageInfo: {
+                ...prev.matches.pageInfo,
+                hasNextPage: fetchMoreResult.matches.pageInfo.hasNextPage,
+                endCursor: fetchMoreResult.matches.pageInfo.endCursor
+              }
+            }
+          };
+        }
+      });
+    },
+    [recentMatches]
+  );
+
   let content = null;
 
-  if (loading) {
+  if (loading && !recentMatches) {
     content = (
       <div
         className={css({
@@ -167,6 +210,8 @@ const RecentMatches: FC = () => {
             onClick={onMatchClick}
             width={TIMELINE_WIDTH}
             maxHeight={TIMELINE_HEIGHT}
+            loadMore={onLoadMore}
+            hasMore={recentMatches.matches.pageInfo.hasNextPage}
           />
           <MatchDetails
             className={css({

@@ -9,8 +9,8 @@ export const typeDef = gql`
   }
 
   type PageInfo {
-    hasNextPage: Boolean
-    hasPreviousPage: Boolean
+    hasNextPage: Boolean!
+    hasPreviousPage: Boolean!
     startCursor: String
     endCursor: String
   }
@@ -20,7 +20,7 @@ export const resolvers: Schema.Resolvers = {
   // @ts-ignore: TS complains that the type string may not be a type of
   // an actual Node, but having this actually happen in practice in unlikely
   Node: {
-    __resolveType: (node) => {
+    __resolveType: node => {
       const { type } = fromGlobalId(node.id);
 
       return type;

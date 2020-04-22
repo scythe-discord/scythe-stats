@@ -91,8 +91,8 @@ export type Node = {
 
 export type PageInfo = {
    __typename?: 'PageInfo',
-  hasNextPage?: Maybe<Scalars['Boolean']>,
-  hasPreviousPage?: Maybe<Scalars['Boolean']>,
+  hasNextPage: Scalars['Boolean'],
+  hasPreviousPage: Scalars['Boolean'],
   startCursor?: Maybe<Scalars['String']>,
   endCursor?: Maybe<Scalars['String']>,
 };
@@ -243,7 +243,6 @@ export type MatchesQuery = (
     { __typename?: 'MatchConnection' }
     & { edges: Array<(
       { __typename?: 'MatchEdge' }
-      & Pick<MatchEdge, 'cursor'>
       & { node: (
         { __typename?: 'Match' }
         & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
@@ -265,7 +264,10 @@ export type MatchesQuery = (
           & Pick<PlayerMatchResult, 'id'>
         ) }
       ) }
-    )> }
+    )>, pageInfo: (
+      { __typename?: 'PageInfo' }
+      & Pick<PageInfo, 'hasNextPage' | 'endCursor'>
+    ) }
   ) }
 );
 
@@ -380,7 +382,10 @@ export const MatchesDocument = gql`
           id
         }
       }
-      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }

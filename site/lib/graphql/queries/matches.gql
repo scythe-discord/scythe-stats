@@ -26,7 +26,10 @@ query matches($first: Int!, $after: String) {
           id
         }
       }
-      cursor
+    }
+    pageInfo {
+      hasNextPage
+      endCursor
     }
   }
 }

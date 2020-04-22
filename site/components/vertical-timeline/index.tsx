@@ -2,6 +2,7 @@ import { Fragment, FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 import PerfectScrollbar from 'react-perfect-scrollbar';
+import InfiniteScroll from 'react-infinite-scroller';
 
 import TimelineRow from './timeline-row';
 
@@ -20,6 +21,8 @@ interface Props {
   maxHeight: string;
   className?: string;
   onClick?: (key: string) => void;
+  loadMore?: (page: number) => void;
+  hasMore?: boolean;
 }
 
 export const VerticalTimeline: FC<Props> = ({
@@ -28,43 +31,54 @@ export const VerticalTimeline: FC<Props> = ({
   width,
   maxHeight,
   className,
-  onClick
+  onClick,
+  loadMore,
+  hasMore
 }) => {
   const [css] = useStyletron();
 
+  const timelineElements = elements.map(
+    ({ key, isSelectable, content, rawContentDescriptor, date }, i) => {
+      const isSelected = i === selected;
+      const hasPrev = i > 0;
+
+      return (
+        <Fragment key={key}>
+          {hasPrev && <TimelineRow />}
+          <TimelineRow
+            element={{
+              id: key,
+              isSelected,
+              content,
+              rawContentDescriptor,
+              date,
+              onClick: isSelectable ? onClick : undefined
+            }}
+          />
+        </Fragment>
+      );
+    }
+  );
+
   return (
-    <PerfectScrollbar
+    <div
       className={classNames(
         css({
           padding: '5px 0',
           width,
-          maxHeight
+          maxHeight,
+          overflow: 'auto'
         }),
         className
       )}
     >
-      {elements.map(
-        ({ key, isSelectable, content, rawContentDescriptor, date }, i) => {
-          const isSelected = i === selected;
-          const hasPrev = i > 0;
-
-          return (
-            <Fragment key={key}>
-              {hasPrev && <TimelineRow />}
-              <TimelineRow
-                element={{
-                  id: key,
-                  isSelected,
-                  content,
-                  rawContentDescriptor,
-                  date,
-                  onClick: isSelectable ? onClick : undefined
-                }}
-              />
-            </Fragment>
-          );
-        }
+      {loadMore && hasMore !== undefined ? (
+        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} useWindow={false}>
+          {timelineElements}
+        </InfiniteScroll>
+      ) : (
+        timelineElements
       )}
-    </PerfectScrollbar>
+    </div>
   );
 };
