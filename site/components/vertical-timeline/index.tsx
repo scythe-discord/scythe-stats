@@ -1,10 +1,10 @@
 import { Fragment, FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import classNames from 'classnames';
-import PerfectScrollbar from 'react-perfect-scrollbar';
 import InfiniteScroll from 'react-infinite-scroller';
 
 import TimelineRow from './timeline-row';
+import TimelineSpacer from './timeline-spacer';
 
 export interface TimelineElement {
   key: string;
@@ -44,16 +44,14 @@ export const VerticalTimeline: FC<Props> = ({
 
       return (
         <Fragment key={key}>
-          {hasPrev && <TimelineRow />}
+          {hasPrev && <TimelineSpacer />}
           <TimelineRow
-            element={{
-              id: key,
-              isSelected,
-              content,
-              rawContentDescriptor,
-              date,
-              onClick: isSelectable ? onClick : undefined
-            }}
+            id={key}
+            isSelected={isSelected}
+            content={content}
+            rawContentDescriptor={rawContentDescriptor}
+            date={date}
+            onClick={isSelectable ? onClick : undefined}
           />
         </Fragment>
       );
