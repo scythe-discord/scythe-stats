@@ -16,6 +16,8 @@ export interface TimelineElement {
 interface Props {
   elements: TimelineElement[];
   selected: number;
+  width: string;
+  maxHeight: string;
   className?: string;
   onClick?: (key: string) => void;
 }
@@ -23,6 +25,8 @@ interface Props {
 export const VerticalTimeline: FC<Props> = ({
   elements,
   selected,
+  width,
+  maxHeight,
   className,
   onClick
 }) => {
@@ -33,8 +37,8 @@ export const VerticalTimeline: FC<Props> = ({
       className={classNames(
         css({
           padding: '5px 0',
-          width: '550px',
-          maxHeight: '450px'
+          width,
+          maxHeight
         }),
         className
       )}

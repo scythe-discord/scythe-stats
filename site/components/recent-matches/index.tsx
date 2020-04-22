@@ -11,6 +11,9 @@ import MatchDetails from '../match-details';
 
 import RecentMatchBanner from './recent-match-banner';
 
+const TIMELINE_WIDTH = '550px';
+const TIMELINE_HEIGHT = '450px';
+
 const DiscordLink = withStyle(StyledLink as any, {
   // Some attempt at mimicking Discord blurple
   color: '#304eb6',
@@ -59,8 +62,11 @@ const RecentMatches: FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '550px',
-          height: '450px'
+          height: TIMELINE_HEIGHT,
+
+          [theme.mediaQuery.large]: {
+            width: TIMELINE_WIDTH
+          }
         })}
       >
         <StyledSpinnerNext />
@@ -73,8 +79,12 @@ const RecentMatches: FC = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'center',
-          width: '550px',
-          height: '450px'
+          width: TIMELINE_WIDTH,
+          height: TIMELINE_HEIGHT,
+
+          [theme.mediaQuery.large]: {
+            width: TIMELINE_WIDTH
+          }
         })}
       >
         We failed to load recent matches :(
@@ -155,6 +165,8 @@ const RecentMatches: FC = () => {
             elements={timelineElements}
             selected={selected}
             onClick={onMatchClick}
+            width={TIMELINE_WIDTH}
+            maxHeight={TIMELINE_HEIGHT}
           />
           <MatchDetails
             className={css({
