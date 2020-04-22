@@ -3,7 +3,7 @@ import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 
 interface Props {
-  id: string;
+  id?: string;
   isSelected: boolean;
   size: number;
   rawContentDescriptor: string;
@@ -21,7 +21,7 @@ const TimelineCircle: FC<Props> = ({
 }) => {
   const [css, theme] = useStyletron();
   const onClickWithId = useCallback(() => {
-    if (onClick) {
+    if (onClick && id) {
       onClick(id);
     }
   }, [onClick, id]);

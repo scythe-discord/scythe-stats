@@ -9,7 +9,7 @@ const CenteredHeadCell = withStyle(StyledHeadCell, {
   alignItems: 'center'
 });
 
-interface MatchDetailsRow {
+export interface MatchDetailsRow {
   playerName: string;
   faction: string;
   playerMat: string;
@@ -21,7 +21,7 @@ interface Props {
   className?: string;
 }
 
-const MatchDetails: FC<Props> = ({ rows, className }) => {
+export const MatchDetails: FC<Props> = ({ rows, className }) => {
   return (
     <StyledTable
       className={className}
@@ -38,5 +38,3 @@ const MatchDetails: FC<Props> = ({ rows, className }) => {
     </StyledTable>
   );
 };
-
-export default MatchDetails;

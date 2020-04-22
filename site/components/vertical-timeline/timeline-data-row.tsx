@@ -15,7 +15,7 @@ interface Props {
   onClick?: (id: string) => void;
 }
 
-const TimelineRow: FC<Props> = ({
+const TimelineDataRow: FC<Props> = ({
   id,
   isSelected,
   content,
@@ -73,4 +73,4 @@ const TimelineRow: FC<Props> = ({
   );
 };
 
-export default TimelineRow;
+export default TimelineDataRow;

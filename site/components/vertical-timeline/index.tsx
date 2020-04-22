@@ -3,7 +3,8 @@ import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 import InfiniteScroll from 'react-infinite-scroller';
 
-import TimelineRow from './timeline-row';
+import TimelineDataRow from './timeline-data-row';
+import TimelineSkeletonRow from './timeline-skeleton-row';
 import TimelineSpacer from './timeline-spacer';
 
 export interface TimelineElement {
@@ -22,7 +23,9 @@ interface Props {
   className?: string;
   onClick?: (key: string) => void;
   loadMore?: (page: number) => void;
+  isLoading?: boolean;
   hasMore?: boolean;
+  numLoadingElements?: number;
 }
 
 export const VerticalTimeline: FC<Props> = ({
@@ -33,7 +36,9 @@ export const VerticalTimeline: FC<Props> = ({
   className,
   onClick,
   loadMore,
-  hasMore
+  isLoading,
+  hasMore,
+  numLoadingElements
 }) => {
   const [css] = useStyletron();
 
@@ -45,7 +50,7 @@ export const VerticalTimeline: FC<Props> = ({
       return (
         <Fragment key={key}>
           {hasPrev && <TimelineSpacer />}
-          <TimelineRow
+          <TimelineDataRow
             id={key}
             isSelected={isSelected}
             content={content}
@@ -57,6 +62,17 @@ export const VerticalTimeline: FC<Props> = ({
       );
     }
   );
+
+  if (isLoading && numLoadingElements) {
+    for (let i = 0; i < numLoadingElements; i++) {
+      timelineElements.push(
+        <>
+          {timelineElements.length > 0 ? <TimelineSpacer /> : null}
+          <TimelineSkeletonRow />
+        </>
+      );
+    }
+  }
 
   return (
     <div
