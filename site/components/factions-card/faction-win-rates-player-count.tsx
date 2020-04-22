@@ -12,7 +12,6 @@ import {
   CartesianGrid,
   Tooltip,
   Legend,
-  LegendValueFormatter
 } from 'recharts';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
@@ -32,7 +31,7 @@ interface Props {
 }
 
 const FactionWinRatesByPlayerCount: FC<Props> = ({
-  factionStatsByPlayerCount
+  factionStatsByPlayerCount,
 }) => {
   const [css, theme] = useStyletron();
   const data = factionStatsByPlayerCount.map(
@@ -42,12 +41,12 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
       return {
         playerCount,
         value: winRate,
-        basis: 100 / playerCount
+        basis: 100 / playerCount,
       };
     }
   );
 
-  const renderLegendContent: LegendValueFormatter = value => {
+  const renderLegendContent = (value: string) => {
     if (value === EXPECTED_WIN_RATE_LINE_NAME) {
       return (
         <LabelMedium
@@ -55,9 +54,9 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
             Block: {
               style: {
                 display: 'inline-flex',
-                alignItems: 'center'
-              }
-            }
+                alignItems: 'center',
+              },
+            },
           }}
         >
           {value}
@@ -74,7 +73,7 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
                 display: 'inline-flex',
                 color: theme.colors.primary600,
                 cursor: 'pointer',
-                margin: '0 7px'
+                margin: '0 7px',
               })}
             >
               <FontAwesomeIcon icon={faInfo} size="xs" />
@@ -89,9 +88,9 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
         overrides={{
           Block: {
             style: {
-              display: 'inline'
-            }
-          }
+              display: 'inline',
+            },
+          },
         }}
       >
         {value}
@@ -108,11 +107,11 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
     >
       <LineChart data={data}>
         <Tooltip
-          formatter={(value, name) => {
+          formatter={(value: string, name: string) => {
             const winRate = `${Number(value).toFixed(2)}%`;
             const capitalizedName = name
               .split(' ')
-              .map(s => s.charAt(0).toUpperCase() + s.substring(1))
+              .map((s) => s.charAt(0).toUpperCase() + s.substring(1))
               .join(' ');
             return [winRate, capitalizedName];
           }}
@@ -124,7 +123,7 @@ const FactionWinRatesByPlayerCount: FC<Props> = ({
         <XAxis dataKey="playerCount" />
         <YAxis
           width={40}
-          tickFormatter={val => {
+          tickFormatter={(val) => {
             return `${val}%`;
           }}
         />

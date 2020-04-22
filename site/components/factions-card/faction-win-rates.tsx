@@ -7,7 +7,7 @@ import {
   XAxis,
   YAxis,
   CartesianGrid,
-  Tooltip
+  Tooltip,
 } from 'recharts';
 
 import GQL from '../../lib/graphql';
@@ -23,7 +23,7 @@ interface Props {
 const FactionWinRates: FC<Props> = ({
   factions,
   selectedFactionIdx,
-  onClickFaction
+  onClickFaction,
 }) => {
   const onClickBar = useCallback(
     ({ idx }) => {
@@ -37,7 +37,7 @@ const FactionWinRates: FC<Props> = ({
 
     return {
       idx,
-      value: winRate
+      value: winRate,
     };
   });
 
@@ -51,9 +51,11 @@ const FactionWinRates: FC<Props> = ({
       >
         <Tooltip
           cursor={{
-            fill: '#ededed'
+            // @ts-ignore - because for some reason this works in recharts beta
+            fill: '#ededed',
+            strokeDasharray: 'none',
           }}
-          formatter={value => {
+          formatter={(value: string) => {
             const winRate = `${Number(value).toFixed(2)}%`;
             return [winRate, 'Win Rate'];
           }}
@@ -75,7 +77,7 @@ const FactionWinRates: FC<Props> = ({
         />
         <YAxis
           width={40}
-          tickFormatter={val => {
+          tickFormatter={(val) => {
             return `${val}%`;
           }}
         />
