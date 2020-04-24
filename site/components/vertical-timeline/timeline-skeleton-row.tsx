@@ -7,8 +7,8 @@ import { DATE_TXT_WIDTH, CIRCLE_SIZE } from './dimensions';
 import TimelineCircle from './timeline-circle';
 
 const LOADING_ELLIPSES_SIZE = '5px';
-const SKELETON_CONTENT_WIDTH = '300px';
-const SKELETON_CONTENT_HEIGHT = '40px';
+const SKELETON_CONTENT_WIDTH = 300;
+const SKELETON_CONTENT_HEIGHT = 40;
 
 const LoadingEllipses: FC = () => {
   const [css, theme] = useStyletron();
@@ -16,8 +16,9 @@ const LoadingEllipses: FC = () => {
     <>
       {Array(3)
         .fill(null)
-        .map(() => (
+        .map((_, i) => (
           <svg
+            key={i}
             viewBox={`0 0 100 100`}
             className={css({
               display: 'block',
@@ -45,7 +46,11 @@ const LoadingEllipses: FC = () => {
   );
 };
 
-const TimelineSkeletonRow: FC = () => {
+interface Props {
+  idx: number;
+}
+
+const TimelineSkeletonRow: FC<Props> = ({ idx }) => {
   const [css, theme] = useStyletron();
 
   return (
@@ -92,12 +97,13 @@ const TimelineSkeletonRow: FC = () => {
         })}
       >
         <ContentLoader
+          uniqueKey={`${idx}`}
           className={css({
             display: 'block'
           })}
           speed={2}
-          width={SKELETON_CONTENT_WIDTH}
-          height={SKELETON_CONTENT_HEIGHT}
+          width={`${SKELETON_CONTENT_WIDTH}px`}
+          height={`${SKELETON_CONTENT_HEIGHT}px`}
           viewBox={`0 0 ${SKELETON_CONTENT_WIDTH} ${SKELETON_CONTENT_HEIGHT}`}
           backgroundColor={theme.colors.primary100}
           foregroundColor={theme.colors.primary200}
@@ -107,8 +113,8 @@ const TimelineSkeletonRow: FC = () => {
             y="0"
             rx="3"
             ry="3"
-            width={SKELETON_CONTENT_WIDTH}
-            height={SKELETON_CONTENT_HEIGHT}
+            width={`${SKELETON_CONTENT_WIDTH}px`}
+            height={`${SKELETON_CONTENT_HEIGHT}px`}
           />
         </ContentLoader>
       </div>

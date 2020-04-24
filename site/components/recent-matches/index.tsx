@@ -14,13 +14,13 @@ import RecentMatchBanner from './recent-match-banner';
 const INIT_NUM_LOADING_ELEMENTS = 5; // i.e. for the initial load
 const DEFAULT_NUM_LOADING_ELEMENTS = 3;
 
-const TIMELINE_WIDTH = '550px';
-const TIMELINE_HEIGHT = '450px';
+const TIMELINE_WIDTH = 550;
+const TIMELINE_HEIGHT = 450;
 
 // Intended to style the table such that changes in height
 // (more or less players) do not shift container sizes
 // Height reflects a max 7 player game
-const MIN_MATCH_DETAILS_HEIGHT = '315px';
+const MIN_MATCH_DETAILS_HEIGHT = 315;
 
 const DiscordLink = withStyle(StyledLink as any, {
   // Some attempt at mimicking Discord blurple
@@ -195,8 +195,8 @@ const RecentMatches: FC = () => {
           elements={timelineElements}
           selected={selected}
           onClick={onMatchClick}
-          width={TIMELINE_WIDTH}
-          maxHeight={TIMELINE_HEIGHT}
+          width={`${TIMELINE_WIDTH}px`}
+          maxHeight={`${TIMELINE_HEIGHT}px`}
           loadMore={onLoadMore}
           hasMore={
             recentMatches ? recentMatches.matches.pageInfo.hasNextPage : false
@@ -212,7 +212,7 @@ const RecentMatches: FC = () => {
           <MatchDetails
             className={css({
               gridTemplateRows: '45px',
-              minHeight: MIN_MATCH_DETAILS_HEIGHT,
+              minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
               margin: '40px 0 0'
             })}
             rows={matchDetailsRows}
@@ -223,18 +223,19 @@ const RecentMatches: FC = () => {
               margin: '40px 0 0'
             })}
             speed={2}
-            width={TIMELINE_WIDTH}
-            height={MIN_MATCH_DETAILS_HEIGHT}
+            width={`${TIMELINE_WIDTH}px`}
+            height={`${MIN_MATCH_DETAILS_HEIGHT}px`}
             viewBox={`0 0 ${TIMELINE_WIDTH} ${MIN_MATCH_DETAILS_HEIGHT}`}
             backgroundColor={theme.colors.primary100}
             foregroundColor={theme.colors.primary200}
+            uniqueKey="match-details"
           >
             <rect
               x="0"
               y="0"
               rx="3"
               ry="3"
-              width={TIMELINE_WIDTH}
+              width={`${TIMELINE_WIDTH}px`}
               height={MIN_MATCH_DETAILS_HEIGHT}
             />
           </ContentLoader>

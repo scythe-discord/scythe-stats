@@ -66,10 +66,10 @@ export const VerticalTimeline: FC<Props> = ({
   if (isLoading && numLoadingElements) {
     for (let i = 0; i < numLoadingElements; i++) {
       timelineElements.push(
-        <>
+        <Fragment key={i}>
           {timelineElements.length > 0 ? <TimelineSpacer /> : null}
-          <TimelineSkeletonRow />
-        </>
+          <TimelineSkeletonRow idx={timelineElements.length} />
+        </Fragment>
       );
     }
   }
