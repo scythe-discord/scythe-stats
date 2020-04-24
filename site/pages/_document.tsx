@@ -65,11 +65,6 @@ class MyDocument extends Document<Props> {
               box-sizing: inherit;
               font-family: inherit;
             }
-
-            /* https://github.com/mdbootstrap/perfect-scrollbar/issues/792 */
-            .ps__rail-y {
-              left: auto !important;
-            }
           `
             }}
           />

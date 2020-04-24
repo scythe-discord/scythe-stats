@@ -5,7 +5,6 @@ import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from 'next-with-apollo';
 import { BaseProvider } from 'baseui';
 import { Provider as StyletronProvider } from 'styletron-react';
-import 'react-perfect-scrollbar/dist/css/styles.css';
 
 import { styletron, debug } from '../styletron';
 import Theme from '../lib/theme';
