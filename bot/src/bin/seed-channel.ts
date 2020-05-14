@@ -4,7 +4,7 @@ import {
   BOT_TOKEN,
   GUILD_ID,
   VANILLA_LOG_CHANNEL_ID,
-  GAME_LOG_PREFIX
+  GAME_LOG_PREFIX,
 } from '../common/config';
 import { delay } from '../common/utils';
 import { handleLogRequest } from '../logger';
@@ -19,32 +19,37 @@ const fetchAndLogMessages = async (
   channel: TextChannel,
   before: string | null
 ): Promise<string | null> => {
-  const messages = await channel.fetchMessages({
+  const messages = await channel.messages.fetch({
     limit: REQUEST_LIMIT,
-    before: before ? before : undefined
+    before: before ? before : undefined,
   });
 
   if (messages.size == 0) {
     return null;
   }
 
-  messages.forEach(async message => {
+  messages.forEach(async (message) => {
     if (message.content.startsWith(GAME_LOG_PREFIX)) {
       await handleLogRequest(message);
     }
   });
 
-  return messages.last().id;
+  const lastSeen = messages.last();
+  if (!lastSeen) {
+    return null;
+  }
+
+  return lastSeen.id;
 };
 
 client.on('ready', async () => {
-  const scytheGuild = client.guilds.get(GUILD_ID);
+  const scytheGuild = client.guilds.cache.get(GUILD_ID);
 
   if (!scytheGuild) {
     throw new Error(`Unable to find guild with ID ${GUILD_ID}`);
   }
 
-  const logChannel = scytheGuild.channels.get(
+  const logChannel = scytheGuild.channels.cache.get(
     VANILLA_LOG_CHANNEL_ID
   ) as TextChannel;
 

@@ -6,10 +6,12 @@ import { handleLogRequest } from './logger';
 const client = new Discord.Client();
 
 client.on('ready', () => {
-  console.log(`Logged in as ${client.user.tag}!`);
+  if (client.user) {
+    console.log(`Logged in as ${client.user.tag}!`);
+  }
 });
 
-client.on('message', message => {
+client.on('message', (message) => {
   if (message.content.startsWith(GAME_LOG_PREFIX)) {
     handleLogRequest(message);
   }
