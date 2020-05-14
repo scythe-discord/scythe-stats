@@ -10,20 +10,20 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
-    "@types/graphql-relay": "^0.4.11",
-    "@types/lodash": "^4.14.149",
-    "apollo-server": "^2.9.16",
-    "graphql": "^14.5.8",
+    "@types/graphql-relay": "^0.6.0",
+    "@types/lodash": "^4.14.150",
+    "apollo-server": "^2.13.1",
+    "graphql": "^15.0.0",
     "graphql-relay": "^0.6.0",
     "lodash": "^4.17.15",
-    "pg": "^7.17.1",
+    "pg": "^8.2.0",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.22"
+    "typeorm": "^0.2.24"
   },
   "devDependencies": {
-    "@graphql-codegen/cli": "^1.11.2",
-    "@graphql-codegen/typescript": "^1.11.2",
-    "@graphql-codegen/typescript-resolvers": "^1.12.1",
+    "@graphql-codegen/cli": "^1.13.5",
+    "@graphql-codegen/typescript": "^1.13.5",
+    "@graphql-codegen/typescript-resolvers": "^1.13.5",
     "sequelize-cli": "^5.5.1"
   }
 }
