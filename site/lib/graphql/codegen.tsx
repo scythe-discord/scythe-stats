@@ -4,12 +4,195 @@ import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
-  ID: string,
-  String: string,
-  Boolean: boolean,
-  Int: number,
-  Float: number,
-  Upload: any,
+  ID: string;
+  String: string;
+  Boolean: boolean;
+  Int: number;
+  Float: number;
+  /** The `Upload` scalar type represents a file upload. */
+  Upload: any;
+};
+
+export type Query = {
+   __typename?: 'Query';
+  _empty?: Maybe<Scalars['String']>;
+  playerMat?: Maybe<PlayerMat>;
+  faction: Faction;
+  factions: Array<Faction>;
+  player?: Maybe<Player>;
+  playersByWins: PlayerConnection;
+  matches: MatchConnection;
+};
+
+
+export type QueryPlayerMatArgs = {
+  name: Scalars['String'];
+};
+
+
+export type QueryFactionArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryPlayerArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryPlayersByWinsArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  factionId?: Maybe<Scalars['Int']>;
+  fromDate?: Maybe<Scalars['String']>;
+};
+
+
+export type QueryMatchesArgs = {
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+};
+
+export type PlayerMat = {
+   __typename?: 'PlayerMat';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type Faction = {
+   __typename?: 'Faction';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+  statsByPlayerCount: Array<FactionStatsWithPlayerCount>;
+  factionMatCombos: Array<FactionMatCombo>;
+  topPlayers: Array<PlayerFactionStats>;
+};
+
+
+export type FactionTopPlayersArgs = {
+  first: Scalars['Int'];
+};
+
+export type FactionStatsWithPlayerCount = {
+   __typename?: 'FactionStatsWithPlayerCount';
+  playerCount: Scalars['Int'];
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+};
+
+export type FactionMatCombo = {
+   __typename?: 'FactionMatCombo';
+  faction: Faction;
+  playerMat: PlayerMat;
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+  avgCoinsOnWin: Scalars['Int'];
+  avgRoundsOnWin: Scalars['Float'];
+  leastRoundsForWin: Scalars['Int'];
+};
+
+export type PlayerFactionStats = {
+   __typename?: 'PlayerFactionStats';
+  player: Player;
+  totalWins: Scalars['Int'];
+};
+
+export type Player = Node & {
+   __typename?: 'Player';
+  id: Scalars['ID'];
+  displayName: Scalars['String'];
+  steamId?: Maybe<Scalars['String']>;
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+};
+
+
+export type PlayerTotalWinsArgs = {
+  factionId?: Maybe<Scalars['Int']>;
+  fromDate?: Maybe<Scalars['String']>;
+};
+
+
+export type PlayerTotalMatchesArgs = {
+  factionId?: Maybe<Scalars['Int']>;
+  fromDate?: Maybe<Scalars['String']>;
+};
+
+export type Node = {
+  id: Scalars['ID'];
+};
+
+export type PlayerConnection = {
+   __typename?: 'PlayerConnection';
+  edges: Array<PlayerEdge>;
+  pageInfo: PageInfo;
+};
+
+export type PlayerEdge = {
+   __typename?: 'PlayerEdge';
+  cursor: Scalars['String'];
+  node: Player;
+};
+
+export type PageInfo = {
+   __typename?: 'PageInfo';
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  startCursor?: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']>;
+};
+
+export type MatchConnection = {
+   __typename?: 'MatchConnection';
+  edges: Array<MatchEdge>;
+  pageInfo: PageInfo;
+};
+
+export type MatchEdge = {
+   __typename?: 'MatchEdge';
+  cursor: Scalars['String'];
+  node: Match;
+};
+
+export type Match = Node & {
+   __typename?: 'Match';
+  id: Scalars['ID'];
+  datePlayed: Scalars['String'];
+  numRounds: Scalars['Int'];
+  playerResults: Array<PlayerMatchResult>;
+  winner: PlayerMatchResult;
+};
+
+export type PlayerMatchResult = {
+   __typename?: 'PlayerMatchResult';
+  id: Scalars['Int'];
+  player: Player;
+  faction: Faction;
+  playerMat: PlayerMat;
+  coins: Scalars['Int'];
+};
+
+export type Mutation = {
+   __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  logMatch?: Maybe<Match>;
+};
+
+
+export type MutationLogMatchArgs = {
+  numRounds: Scalars['Int'];
+  datePlayed: Scalars['String'];
+  playerMatchResults: Array<PlayerMatchResultInput>;
+};
+
+export type PlayerMatchResultInput = {
+  displayName: Scalars['String'];
+  steamId?: Maybe<Scalars['String']>;
+  faction: Scalars['String'];
+  playerMat: Scalars['String'];
+  coins: Scalars['Int'];
 };
 
 export enum CacheControlScope {
@@ -17,191 +200,9 @@ export enum CacheControlScope {
   Private = 'PRIVATE'
 }
 
-export type Faction = {
-   __typename?: 'Faction',
-  id: Scalars['Int'],
-  name: Scalars['String'],
-  totalWins: Scalars['Int'],
-  totalMatches: Scalars['Int'],
-  statsByPlayerCount: Array<FactionStatsWithPlayerCount>,
-  factionMatCombos: Array<FactionMatCombo>,
-  topPlayers: Array<PlayerFactionStats>,
-};
-
-
-export type FactionTopPlayersArgs = {
-  first: Scalars['Int']
-};
-
-export type FactionMatCombo = {
-   __typename?: 'FactionMatCombo',
-  faction: Faction,
-  playerMat: PlayerMat,
-  totalWins: Scalars['Int'],
-  totalMatches: Scalars['Int'],
-  avgCoinsOnWin: Scalars['Int'],
-  avgRoundsOnWin: Scalars['Float'],
-  leastRoundsForWin: Scalars['Int'],
-};
-
-export type FactionStatsWithPlayerCount = {
-   __typename?: 'FactionStatsWithPlayerCount',
-  playerCount: Scalars['Int'],
-  totalWins: Scalars['Int'],
-  totalMatches: Scalars['Int'],
-};
-
-export type Match = Node & {
-   __typename?: 'Match',
-  id: Scalars['ID'],
-  datePlayed: Scalars['String'],
-  numRounds: Scalars['Int'],
-  playerResults: Array<PlayerMatchResult>,
-  winner: PlayerMatchResult,
-};
-
-export type MatchConnection = {
-   __typename?: 'MatchConnection',
-  edges: Array<MatchEdge>,
-  pageInfo: PageInfo,
-};
-
-export type MatchEdge = {
-   __typename?: 'MatchEdge',
-  cursor: Scalars['String'],
-  node: Match,
-};
-
-export type Mutation = {
-   __typename?: 'Mutation',
-  _empty?: Maybe<Scalars['String']>,
-  logMatch?: Maybe<Match>,
-};
-
-
-export type MutationLogMatchArgs = {
-  numRounds: Scalars['Int'],
-  datePlayed: Scalars['String'],
-  playerMatchResults: Array<PlayerMatchResultInput>
-};
-
-export type Node = {
-  id: Scalars['ID'],
-};
-
-export type PageInfo = {
-   __typename?: 'PageInfo',
-  hasNextPage: Scalars['Boolean'],
-  hasPreviousPage: Scalars['Boolean'],
-  startCursor?: Maybe<Scalars['String']>,
-  endCursor?: Maybe<Scalars['String']>,
-};
-
-export type Player = Node & {
-   __typename?: 'Player',
-  id: Scalars['ID'],
-  displayName: Scalars['String'],
-  steamId?: Maybe<Scalars['String']>,
-  totalWins: Scalars['Int'],
-  totalMatches: Scalars['Int'],
-};
-
-
-export type PlayerTotalWinsArgs = {
-  factionId?: Maybe<Scalars['Int']>,
-  fromDate?: Maybe<Scalars['String']>
-};
-
-
-export type PlayerTotalMatchesArgs = {
-  factionId?: Maybe<Scalars['Int']>,
-  fromDate?: Maybe<Scalars['String']>
-};
-
-export type PlayerConnection = {
-   __typename?: 'PlayerConnection',
-  edges: Array<PlayerEdge>,
-  pageInfo: PageInfo,
-};
-
-export type PlayerEdge = {
-   __typename?: 'PlayerEdge',
-  cursor: Scalars['String'],
-  node: Player,
-};
-
-export type PlayerFactionStats = {
-   __typename?: 'PlayerFactionStats',
-  player: Player,
-  totalWins: Scalars['Int'],
-};
-
-export type PlayerMat = {
-   __typename?: 'PlayerMat',
-  id: Scalars['Int'],
-  name: Scalars['String'],
-};
-
-export type PlayerMatchResult = {
-   __typename?: 'PlayerMatchResult',
-  id: Scalars['Int'],
-  player: Player,
-  faction: Faction,
-  playerMat: PlayerMat,
-  coins: Scalars['Int'],
-};
-
-export type PlayerMatchResultInput = {
-  displayName: Scalars['String'],
-  steamId?: Maybe<Scalars['String']>,
-  faction: Scalars['String'],
-  playerMat: Scalars['String'],
-  coins: Scalars['Int'],
-};
-
-export type Query = {
-   __typename?: 'Query',
-  _empty?: Maybe<Scalars['String']>,
-  playerMat?: Maybe<PlayerMat>,
-  faction: Faction,
-  factions: Array<Faction>,
-  player?: Maybe<Player>,
-  playersByWins: PlayerConnection,
-  matches: MatchConnection,
-};
-
-
-export type QueryPlayerMatArgs = {
-  name: Scalars['String']
-};
-
-
-export type QueryFactionArgs = {
-  id: Scalars['Int']
-};
-
-
-export type QueryPlayerArgs = {
-  id: Scalars['ID']
-};
-
-
-export type QueryPlayersByWinsArgs = {
-  first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>,
-  factionId?: Maybe<Scalars['Int']>,
-  fromDate?: Maybe<Scalars['String']>
-};
-
-
-export type QueryMatchesArgs = {
-  first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>
-};
-
 
 export type FactionStatsQueryVariables = {
-  numTopPlayers: Scalars['Int']
+  numTopPlayers: Scalars['Int'];
 };
 
 
@@ -232,8 +233,8 @@ export type FactionStatsQuery = (
 );
 
 export type MatchesQueryVariables = {
-  first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
 };
 
 
@@ -272,9 +273,9 @@ export type MatchesQuery = (
 );
 
 export type TopPlayersQueryVariables = {
-  first: Scalars['Int'],
-  after?: Maybe<Scalars['String']>,
-  fromDate?: Maybe<Scalars['String']>
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+  fromDate?: Maybe<Scalars['String']>;
 };
 
 
@@ -332,7 +333,7 @@ export const FactionStatsDocument = gql`
  * __useFactionStatsQuery__
  *
  * To run a query within a React component, call `useFactionStatsQuery` and pass it any options that fit your needs.
- * When your component renders, `useFactionStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useFactionStatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -395,7 +396,7 @@ export const MatchesDocument = gql`
  * __useMatchesQuery__
  *
  * To run a query within a React component, call `useMatchesQuery` and pass it any options that fit your needs.
- * When your component renders, `useMatchesQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useMatchesQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
@@ -437,7 +438,7 @@ export const TopPlayersDocument = gql`
  * __useTopPlayersQuery__
  *
  * To run a query within a React component, call `useTopPlayersQuery` and pass it any options that fit your needs.
- * When your component renders, `useTopPlayersQuery` returns an object from Apollo Client that contains loading, error, and data properties 
+ * When your component renders, `useTopPlayersQuery` returns an object from Apollo Client that contains loading, error, and data properties
  * you can use to render your UI.
  *
  * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;

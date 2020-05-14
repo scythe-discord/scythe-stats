@@ -27,14 +27,14 @@ const DiscordLink = withStyle(StyledLink as any, {
   color: '#304eb6',
   textDecoration: 'none',
   ':visited': {
-    color: '#304eb6'
+    color: '#304eb6',
   },
   ':hover': {
-    color: '#8da0e1'
+    color: '#8da0e1',
   },
   ':active, :focus': {
-    color: '#8da0e1'
-  }
+    color: '#8da0e1',
+  },
 });
 
 const RecentMatches: FC = () => {
@@ -43,9 +43,9 @@ const RecentMatches: FC = () => {
   const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
     variables: {
-      first: 10
+      first: 10,
     },
-    notifyOnNetworkStatusChange: true
+    notifyOnNetworkStatusChange: true,
   });
 
   const onMatchClick = useCallback(
@@ -70,8 +70,8 @@ const RecentMatches: FC = () => {
 
       const {
         matches: {
-          pageInfo: { hasNextPage, endCursor }
-        }
+          pageInfo: { hasNextPage, endCursor },
+        },
       } = recentMatches;
 
       if (!hasNextPage || !endCursor) {
@@ -80,7 +80,7 @@ const RecentMatches: FC = () => {
 
       fetchMore({
         variables: {
-          after: endCursor
+          after: endCursor,
         },
         updateQuery: (prev, { fetchMoreResult }) => {
           if (!fetchMoreResult) {
@@ -95,11 +95,11 @@ const RecentMatches: FC = () => {
               pageInfo: {
                 ...prev.matches.pageInfo,
                 hasNextPage: fetchMoreResult.matches.pageInfo.hasNextPage,
-                endCursor: fetchMoreResult.matches.pageInfo.endCursor
-              }
-            }
+                endCursor: fetchMoreResult.matches.pageInfo.endCursor,
+              },
+            },
           };
-        }
+        },
       });
     },
     [recentMatches]
@@ -120,7 +120,7 @@ const RecentMatches: FC = () => {
       const {
         faction: { name: factionName },
         playerMat: { name: playerMatName },
-        player: { displayName }
+        player: { displayName },
       } = winningResult;
 
       const content = (
@@ -142,7 +142,7 @@ const RecentMatches: FC = () => {
         isSelectable: true,
         content,
         rawContentDescriptor,
-        date: datePlayed
+        date: datePlayed,
       };
     });
 
@@ -151,13 +151,13 @@ const RecentMatches: FC = () => {
         player: { displayName },
         faction: { name: factionName },
         playerMat: { name: playerMatName },
-        coins
+        coins,
       }) => {
         return {
           playerName: displayName,
           faction: factionName,
           playerMat: playerMatName,
-          coins
+          coins,
         };
       }
     );
@@ -170,9 +170,9 @@ const RecentMatches: FC = () => {
         overrides={{
           Block: {
             style: {
-              marginTop: 0
-            }
-          }
+              marginTop: 0,
+            },
+          },
         }}
       >
         Recent Matches
@@ -187,8 +187,8 @@ const RecentMatches: FC = () => {
 
           [theme.mediaQuery.large]: {
             flexDirection: 'column',
-            flexWrap: 'nowrap'
-          }
+            flexWrap: 'nowrap',
+          },
         })}
       >
         <VerticalTimeline
@@ -199,7 +199,7 @@ const RecentMatches: FC = () => {
           maxHeight={`${TIMELINE_HEIGHT}px`}
           loadMore={onLoadMore}
           hasMore={
-            recentMatches ? recentMatches.matches.pageInfo.hasNextPage : false
+            recentMatches ? !!recentMatches.matches.pageInfo.hasNextPage : false
           }
           isLoading={loading}
           numLoadingElements={
@@ -213,14 +213,14 @@ const RecentMatches: FC = () => {
             className={css({
               gridTemplateRows: '45px',
               minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
-              margin: '40px 0 0'
+              margin: '40px 0 0',
             })}
             rows={matchDetailsRows}
           />
         ) : (
           <ContentLoader
             className={css({
-              margin: '40px 0 0'
+              margin: '40px 0 0',
             })}
             speed={2}
             width={`${TIMELINE_WIDTH}px`}
@@ -250,10 +250,10 @@ const RecentMatches: FC = () => {
               margin: '25px 0 0',
 
               [theme.mediaQuery.large]: {
-                textAlign: 'left'
-              }
-            }
-          }
+                textAlign: 'left',
+              },
+            },
+          },
         }}
       >
         Looking for more matches?{' '}

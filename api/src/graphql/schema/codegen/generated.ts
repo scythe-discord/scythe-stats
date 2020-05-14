@@ -94,8 +94,8 @@ export type Node = {
 
 export type PageInfo = {
    __typename?: 'PageInfo',
-  hasNextPage: Scalars['Boolean'],
-  hasPreviousPage: Scalars['Boolean'],
+  hasNextPage?: Maybe<Scalars['Boolean']>,
+  hasPreviousPage?: Maybe<Scalars['Boolean']>,
   startCursor?: Maybe<Scalars['String']>,
   endCursor?: Maybe<Scalars['String']>,
 };
@@ -395,8 +395,8 @@ export type NodeResolvers<ContextType = any, ParentType extends ResolversParentT
 }>;
 
 export type PageInfoResolvers<ContextType = any, ParentType extends ResolversParentTypes['PageInfo'] = ResolversParentTypes['PageInfo']> = ResolversObject<{
-  hasNextPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
-  hasPreviousPage?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>,
+  hasNextPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
+  hasPreviousPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
   startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn,
