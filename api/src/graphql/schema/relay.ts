@@ -17,13 +17,13 @@ export const typeDef = gql`
 `;
 
 export const resolvers: Schema.Resolvers = {
-  // @ts-ignore: TS complains that the type string may not be a type of
-  // an actual Node, but having this actually happen in practice in unlikely
   Node: {
-    __resolveType: node => {
+    // @ts-ignore: TS complains that the type string may not be a type of
+    // an actual Node, but having this actually happen in practice in unlikely
+    __resolveType: (node) => {
       const { type } = fromGlobalId(node.id);
 
       return type;
-    }
-  }
+    },
+  },
 };
