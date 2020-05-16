@@ -2,20 +2,20 @@ import { gql } from 'apollo-server';
 import { merge } from 'lodash';
 
 import {
-  typeDef as scytheTypeDef,
-  resolvers as scytheResolvers
-} from './scythe';
-import {
   typeDef as factionsTypeDef,
-  resolvers as factionsResolvers
+  resolvers as factionsResolvers,
 } from './factions';
 import {
+  typeDef as playerMatsTypeDef,
+  resolvers as playerMatsResolvers,
+} from './player-mats';
+import {
   typeDef as matchTypeDef,
-  resolvers as matchResolvers
+  resolvers as matchResolvers,
 } from './matches';
 import {
   typeDef as playerTypeDef,
-  resolvers as playerResolvers
+  resolvers as playerResolvers,
 } from './players';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
 
@@ -36,16 +36,16 @@ export default {
     Query,
     Mutation,
     relayTypeDef,
-    scytheTypeDef,
+    ...playerMatsTypeDef,
     ...factionsTypeDef,
     ...playerTypeDef,
-    ...matchTypeDef
+    ...matchTypeDef,
   ],
   resolvers: merge(
     relayResolvers,
-    scytheResolvers,
+    playerMatsResolvers,
     factionsResolvers,
     playerResolvers,
     matchResolvers
-  )
+  ),
 };

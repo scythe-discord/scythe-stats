@@ -16,7 +16,8 @@ export type Scalars = {
 export type Query = {
    __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
-  playerMat?: Maybe<PlayerMat>;
+  playerMat: PlayerMat;
+  playerMats: Array<PlayerMat>;
   faction: Faction;
   factions: Array<Faction>;
   player?: Maybe<Player>;
@@ -27,7 +28,7 @@ export type Query = {
 
 
 export type QueryPlayerMatArgs = {
-  name: Scalars['String'];
+  id: Scalars['Int'];
 };
 
 

@@ -8,6 +8,18 @@ import {
   typeDef as playersByWinsTypeDef,
   resolvers as playersByWinsResolvers,
 } from './players-by-wins';
+import {
+  typeDef as playersByNameTypeDef,
+  resolvers as playersByNameResolvers,
+} from './players-by-name';
 
-export const typeDef = [playerTypeDef, playersByWinsTypeDef];
-export const resolvers = merge(playerResolvers, playersByWinsResolvers);
+export const typeDef = [
+  playerTypeDef,
+  playersByWinsTypeDef,
+  playersByNameTypeDef,
+];
+export const resolvers = merge(
+  playerResolvers,
+  playersByWinsResolvers,
+  playersByNameResolvers
+);
