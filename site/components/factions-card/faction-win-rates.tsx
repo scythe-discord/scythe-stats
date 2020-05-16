@@ -84,7 +84,7 @@ const FactionWinRates: FC<Props> = ({
           }}
         />
 
-        <Bar dataKey="value" onClick={onClickBar} fill="#419fff">
+        <Bar dataKey="value" onClick={onClickBar} fill="#1f78c1">
           {data.map((_, index) => (
             <Cell
               cursor="pointer"
