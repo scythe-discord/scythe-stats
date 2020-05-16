@@ -7,7 +7,7 @@ import {
   SiteHeader,
   TopPlayers,
   RecentMatches,
-  FactionsCard
+  FactionsCard,
 } from '../components';
 import GQL from '../lib/graphql';
 
@@ -20,14 +20,14 @@ interface Props {
 const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
   factionStats,
   topPlayersMonthly,
-  topPlayersAllTime
+  topPlayersAllTime,
 }) => {
   const [css, theme] = useStyletron();
 
   return (
     <div
       className={css({
-        backgroundColor: theme.colors.primary50
+        backgroundColor: theme.colors.backgroundPrimary,
       })}
     >
       <SiteHeader />
@@ -38,13 +38,13 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
           width: '100%',
 
           [theme.mediaQuery.medium]: {
-            padding: '20px 0'
+            padding: '20px 0',
           },
 
           [theme.mediaQuery.large]: {
             padding: '20px',
-            maxWidth: '1650px'
-          }
+            maxWidth: '1650px',
+          },
         })}
       >
         <div
@@ -53,8 +53,8 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
             flexDirection: 'column',
 
             [theme.mediaQuery.large]: {
-              flexDirection: 'row'
-            }
+              flexDirection: 'row',
+            },
           })}
         >
           <div
@@ -65,15 +65,15 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
               minWidth: 0,
 
               [theme.mediaQuery.large]: {
-                margin: '0 25px 0 0'
-              }
+                margin: '0 25px 0 0',
+              },
             })}
           >
             <FactionsCard
               factionStats={factionStats}
               className={css({
                 flex: '1 1 auto',
-                minWidth: 0
+                minWidth: 0,
               })}
             />
           </div>
@@ -81,7 +81,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
             <RecentMatches />
             <div
               className={css({
-                margin: '25px 0 0'
+                margin: '25px 0 0',
               })}
             >
               <TopPlayers
@@ -96,7 +96,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
   );
 };
 
-HomePage.getInitialProps = async ctx => {
+HomePage.getInitialProps = async (ctx) => {
   const apolloClient = ctx.apolloClient;
 
   const { data: factionStats } = await apolloClient.query<
@@ -105,8 +105,8 @@ HomePage.getInitialProps = async ctx => {
   >({
     query: GQL.FactionStatsDocument,
     variables: {
-      numTopPlayers: 1
-    }
+      numTopPlayers: 1,
+    },
   });
   const { data: topPlayersAllTime } = await apolloClient.query<
     GQL.TopPlayersQuery,
@@ -114,8 +114,8 @@ HomePage.getInitialProps = async ctx => {
   >({
     query: GQL.TopPlayersDocument,
     variables: {
-      first: 5
-    }
+      first: 5,
+    },
   });
   const { data: topPlayersMonthly } = await apolloClient.query<
     GQL.TopPlayersQuery,
@@ -124,16 +124,14 @@ HomePage.getInitialProps = async ctx => {
     query: GQL.TopPlayersDocument,
     variables: {
       first: 5,
-      fromDate: moment()
-        .subtract(1, 'month')
-        .toISOString()
-    }
+      fromDate: moment().subtract(1, 'month').toISOString(),
+    },
   });
 
   return {
     factionStats,
     topPlayersAllTime,
-    topPlayersMonthly
+    topPlayersMonthly,
   };
 };
 

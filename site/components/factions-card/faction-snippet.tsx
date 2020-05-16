@@ -1,7 +1,7 @@
 import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
-import { ListItem, ListItemLabel } from 'baseui/list';
+import { ListItem, PropsT, ListItemLabel } from 'baseui/list';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
@@ -33,13 +33,33 @@ const SnippetEndEnhancer: FC<{ children: ReactNode }> = ({ children }) => {
       overrides={{
         Block: {
           style: {
-            padding: '0 0 0 30px'
-          }
-        }
+            padding: '0 0 0 30px',
+          },
+        },
       }}
     >
       {children}
     </LabelMedium>
+  );
+};
+
+const StyledListItem: FC<PropsT> = (props) => {
+  const [_, theme] = useStyletron();
+
+  return (
+    <ListItem
+      overrides={{
+        Content: {},
+        Root: {
+          style: {
+            backgroundColor: theme.colors.backgroundSecondary,
+          },
+        },
+        ArtworkContainer: {},
+        EndEnhancerContainer: {},
+      }}
+      {...props}
+    />
   );
 };
 
@@ -65,9 +85,9 @@ const FactionSnippet: FC<Props> = ({
   faction,
   factionMatCombos,
   topPlayerStats,
-  className
+  className,
 }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   const topPlayer = topPlayerStats.player;
   const bestPlayerMat = getBestPlayerMat(factionMatCombos);
@@ -77,23 +97,23 @@ const FactionSnippet: FC<Props> = ({
       <div
         className={css({
           display: 'flex',
-          alignItems: 'center'
+          alignItems: 'center',
         })}
       >
         <FactionIcon
           faction={faction.name}
           size={72}
           className={css({
-            padding: '0 20px 0 0'
+            padding: '0 20px 0 0',
           })}
         />
         <H1
           overrides={{
             Block: {
               style: {
-                margin: 0
-              }
-            }
+                margin: 0,
+              },
+            },
           }}
         >
           {faction.name}
@@ -102,10 +122,11 @@ const FactionSnippet: FC<Props> = ({
       <ul
         className={css({
           padding: 0,
-          margin: '30px 0 0'
+          margin: '30px 0 0',
+          backgroundColor: theme.colors.backgroundSecondary,
         })}
       >
-        <ListItem
+        <StyledListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>
               {faction.totalMatches} Games
@@ -113,22 +134,22 @@ const FactionSnippet: FC<Props> = ({
           )}
         >
           <ListItemLabel>Games Recorded</ListItemLabel>
-        </ListItem>
-        <ListItem
+        </StyledListItem>
+        <StyledListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>{faction.totalWins} Wins</SnippetEndEnhancer>
           )}
         >
           <ListItemLabel>Total Wins</ListItemLabel>
-        </ListItem>
-        <ListItem
+        </StyledListItem>
+        <StyledListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>{bestPlayerMat.name}</SnippetEndEnhancer>
           )}
         >
           <ListItemLabel>Best Player Mat</ListItemLabel>
-        </ListItem>
-        <ListItem
+        </StyledListItem>
+        <StyledListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>
               {topPlayer.displayName} ({topPlayerStats.totalWins} Wins)
@@ -136,7 +157,7 @@ const FactionSnippet: FC<Props> = ({
           )}
         >
           <ListItemLabel>Top Player</ListItemLabel>
-        </ListItem>
+        </StyledListItem>
       </ul>
     </div>
   );

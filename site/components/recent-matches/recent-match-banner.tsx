@@ -9,9 +9,9 @@ const BannerLabel: FC<{ children: ReactNode }> = ({ children }) => (
     overrides={{
       Block: {
         style: {
-          whiteSpace: 'nowrap'
-        }
-      }
+          whiteSpace: 'nowrap',
+        },
+      },
     }}
   >
     {children}
@@ -35,7 +35,7 @@ const RecentMatchBanner: FC<Props> = ({
   playerMatName,
   numRounds,
   isSelected,
-  onClick
+  onClick,
 }) => {
   const [css, theme] = useStyletron();
   const onClickWithId = useCallback(() => {
@@ -50,7 +50,7 @@ const RecentMatchBanner: FC<Props> = ({
         display: 'flex',
         alignItems: 'center',
         backgroundColor: isSelected
-          ? '#daecff'
+          ? theme.colors.primary600
           : theme.colors.backgroundPrimary,
         cursor: 'pointer',
         border: `${isSelected ? '2px' : '1px'} solid ${
@@ -63,12 +63,14 @@ const RecentMatchBanner: FC<Props> = ({
         transition: `background-color ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`,
 
         [':hover']: {
-          backgroundColor: '#ebf5ff'
+          backgroundColor: isSelected
+            ? theme.colors.primary600
+            : theme.colors.primary700,
         },
 
         [':active']: {
-          backgroundColor: '#daecff'
-        }
+          backgroundColor: theme.colors.primary600,
+        },
       })}
       onClick={onClickWithId}
     >
@@ -77,7 +79,7 @@ const RecentMatchBanner: FC<Props> = ({
         faction={factionName}
         size={28}
         className={css({
-          margin: '0 5px'
+          margin: '0 5px',
         })}
       />
       <BannerLabel>

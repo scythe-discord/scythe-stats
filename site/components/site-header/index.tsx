@@ -3,25 +3,26 @@ import {
   HeaderNavigation,
   StyledNavigationList,
   StyledNavigationItem,
-  ALIGN
+  ALIGN,
 } from 'baseui/header-navigation';
 import { Block } from 'baseui/block';
+import { LabelLarge } from 'baseui/typography';
 
 import StandardNavItems from './standard-nav-items';
 import CondensedNavItems from './condensed-nav-items';
 
 export default () => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   return (
     <HeaderNavigation
       overrides={{
         Root: {
           style: {
-            backgroundColor: 'white',
-            boxShadow: '0 1px 8px rgba(0, 0, 0, .2)'
-          }
-        }
+            backgroundColor: theme.colors.backgroundSecondary,
+            boxShadow: '0 1px 8px rgba(0, 0, 0, .2)',
+          },
+        },
       }}
     >
       <div
@@ -30,16 +31,26 @@ export default () => {
           flex: '1 1 auto',
           padding: '0 20px 0 0',
           margin: '0 auto',
-          maxWidth: '1650px'
+          maxWidth: '1650px',
         })}
       >
         <StyledNavigationList $align={ALIGN.left}>
           <StyledNavigationItem
             className={css({
-              fontSize: '20px'
+              fontSize: '20px',
             })}
           >
-            beloved pacifist
+            <LabelLarge
+              overrides={{
+                Block: {
+                  style: {
+                    fontSize: '22px',
+                  },
+                },
+              }}
+            >
+              beloved pacifist
+            </LabelLarge>
           </StyledNavigationItem>
         </StyledNavigationList>
         <StyledNavigationList $align={ALIGN.center}></StyledNavigationList>

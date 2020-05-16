@@ -14,9 +14,9 @@ const Card: FC<Props> = ({ className, children }) => {
     <div
       className={classNames(
         css({
-          background: theme.colors.backgroundPrimary,
+          background: theme.colors.backgroundSecondary,
           padding: '35px',
-          boxShadow: 'rgba(0, 0, 0, 0.15) 0 2px 8px'
+          boxShadow: 'rgba(0, 0, 0, 0.15) 0 2px 8px',
         }),
         className
       )}

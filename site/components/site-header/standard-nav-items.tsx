@@ -2,6 +2,7 @@ import { ReactNode } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
+import { LabelLarge } from 'baseui/typography';
 import Link from 'next/link';
 import classNames from 'classnames';
 
@@ -9,7 +10,7 @@ import BuyMeACoffee from './buy-me-a-coffee';
 
 const SpacedNavigationItem = ({
   className,
-  children
+  children,
 }: {
   className?: string;
   children: ReactNode;
@@ -23,8 +24,8 @@ const SpacedNavigationItem = ({
           margin: '0 5px',
 
           [theme.mediaQuery.large]: {
-            margin: '0 15px'
-          }
+            margin: '0 15px',
+          },
         }),
         className
       )}
@@ -34,13 +35,12 @@ const SpacedNavigationItem = ({
   );
 };
 
-const StyledLink = withStyle(BaseLink as any, {
-  textDecoration: 'none'
-});
+const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
+  color: $theme.colors.primary,
+  textDecoration: 'none',
+}));
 
 export default () => {
-  const [css] = useStyletron();
-
   return (
     <>
       <SpacedNavigationItem>
@@ -66,12 +66,18 @@ export default () => {
           Contribute
         </StyledLink>
       </SpacedNavigationItem>
-      <SpacedNavigationItem
-        className={css({
-          fontSize: '20px'
-        })}
-      >
-        /
+      <SpacedNavigationItem>
+        <LabelLarge
+          overrides={{
+            Block: {
+              style: {
+                fontSize: '20px',
+              },
+            },
+          }}
+        >
+          /
+        </LabelLarge>
       </SpacedNavigationItem>
       <StyledNavigationItem>
         <BuyMeACoffee />

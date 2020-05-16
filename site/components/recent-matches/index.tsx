@@ -22,20 +22,20 @@ const TIMELINE_HEIGHT = 450;
 // Height reflects a max 7 player game
 const MIN_MATCH_DETAILS_HEIGHT = 315;
 
-const DiscordLink = withStyle(StyledLink as any, {
+const DiscordLink = withStyle(StyledLink as any, () => ({
   // Some attempt at mimicking Discord blurple
-  color: '#304eb6',
+  color: '#8da0e1',
   textDecoration: 'none',
   ':visited': {
-    color: '#304eb6',
+    color: '#8da0e1',
   },
   ':hover': {
-    color: '#8da0e1',
+    color: '#a8b6e8',
   },
   ':active, :focus': {
-    color: '#8da0e1',
+    color: '#a8b6e8',
   },
-});
+}));
 
 const RecentMatches: FC = () => {
   const [css, theme] = useStyletron();

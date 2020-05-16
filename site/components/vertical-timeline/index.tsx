@@ -38,7 +38,7 @@ export const VerticalTimeline: FC<Props> = ({
   loadMore,
   isLoading,
   hasMore,
-  numLoadingElements
+  numLoadingElements,
 }) => {
   const [css] = useStyletron();
 
@@ -81,13 +81,18 @@ export const VerticalTimeline: FC<Props> = ({
           padding: '5px 0',
           width,
           maxHeight,
-          overflow: 'auto'
+          overflow: 'auto',
         }),
         className
       )}
     >
       {loadMore && hasMore !== undefined ? (
-        <InfiniteScroll loadMore={loadMore} hasMore={hasMore} useWindow={false}>
+        <InfiniteScroll
+          loadMore={loadMore}
+          hasMore={hasMore}
+          useWindow={false}
+          threshold={50}
+        >
           {timelineElements}
         </InfiniteScroll>
       ) : (

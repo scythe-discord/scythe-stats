@@ -27,14 +27,14 @@ const LoadingEllipses: FC = () => {
               overflow: 'visible',
               margin: '0 0 0 10px',
               [':first-child']: {
-                marginLeft: '0'
-              }
+                marginLeft: '0',
+              },
             })}
           >
             <circle
               className={css({
-                fill: theme.colors.primaryA,
-                stroke: theme.colors.primaryA
+                fill: theme.colors.primary500,
+                stroke: theme.colors.primary500,
               })}
               cx={50}
               cy={50}
@@ -57,7 +57,7 @@ const TimelineSkeletonRow: FC<Props> = ({ idx }) => {
     <div
       className={css({
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       })}
     >
       <LabelMedium
@@ -70,9 +70,9 @@ const TimelineSkeletonRow: FC<Props> = ({ idx }) => {
               flex: `0 0 auto`,
               width: `${DATE_TXT_WIDTH}px`,
               textAlign: 'right',
-              padding: '0 20px 0 0'
-            }
-          }
+              padding: '0 20px 0 0',
+            },
+          },
         }}
       >
         <LoadingEllipses />
@@ -82,7 +82,7 @@ const TimelineSkeletonRow: FC<Props> = ({ idx }) => {
           display: 'flex',
           flex: `0 0 ${CIRCLE_SIZE}px`,
           justifyContent: 'center',
-          padding: '0'
+          padding: '0',
         })}
       >
         <TimelineCircle
@@ -93,20 +93,20 @@ const TimelineSkeletonRow: FC<Props> = ({ idx }) => {
       </div>
       <div
         className={css({
-          padding: '0 0 0 15px'
+          padding: '0 0 0 15px',
         })}
       >
         <ContentLoader
           uniqueKey={`${idx}`}
           className={css({
-            display: 'block'
+            display: 'block',
           })}
           speed={2}
           width={`${SKELETON_CONTENT_WIDTH}px`}
           height={`${SKELETON_CONTENT_HEIGHT}px`}
           viewBox={`0 0 ${SKELETON_CONTENT_WIDTH} ${SKELETON_CONTENT_HEIGHT}`}
-          backgroundColor={theme.colors.primary100}
-          foregroundColor={theme.colors.primary200}
+          backgroundColor={theme.colors.primary700}
+          foregroundColor={theme.colors.primary600}
         >
           <rect
             x="0"

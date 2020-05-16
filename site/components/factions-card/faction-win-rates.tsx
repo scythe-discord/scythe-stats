@@ -1,4 +1,5 @@
 import { FC, useCallback } from 'react';
+import { useStyletron } from 'baseui';
 import {
   ResponsiveContainer,
   BarChart,
@@ -25,6 +26,7 @@ const FactionWinRates: FC<Props> = ({
   selectedFactionIdx,
   onClickFaction,
 }) => {
+  const [_, theme] = useStyletron();
   const onClickBar = useCallback(
     ({ idx }) => {
       onClickFaction(idx);
@@ -52,7 +54,7 @@ const FactionWinRates: FC<Props> = ({
         <Tooltip
           cursor={{
             // @ts-ignore - because for some reason this works in recharts beta
-            fill: '#ededed',
+            fill: theme.colors.primary700,
             strokeDasharray: 'none',
           }}
           formatter={(value: string) => {

@@ -17,7 +17,7 @@ const TimelineCircle: FC<Props> = ({
   className,
   isSelected,
   rawContentDescriptor,
-  onClick
+  onClick,
 }) => {
   const [css, theme] = useStyletron();
   const onClickWithId = useCallback(() => {
@@ -34,7 +34,7 @@ const TimelineCircle: FC<Props> = ({
           background: 'transparent',
           cursor: 'pointer',
           padding: 0,
-          margin: 0
+          margin: 0,
         }),
         className
       )}
@@ -48,32 +48,32 @@ const TimelineCircle: FC<Props> = ({
             display: 'block',
             width: `${size}px`,
             height: `${size}px`,
-            overflow: 'visible'
+            overflow: 'visible',
           })
         )}
       >
         <circle
           className={css({
-            fill: 'white',
-            stroke: '#419fff',
-            strokeWidth: '10px'
+            fill: theme.colors.backgroundSecondary,
+            stroke: theme.colors.spinnerTrackFill,
+            strokeWidth: '10px',
           })}
           cx={50}
           cy={50}
           r={45}
         />
-        {
-          <circle
-            className={css({
-              fill: isSelected ? '#419fff' : theme.colors.primaryB,
-              stroke: 'none',
-              transition: `fill ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`
-            })}
-            cx={50}
-            cy={50}
-            r={25}
-          />
-        }
+        <circle
+          className={css({
+            fill: isSelected
+              ? theme.colors.spinnerTrackFill
+              : theme.colors.backgroundSecondary,
+            stroke: 'none',
+            transition: `fill ${theme.animation.timing100} ${theme.animation.easeInOutCurve}`,
+          })}
+          cx={50}
+          cy={50}
+          r={25}
+        />
       </svg>
     </button>
   );
