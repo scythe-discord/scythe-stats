@@ -1,0 +1,35 @@
+mutation logMatch(
+  $numRounds: Int!
+  $datePlayed: String!
+  $playerMatchResults: [PlayerMatchResultInput!]!
+) {
+  logMatch(
+    numRounds: $numRounds
+    datePlayed: $datePlayed
+    playerMatchResults: $playerMatchResults
+  ) {
+    id
+    datePlayed
+    numRounds
+    playerResults {
+      id
+      player {
+        id
+        displayName
+        steamId
+      }
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+      coins
+    }
+    winner {
+      id
+    }
+  }
+}

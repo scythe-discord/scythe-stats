@@ -21,6 +21,7 @@ export type Query = {
   factions: Array<Faction>;
   player?: Maybe<Player>;
   playersByWins: PlayerConnection;
+  playersByName: PlayerConnection;
   matches: MatchConnection;
 };
 
@@ -48,15 +49,53 @@ export type QueryPlayersByWinsArgs = {
 };
 
 
+export type QueryPlayersByNameArgs = {
+  startsWith: Scalars['String'];
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+};
+
+
 export type QueryMatchesArgs = {
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
+};
+
+export type Mutation = {
+   __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  logMatch?: Maybe<Match>;
+};
+
+
+export type MutationLogMatchArgs = {
+  numRounds: Scalars['Int'];
+  datePlayed: Scalars['String'];
+  playerMatchResults: Array<PlayerMatchResultInput>;
+};
+
+export type Node = {
+  id: Scalars['ID'];
+};
+
+export type PageInfo = {
+   __typename?: 'PageInfo';
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  startCursor?: Maybe<Scalars['String']>;
+  endCursor?: Maybe<Scalars['String']>;
 };
 
 export type PlayerMat = {
    __typename?: 'PlayerMat';
   id: Scalars['Int'];
   name: Scalars['String'];
+};
+
+export type PlayerFactionStats = {
+   __typename?: 'PlayerFactionStats';
+  player: Player;
+  totalWins: Scalars['Int'];
 };
 
 export type Faction = {
@@ -75,13 +114,6 @@ export type FactionTopPlayersArgs = {
   first: Scalars['Int'];
 };
 
-export type FactionStatsWithPlayerCount = {
-   __typename?: 'FactionStatsWithPlayerCount';
-  playerCount: Scalars['Int'];
-  totalWins: Scalars['Int'];
-  totalMatches: Scalars['Int'];
-};
-
 export type FactionMatCombo = {
    __typename?: 'FactionMatCombo';
   faction: Faction;
@@ -93,10 +125,11 @@ export type FactionMatCombo = {
   leastRoundsForWin: Scalars['Int'];
 };
 
-export type PlayerFactionStats = {
-   __typename?: 'PlayerFactionStats';
-  player: Player;
+export type FactionStatsWithPlayerCount = {
+   __typename?: 'FactionStatsWithPlayerCount';
+  playerCount: Scalars['Int'];
   totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
 };
 
 export type Player = Node & {
@@ -120,10 +153,6 @@ export type PlayerTotalMatchesArgs = {
   fromDate?: Maybe<Scalars['String']>;
 };
 
-export type Node = {
-  id: Scalars['ID'];
-};
-
 export type PlayerConnection = {
    __typename?: 'PlayerConnection';
   edges: Array<PlayerEdge>;
@@ -136,12 +165,13 @@ export type PlayerEdge = {
   node: Player;
 };
 
-export type PageInfo = {
-   __typename?: 'PageInfo';
-  hasNextPage?: Maybe<Scalars['Boolean']>;
-  hasPreviousPage?: Maybe<Scalars['Boolean']>;
-  startCursor?: Maybe<Scalars['String']>;
-  endCursor?: Maybe<Scalars['String']>;
+export type Match = Node & {
+   __typename?: 'Match';
+  id: Scalars['ID'];
+  datePlayed: Scalars['String'];
+  numRounds: Scalars['Int'];
+  playerResults: Array<PlayerMatchResult>;
+  winner: PlayerMatchResult;
 };
 
 export type MatchConnection = {
@@ -156,15 +186,6 @@ export type MatchEdge = {
   node: Match;
 };
 
-export type Match = Node & {
-   __typename?: 'Match';
-  id: Scalars['ID'];
-  datePlayed: Scalars['String'];
-  numRounds: Scalars['Int'];
-  playerResults: Array<PlayerMatchResult>;
-  winner: PlayerMatchResult;
-};
-
 export type PlayerMatchResult = {
    __typename?: 'PlayerMatchResult';
   id: Scalars['Int'];
@@ -172,19 +193,6 @@ export type PlayerMatchResult = {
   faction: Faction;
   playerMat: PlayerMat;
   coins: Scalars['Int'];
-};
-
-export type Mutation = {
-   __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['String']>;
-  logMatch?: Maybe<Match>;
-};
-
-
-export type MutationLogMatchArgs = {
-  numRounds: Scalars['Int'];
-  datePlayed: Scalars['String'];
-  playerMatchResults: Array<PlayerMatchResultInput>;
 };
 
 export type PlayerMatchResultInput = {
@@ -200,6 +208,38 @@ export enum CacheControlScope {
   Private = 'PRIVATE'
 }
 
+
+export type LogMatchMutationVariables = {
+  numRounds: Scalars['Int'];
+  datePlayed: Scalars['String'];
+  playerMatchResults: Array<PlayerMatchResultInput>;
+};
+
+
+export type LogMatchMutation = (
+  { __typename?: 'Mutation' }
+  & { logMatch?: Maybe<(
+    { __typename?: 'Match' }
+    & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
+    & { playerResults: Array<(
+      { __typename?: 'PlayerMatchResult' }
+      & Pick<PlayerMatchResult, 'id' | 'coins'>
+      & { player: (
+        { __typename?: 'Player' }
+        & Pick<Player, 'id' | 'displayName' | 'steamId'>
+      ), faction: (
+        { __typename?: 'Faction' }
+        & Pick<Faction, 'id' | 'name'>
+      ), playerMat: (
+        { __typename?: 'PlayerMat' }
+        & Pick<PlayerMat, 'id' | 'name'>
+      ) }
+    )>, winner: (
+      { __typename?: 'PlayerMatchResult' }
+      & Pick<PlayerMatchResult, 'id'>
+    ) }
+  )> }
+);
 
 export type FactionStatsQueryVariables = {
   numTopPlayers: Scalars['Int'];
@@ -294,6 +334,62 @@ export type TopPlayersQuery = (
 );
 
 
+export const LogMatchDocument = gql`
+    mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!) {
+  logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults) {
+    id
+    datePlayed
+    numRounds
+    playerResults {
+      id
+      player {
+        id
+        displayName
+        steamId
+      }
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+      coins
+    }
+    winner {
+      id
+    }
+  }
+}
+    `;
+export type LogMatchMutationFn = ApolloReactCommon.MutationFunction<LogMatchMutation, LogMatchMutationVariables>;
+
+/**
+ * __useLogMatchMutation__
+ *
+ * To run a mutation, you first call `useLogMatchMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useLogMatchMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [logMatchMutation, { data, loading, error }] = useLogMatchMutation({
+ *   variables: {
+ *      numRounds: // value for 'numRounds'
+ *      datePlayed: // value for 'datePlayed'
+ *      playerMatchResults: // value for 'playerMatchResults'
+ *   },
+ * });
+ */
+export function useLogMatchMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LogMatchMutation, LogMatchMutationVariables>) {
+        return ApolloReactHooks.useMutation<LogMatchMutation, LogMatchMutationVariables>(LogMatchDocument, baseOptions);
+      }
+export type LogMatchMutationHookResult = ReturnType<typeof useLogMatchMutation>;
+export type LogMatchMutationResult = ApolloReactCommon.MutationResult<LogMatchMutation>;
+export type LogMatchMutationOptions = ApolloReactCommon.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
 export const FactionStatsDocument = gql`
     query factionStats($numTopPlayers: Int!) {
   factions {
