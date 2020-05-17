@@ -7,7 +7,7 @@ import {
   Player,
   PlayerMatchResult,
   Faction,
-  PlayerMat
+  PlayerMat,
 } from '../../../db/entities';
 import { delay } from '../../../common/utils';
 
@@ -38,7 +38,7 @@ const mergeFloatingPlayers = async (
 ): Promise<void> => {
   const floatingPlayer = await entityManager.findOne(Player, {
     displayName: player.displayName,
-    steamId: null
+    steamId: null,
   });
 
   if (floatingPlayer) {
@@ -58,14 +58,14 @@ const findOrCreatePlayer = async (
 ): Promise<Player> => {
   const playerFilter = steamId
     ? {
-        steamId
+        steamId,
       }
     : {
-        displayName
+        displayName,
       };
 
   const existingPlayer = await entityManager.findOne(Player, {
-    where: playerFilter
+    where: playerFilter,
   });
 
   if (existingPlayer) {
@@ -81,7 +81,7 @@ const findOrCreatePlayer = async (
   const newPlayer = await entityManager.save(
     await entityManager.create(Player, {
       displayName,
-      steamId
+      steamId,
     })
   );
 
@@ -104,14 +104,14 @@ const formPlayerMatchResults = async (
       steamId,
       faction: factionName,
       playerMat: playerMatName,
-      coins
+      coins,
     } = loggedMatchResults[i];
 
     const faction = await entityManager.findOneOrFail(Faction, {
-      where: { name: factionName }
+      where: { name: factionName },
     });
     const playerMat = await entityManager.findOneOrFail(PlayerMat, {
-      where: { name: playerMatName }
+      where: { name: playerMatName },
     });
     const player = await findOrCreatePlayer(
       entityManager,
@@ -124,7 +124,7 @@ const formPlayerMatchResults = async (
         faction,
         playerMat,
         player,
-        coins
+        coins,
       })
     );
 
@@ -135,7 +135,7 @@ const formPlayerMatchResults = async (
 
 const findMatchWinner = (playerMatchResults: PlayerMatchResult[]) => {
   let winner = playerMatchResults[0];
-  playerMatchResults.forEach(result => {
+  playerMatchResults.forEach((result) => {
     if (result.coins > winner.coins) {
       winner = result;
     }
@@ -164,7 +164,7 @@ const validateMatch = async (
     const {
       faction: factionName,
       playerMat: playerMatName,
-      displayName
+      displayName,
     } = loggedMatchResults[i];
 
     if (
@@ -205,11 +205,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You do not have permission to log matches');
       }
 
-      try {
-        await validateMatch(numRounds, loggedMatchResults);
-      } catch (error) {
-        throw new Error(`Failed to log match from ${datePlayed}: ${error}`);
-      }
+      await validateMatch(numRounds, loggedMatchResults);
 
       let match: Match | undefined;
       let playerMatchResults: PlayerMatchResult[] | undefined;
@@ -219,11 +215,11 @@ export const resolvers: Schema.Resolvers = {
         try {
           await getManager().transaction(
             'SERIALIZABLE',
-            async transactionalEntityManager => {
+            async (transactionalEntityManager) => {
               match = await transactionalEntityManager.save(
                 await transactionalEntityManager.create(Match, {
                   numRounds,
-                  datePlayed
+                  datePlayed,
                 })
               );
 
@@ -248,14 +244,14 @@ export const resolvers: Schema.Resolvers = {
             id: match.id.toString(),
             datePlayed: match.datePlayed.toString(),
             numRounds: match.numRounds,
-            playerResults: playerMatchResults.map(result => ({
+            playerResults: playerMatchResults.map((result) => ({
               id: result.id,
               player: result.player,
               faction: result.faction,
               playerMat: result.playerMat,
-              coins: result.coins
+              coins: result.coins,
             })),
-            winner: match.winner
+            winner: match.winner,
           };
         } catch (error) {
           // Wait some random amount of time so quick bursts of logs
@@ -271,6 +267,6 @@ export const resolvers: Schema.Resolvers = {
       }
 
       return null;
-    }
-  }
+    },
+  },
 };
