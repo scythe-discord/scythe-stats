@@ -1,4 +1,5 @@
 import { FC, useState, useCallback } from 'react';
+import { useApolloClient } from '@apollo/react-hooks';
 import { useStyletron } from 'baseui';
 import { Button, KIND, SIZE as BUTTON_SIZE } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
@@ -30,7 +31,7 @@ interface PlayerEntry {
   player: Value;
   faction: Value;
   playerMat: Value;
-  coins: number | string;
+  coins: string;
 }
 
 const defaultPlayerEntry = {
@@ -46,7 +47,8 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
   ...modalProps
 }) => {
   const [css] = useStyletron();
-  const [numRounds, setNumRounds] = useState<number | string>('');
+  const client = useApolloClient();
+  const [numRounds, setNumRounds] = useState<string>('');
   // Exists to provide a stable, monotonically increasing ID for player entries
   const [currId, setCurrId] = useState(1);
   const [playerEntries, setPlayerEntries] = useState<PlayerEntry[]>([
@@ -60,6 +62,10 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
     },
   ]);
   const [formError, setFormError] = useState<string | null>(null);
+  const [
+    logMatchMutation,
+    { loading: logMatchLoading },
+  ] = GQL.useLogMatchMutation();
 
   const onCancel = useCallback(() => {
     if (modalProps.onClose) {
@@ -67,17 +73,98 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
     }
   }, [modalProps.onClose]);
 
-  const onConfirm = useCallback(() => {
+  const onConfirm = useCallback(async () => {
+    let error = null;
+    const numRoundsAsNum = Number.parseInt(numRounds);
     playerEntries.forEach((entry) => {
       if (
         !entry.player.length ||
         !entry.faction.length ||
         !entry.playerMat.length ||
-        entry.coins === ''
+        entry.coins === '' ||
+        numRounds === ''
       ) {
-        setFormError('One or more fields are missing');
+        error = 'One or more fields are missing';
+      }
+
+      const coinsAsNum = Number.parseInt(entry.coins);
+
+      if (Number.isNaN(coinsAsNum)) {
+        error = 'Coins must be valid positive integers';
       }
     });
+
+    if (Number.isNaN(numRoundsAsNum)) {
+      error = 'Enter a valid number of rounds played';
+    }
+
+    if (error) {
+      setFormError(error);
+      return;
+    }
+
+    const playerMatchResults: GQL.PlayerMatchResultInput[] = playerEntries.map(
+      (entry) => ({
+        displayName: entry.player[0].label as string,
+        faction: entry.faction[0].label as string,
+        playerMat: entry.playerMat[0].label as string,
+        coins: Number.parseInt(entry.coins),
+      })
+    );
+
+    try {
+      const res = await logMatchMutation({
+        variables: {
+          datePlayed: new Date().toISOString(),
+          numRounds: numRoundsAsNum,
+          playerMatchResults,
+        },
+      });
+
+      const existingMatches = client.readQuery<
+        GQL.MatchesQuery,
+        GQL.MatchesQueryVariables
+      >({
+        query: GQL.MatchesDocument,
+        variables: {
+          first: 10,
+        },
+      });
+
+      if (res.data && res.data.logMatch && existingMatches) {
+        const loggedMatch = res.data.logMatch;
+        client.writeQuery<GQL.MatchesQuery, GQL.MatchesQueryVariables>({
+          query: GQL.MatchesDocument,
+          variables: {
+            first: 10,
+          },
+          data: {
+            __typename: existingMatches.__typename,
+            matches: {
+              ...existingMatches.matches,
+              edges: [
+                {
+                  node: {
+                    ...loggedMatch,
+                  },
+                  __typename: 'MatchEdge',
+                },
+                ...existingMatches.matches.edges,
+              ],
+            },
+          },
+        });
+        onCancel();
+      } else {
+        setFormError('An unknown error occurred attempting to log your match');
+      }
+    } catch (e) {
+      if (e.graphQLErrors && e.graphQLErrors.length) {
+        setFormError(e.graphQLErrors[0].message);
+      } else {
+        setFormError('An unknown error occurred attempting to log your match');
+      }
+    }
   }, [playerEntries]);
 
   const onAddPlayer = useCallback(() => {
@@ -251,7 +338,11 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         <ModalButton kind={KIND.tertiary} onClick={onCancel}>
           Cancel
         </ModalButton>
-        <ModalButton kind={KIND.secondary} onClick={onConfirm}>
+        <ModalButton
+          kind={KIND.secondary}
+          onClick={onConfirm}
+          isLoading={logMatchLoading}
+        >
           Confirm
         </ModalButton>
       </ModalFooter>
