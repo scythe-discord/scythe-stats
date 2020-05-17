@@ -1,4 +1,5 @@
-import { FC, useCallback } from 'react';
+import { FC, useCallback, useRef } from 'react';
+import { useDebounceCallback } from '@react-hook/debounce';
 import { useStyletron, styled } from 'baseui';
 import { Button, KIND, SIZE, SHAPE } from 'baseui/button';
 import { Delete } from 'baseui/icon';
@@ -66,6 +67,8 @@ const RecordMatchRow: FC<Props> = ({
     { loading, data: playersByName },
   ] = GQL.usePlayersByNameLazyQuery();
 
+  const playerNameRef = useRef('');
+
   const onChangePlayerWrapper = useCallback(
     (params: OnChangeParams) => onChangePlayer(id, params),
     [id]
@@ -84,15 +87,20 @@ const RecordMatchRow: FC<Props> = ({
     [id]
   );
 
+  const onLoadPlayerOptions = useDebounceCallback(() => {
+    const playerName = playerNameRef.current;
+    loadPlayers({
+      variables: {
+        startsWith: playerName,
+        first: 10,
+      },
+    });
+  }, 300);
+
   const onChangePlayerInput = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
-      const playerName = event.currentTarget.value;
-      loadPlayers({
-        variables: {
-          startsWith: playerName,
-          first: 10,
-        },
-      });
+      playerNameRef.current = event.currentTarget.value;
+      onLoadPlayerOptions();
     },
     []
   );
@@ -124,6 +132,13 @@ const RecordMatchRow: FC<Props> = ({
         onInputChange={onChangePlayerInput}
         isLoading={loading}
         creatable
+        overrides={{
+          ControlContainer: {
+            style: {
+              width: '175px',
+            },
+          },
+        }}
       />
       <Select
         type={TYPE.select}
