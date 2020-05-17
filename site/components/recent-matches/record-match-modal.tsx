@@ -154,6 +154,19 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
             },
           },
         });
+        setNumRounds('');
+        setCurrId(1);
+        setPlayerEntries([
+          {
+            id: 0,
+            ...defaultPlayerEntry,
+          },
+          {
+            id: 1,
+            ...defaultPlayerEntry,
+          },
+        ]);
+
         onCancel();
       } else {
         setFormError('An unknown error occurred attempting to log your match');
