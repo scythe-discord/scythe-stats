@@ -1,6 +1,6 @@
 import { gql } from 'apollo-server';
 import { connectionFromArray } from 'graphql-relay';
-import { getRepository, Like } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 import { Player } from '../../../db/entities';
 import Schema from '../codegen';
@@ -19,9 +19,11 @@ export const resolvers: Schema.Resolvers = {
   Query: {
     playersByName: async (_, { startsWith, first, after }) => {
       const playerRepository = getRepository(Player);
-      const players = await playerRepository.find({
-        displayName: Like(`%${startsWith}%`),
-      });
+      // Caveat: ILIKE only available in Postgres
+      const query = playerRepository
+        .createQueryBuilder('player')
+        .where(`player."displayName" ILIKE '%${startsWith}%'`);
+      const players = await query.getMany();
       return connectionFromArray(players, { first, after });
     },
   },
