@@ -1,6 +1,7 @@
 import { FC, useState, useCallback } from 'react';
 import ContentLoader from 'react-content-loader';
 import { useStyletron, withStyle } from 'baseui';
+import { Button, KIND, SIZE } from 'baseui/button';
 import { HeadingLarge, LabelSmall } from 'baseui/typography';
 import { StyledLink } from 'baseui/link';
 
@@ -10,6 +11,7 @@ import Card from '../card';
 import { MatchDetails, MatchDetailsRow } from '../match-details';
 
 import RecentMatchBanner from './recent-match-banner';
+import RecordMatchModal from './record-match-modal';
 
 const INIT_NUM_LOADING_ELEMENTS = 5; // i.e. for the initial load
 const DEFAULT_NUM_LOADING_ELEMENTS = 3;
@@ -37,9 +39,15 @@ const DiscordLink = withStyle(StyledLink as any, () => ({
   },
 }));
 
-const RecentMatches: FC = () => {
+interface Props {
+  factionStats: GQL.FactionStatsQuery;
+  playerMats: GQL.PlayerMatsQuery;
+}
+
+const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
   const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
+  const [isRecordModalVisible, setIsRecordModalVisible] = useState(false);
   const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
     variables: {
@@ -47,6 +55,15 @@ const RecentMatches: FC = () => {
     },
     notifyOnNetworkStatusChange: true,
   });
+
+  const onClickRecordMatch = useCallback(
+    () => setIsRecordModalVisible(true),
+    []
+  );
+  const onCancelRecordMatch = useCallback(
+    () => setIsRecordModalVisible(false),
+    []
+  );
 
   const onMatchClick = useCallback(
     (id: string) => {
@@ -165,19 +182,34 @@ const RecentMatches: FC = () => {
 
   return (
     <Card>
-      <HeadingLarge
-        as="h1"
-        overrides={{
-          Block: {
-            style: {
-              marginTop: 0,
-            },
-          },
-        }}
+      <div
+        className={css({
+          display: 'flex',
+          alignItems: 'center',
+          margin: '0 0 20px',
+        })}
       >
-        Recent Matches
-      </HeadingLarge>
-
+        <HeadingLarge
+          as="h1"
+          overrides={{
+            Block: {
+              style: {
+                flex: '1 1 auto',
+                margin: 0,
+              },
+            },
+          }}
+        >
+          Recent Matches
+        </HeadingLarge>
+        <Button
+          kind={KIND.secondary}
+          size={SIZE.compact}
+          onClick={onClickRecordMatch}
+        >
+          Record a Match
+        </Button>
+      </div>
       <div
         className={css({
           display: 'flex',
@@ -241,7 +273,6 @@ const RecentMatches: FC = () => {
           </ContentLoader>
         )}
       </div>
-
       <LabelSmall
         overrides={{
           Block: {
@@ -265,6 +296,12 @@ const RecentMatches: FC = () => {
           Join our Discord!
         </DiscordLink>
       </LabelSmall>
+      <RecordMatchModal
+        factions={factionStats.factions}
+        playerMats={playerMats.playerMats}
+        isOpen={isRecordModalVisible}
+        onClose={onCancelRecordMatch}
+      ></RecordMatchModal>
     </Card>
   );
 };

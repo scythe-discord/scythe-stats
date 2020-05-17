@@ -1,0 +1,6 @@
+query playerMats {
+  playerMats {
+    id
+    name
+  }
+}

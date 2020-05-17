@@ -313,6 +313,38 @@ export type MatchesQuery = (
   ) }
 );
 
+export type PlayerMatsQueryVariables = {};
+
+
+export type PlayerMatsQuery = (
+  { __typename?: 'Query' }
+  & { playerMats: Array<(
+    { __typename?: 'PlayerMat' }
+    & Pick<PlayerMat, 'id' | 'name'>
+  )> }
+);
+
+export type PlayersByNameQueryVariables = {
+  startsWith: Scalars['String'];
+  first: Scalars['Int'];
+  after?: Maybe<Scalars['String']>;
+};
+
+
+export type PlayersByNameQuery = (
+  { __typename?: 'Query' }
+  & { playersByName: (
+    { __typename?: 'PlayerConnection' }
+    & { edges: Array<(
+      { __typename?: 'PlayerEdge' }
+      & { node: (
+        { __typename?: 'Player' }
+        & Pick<Player, 'id' | 'displayName' | 'steamId'>
+      ) }
+    )> }
+  ) }
+);
+
 export type TopPlayersQueryVariables = {
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
@@ -515,6 +547,80 @@ export function useMatchesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHook
 export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
 export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
 export type MatchesQueryResult = ApolloReactCommon.QueryResult<MatchesQuery, MatchesQueryVariables>;
+export const PlayerMatsDocument = gql`
+    query playerMats {
+  playerMats {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __usePlayerMatsQuery__
+ *
+ * To run a query within a React component, call `usePlayerMatsQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlayerMatsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlayerMatsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function usePlayerMatsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
+        return ApolloReactHooks.useQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+      }
+export function usePlayerMatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+        }
+export type PlayerMatsQueryHookResult = ReturnType<typeof usePlayerMatsQuery>;
+export type PlayerMatsLazyQueryHookResult = ReturnType<typeof usePlayerMatsLazyQuery>;
+export type PlayerMatsQueryResult = ApolloReactCommon.QueryResult<PlayerMatsQuery, PlayerMatsQueryVariables>;
+export const PlayersByNameDocument = gql`
+    query playersByName($startsWith: String!, $first: Int!, $after: String) {
+  playersByName(startsWith: $startsWith, first: $first, after: $after) {
+    edges {
+      node {
+        id
+        displayName
+        steamId
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __usePlayersByNameQuery__
+ *
+ * To run a query within a React component, call `usePlayersByNameQuery` and pass it any options that fit your needs.
+ * When your component renders, `usePlayersByNameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = usePlayersByNameQuery({
+ *   variables: {
+ *      startsWith: // value for 'startsWith'
+ *      first: // value for 'first'
+ *      after: // value for 'after'
+ *   },
+ * });
+ */
+export function usePlayersByNameQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
+        return ApolloReactHooks.useQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+      }
+export function usePlayersByNameLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+        }
+export type PlayersByNameQueryHookResult = ReturnType<typeof usePlayersByNameQuery>;
+export type PlayersByNameLazyQueryHookResult = ReturnType<typeof usePlayersByNameLazyQuery>;
+export type PlayersByNameQueryResult = ApolloReactCommon.QueryResult<PlayersByNameQuery, PlayersByNameQueryVariables>;
 export const TopPlayersDocument = gql`
     query topPlayers($first: Int!, $after: String, $fromDate: String) {
   playersByWins(first: $first, after: $after, fromDate: $fromDate) {
