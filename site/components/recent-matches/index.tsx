@@ -47,6 +47,9 @@ interface Props {
 const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
   const [css, theme] = useStyletron();
   const [selected, setSelected] = useState(0);
+  const [lastFetchedCursor, setLastFetchedCursor] = useState<string | null>(
+    null
+  );
   const [isRecordModalVisible, setIsRecordModalVisible] = useState(false);
   const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
@@ -95,6 +98,8 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
         return;
       }
 
+      setLastFetchedCursor(endCursor);
+
       fetchMore({
         variables: {
           after: endCursor,
@@ -124,8 +129,14 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
 
   let timelineElements: TimelineElement[] = [];
   let matchDetailsRows: MatchDetailsRow[] = [];
+  let hasMore = false;
 
   if (recentMatches) {
+    const currEndCursor = recentMatches.matches.pageInfo.endCursor;
+    hasMore =
+      currEndCursor !== lastFetchedCursor &&
+      !!recentMatches.matches.pageInfo.hasNextPage;
+
     const selectedMatch = recentMatches.matches.edges[selected].node;
 
     timelineElements = recentMatches.matches.edges.map(({ node }, idx) => {
@@ -230,9 +241,7 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
           width={`${TIMELINE_WIDTH}px`}
           maxHeight={`${TIMELINE_HEIGHT}px`}
           loadMore={onLoadMore}
-          hasMore={
-            recentMatches ? !!recentMatches.matches.pageInfo.hasNextPage : false
-          }
+          hasMore={hasMore}
           isLoading={loading}
           numLoadingElements={
             timelineElements.length
