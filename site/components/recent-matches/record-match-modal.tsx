@@ -265,9 +265,28 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
   );
 
   return (
-    <Modal closeable animate autoFocus size={SIZE.auto} {...modalProps}>
+    <Modal
+      overrides={{
+        Dialog: {
+          style: {
+            maxWidth: '750px',
+            width: '100%',
+          },
+        },
+      }}
+      closeable
+      animate
+      autoFocus
+      size={SIZE.auto}
+      {...modalProps}
+    >
       <ModalHeader>Record Match</ModalHeader>
-      <ModalBody>
+      <ModalBody
+        className={css({
+          overflow: 'auto',
+          paddingBottom: '15px',
+        })}
+      >
         {formError && (
           <Notification
             kind={NOTIFICATION_KIND.negative}

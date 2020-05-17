@@ -132,10 +132,18 @@ const RecordMatchRow: FC<Props> = ({
         onInputChange={onChangePlayerInput}
         isLoading={loading}
         creatable
+        required
         overrides={{
+          Root: {
+            style: {
+              flex: '1 1 auto',
+              minWidth: '135px',
+              width: 'auto',
+            },
+          },
           ControlContainer: {
             style: {
-              width: '175px',
+              width: '100%',
             },
           },
         }}
@@ -151,10 +159,13 @@ const RecordMatchRow: FC<Props> = ({
         onChange={onChangeFactionWrapper}
         getOptionLabel={getFactionLabel}
         getValueLabel={getFactionLabel}
+        required
         overrides={{
           Root: {
             style: {
+              flex: '0 0 auto',
               margin: '0 15px',
+              width: 'auto',
             },
           },
           ControlContainer: {
@@ -174,15 +185,18 @@ const RecordMatchRow: FC<Props> = ({
         value={playerMat}
         placeholder="Player Mat"
         onChange={onChangePlayerMatWrapper}
+        required
         overrides={{
           Root: {
             style: {
+              flex: '0 0 auto',
               margin: '0 15px 0 0',
+              width: 'auto',
             },
           },
           ControlContainer: {
             style: {
-              width: '175px',
+              width: '155px',
             },
           },
         }}
@@ -194,10 +208,13 @@ const RecordMatchRow: FC<Props> = ({
         placeholder="Coins"
         type="number"
         min={0}
+        required
         overrides={{
           Root: {
             style: {
+              flex: '0 0 auto',
               margin: '0 15px 0 0',
+              width: 'auto',
             },
           },
           InputContainer: {
