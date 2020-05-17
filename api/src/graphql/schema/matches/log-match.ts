@@ -148,12 +148,12 @@ const validateMatch = async (
   numRounds: number,
   loggedMatchResults: Schema.PlayerMatchResultInput[]
 ): Promise<void> => {
-  if (numRounds === 0) {
-    throw new Error(`Match cannot be recorded with 0 rounds played`);
+  if (numRounds <= 0) {
+    throw new Error('Matches must have more than 0 rounds played');
   }
 
   if (loggedMatchResults.length < 2 || loggedMatchResults.length > 7) {
-    throw new Error('Match must have between 2 and 7 (inclusive) players');
+    throw new Error('Matches must have 2-7 players');
   }
 
   const seenFactions: { [key: string]: boolean } = {};
@@ -165,7 +165,12 @@ const validateMatch = async (
       faction: factionName,
       playerMat: playerMatName,
       displayName,
+      coins,
     } = loggedMatchResults[i];
+
+    if (coins < 0) {
+      throw new Error('You cannot have negative coin amounts');
+    }
 
     if (
       seenFactions[factionName] ||
