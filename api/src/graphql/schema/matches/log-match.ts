@@ -1,5 +1,6 @@
 import { gql } from 'apollo-server';
 import { getRepository, getManager, EntityManager } from 'typeorm';
+import { RateLimiterMemory } from 'rate-limiter-flexible';
 
 import Schema from '../codegen';
 import {
@@ -13,6 +14,11 @@ import { delay } from '../../../common/utils';
 
 const MAX_RETRIES = 5;
 const MAX_RETRY_DELAY = 1500;
+
+const rateLimiter = new RateLimiterMemory({
+  points: 3, // 3 log requests
+  duration: 30, // Every 30 seconds
+});
 
 export const typeDef = gql`
   extend type Mutation {
@@ -208,6 +214,16 @@ export const resolvers: Schema.Resolvers = {
     ) => {
       if (process.env.NODE_ENV === 'production' && !context.isAdmin) {
         throw new Error('You do not have permission to log matches');
+      }
+
+      if (context.clientIp && !context.isAdmin) {
+        try {
+          await rateLimiter.consume(context.clientIp, 1);
+        } catch {
+          throw new Error(
+            'You are sending log requests too quickly - please wait a few minutes'
+          );
+        }
       }
 
       await validateMatch(numRounds, loggedMatchResults);

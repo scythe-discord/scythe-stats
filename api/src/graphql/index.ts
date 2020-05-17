@@ -18,7 +18,8 @@ export const graphqlServer = new ApolloServer({
     }
 
     return {
-      isAdmin
+      isAdmin,
+      clientIp: req.headers['x-forwarded-for'],
     };
-  }
+  },
 });
