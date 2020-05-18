@@ -17,6 +17,7 @@ import {
   typeDef as playerTypeDef,
   resolvers as playerResolvers,
 } from './players';
+import { typeDef as tierTypeDef, resolvers as tierResolvers } from './tiers';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
 
 export const Query = gql`
@@ -40,12 +41,14 @@ export default {
     ...factionsTypeDef,
     ...playerTypeDef,
     ...matchTypeDef,
+    ...tierTypeDef,
   ],
   resolvers: merge(
     relayResolvers,
     playerMatsResolvers,
     factionsResolvers,
     playerResolvers,
-    matchResolvers
+    matchResolvers,
+    tierResolvers
   ),
 };

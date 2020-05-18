@@ -5,7 +5,8 @@ import {
   Faction,
   PlayerMat,
   Match,
-  PlayerMatchResult
+  PlayerMatchResult,
+  MatComboTier,
 } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -18,6 +19,7 @@ export const typeDef = gql`
   type FactionMatCombo {
     faction: Faction!
     playerMat: PlayerMat!
+    tier: Tier!
     totalWins: Int!
     totalMatches: Int!
     avgCoinsOnWin: Int!
@@ -28,6 +30,19 @@ export const typeDef = gql`
 
 export const resolvers: Schema.Resolvers = {
   FactionMatCombo: {
+    tier: async ({ faction, playerMat }) => {
+      const matComboTierRepo = getRepository(MatComboTier);
+
+      const matComboTier = await matComboTierRepo.findOneOrFail({
+        where: {
+          faction,
+          playerMat,
+        },
+        relations: ['tier'],
+      });
+
+      return matComboTier.tier;
+    },
     totalWins: async ({ faction, playerMat }) => {
       const matchRepo = getRepository(Match);
       const wins = await matchRepo
@@ -35,7 +50,7 @@ export const resolvers: Schema.Resolvers = {
         .innerJoinAndSelect('match.winner', 'winner')
         .where('winner."factionId" = :factionId', { factionId: faction.id })
         .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id
+          playerMatId: playerMat.id,
         })
         .getCount();
       return wins;
@@ -45,10 +60,10 @@ export const resolvers: Schema.Resolvers = {
       const matches = await playerMatchResultRepo
         .createQueryBuilder('result')
         .where('result."factionId" = :factionId', {
-          factionId: faction.id
+          factionId: faction.id,
         })
         .andWhere('result."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id
+          playerMatId: playerMat.id,
         })
         .getCount();
       return matches;
@@ -61,7 +76,7 @@ export const resolvers: Schema.Resolvers = {
         .innerJoin('match.winner', 'winner')
         .where('winner."factionId" = :factionId', { factionId: faction.id })
         .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id
+          playerMatId: playerMat.id,
         })
         .getRawOne();
 
@@ -75,7 +90,7 @@ export const resolvers: Schema.Resolvers = {
         .innerJoin('match.winner', 'winner')
         .where('winner."factionId" = :factionId', { factionId: faction.id })
         .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id
+          playerMatId: playerMat.id,
         })
         .getRawOne();
 
@@ -89,11 +104,11 @@ export const resolvers: Schema.Resolvers = {
         .innerJoin('match.winner', 'winner')
         .where('winner."factionId" = :factionId', { factionId: faction.id })
         .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id
+          playerMatId: playerMat.id,
         })
         .getRawOne();
 
       return res['min'] || 0;
-    }
-  }
+    },
+  },
 };

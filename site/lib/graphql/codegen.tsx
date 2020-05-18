@@ -24,6 +24,7 @@ export type Query = {
   playersByWins: PlayerConnection;
   playersByName: PlayerConnection;
   matches: MatchConnection;
+  tiers: Array<Tier>;
 };
 
 
@@ -119,6 +120,7 @@ export type FactionMatCombo = {
    __typename?: 'FactionMatCombo';
   faction: Faction;
   playerMat: PlayerMat;
+  tier: Tier;
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
@@ -202,6 +204,13 @@ export type PlayerMatchResultInput = {
   faction: Scalars['String'];
   playerMat: Scalars['String'];
   coins: Scalars['Int'];
+};
+
+export type Tier = {
+   __typename?: 'Tier';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  rank: Scalars['Int'];
 };
 
 export enum CacheControlScope {

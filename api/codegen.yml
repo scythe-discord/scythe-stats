@@ -12,4 +12,5 @@ generates:
         Faction: '../../../db/entities#FactionModel'
         PlayerMat: '../../../db/entities#PlayerMatModel'
         Player: '../../../db/entities#PlayerModel'
+        Tier: '../../../db/entities#TierModel'
         FactionMatCombo: '../factions/faction-mat-combo#FactionMatComboBase'

@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { FactionModel, PlayerMatModel, PlayerModel } from '../../../db/entities';
+import { FactionModel, PlayerMatModel, PlayerModel, TierModel } from '../../../db/entities';
 import { FactionMatComboBase } from '../factions/faction-mat-combo';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
@@ -26,6 +26,7 @@ export type Query = {
   playersByWins: PlayerConnection;
   playersByName: PlayerConnection;
   matches: MatchConnection;
+  tiers: Array<Tier>;
 };
 
 
@@ -121,6 +122,7 @@ export type FactionMatCombo = {
    __typename?: 'FactionMatCombo';
   faction: Faction;
   playerMat: PlayerMat;
+  tier: Tier;
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
@@ -204,6 +206,13 @@ export type PlayerMatchResultInput = {
   faction: Scalars['String'];
   playerMat: Scalars['String'];
   coins: Scalars['Int'];
+};
+
+export type Tier = {
+   __typename?: 'Tier';
+  id: Scalars['Int'];
+  name: Scalars['String'];
+  rank: Scalars['Int'];
 };
 
 export enum CacheControlScope {
@@ -308,6 +317,7 @@ export type ResolversTypes = ResolversObject<{
   MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversTypes['Player'], faction: ResolversTypes['Faction'], playerMat: ResolversTypes['PlayerMat'] }>,
   PlayerMatchResultInput: PlayerMatchResultInput,
+  Tier: ResolverTypeWrapper<TierModel>,
   CacheControlScope: CacheControlScope,
   Upload: ResolverTypeWrapper<Scalars['Upload']>,
 }>;
@@ -336,6 +346,7 @@ export type ResolversParentTypes = ResolversObject<{
   MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
   PlayerMatchResult: Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversParentTypes['Player'], faction: ResolversParentTypes['Faction'], playerMat: ResolversParentTypes['PlayerMat'] },
   PlayerMatchResultInput: PlayerMatchResultInput,
+  Tier: TierModel,
   CacheControlScope: CacheControlScope,
   Upload: Scalars['Upload'],
 }>;
@@ -350,6 +361,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
   playersByWins?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByWinsArgs, 'first'>>,
   playersByName?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByNameArgs, 'startsWith' | 'first'>>,
   matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>,
+  tiers?: Resolver<Array<ResolversTypes['Tier']>, ParentType, ContextType>,
 }>;
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
@@ -396,6 +408,7 @@ export type FactionResolvers<ContextType = any, ParentType extends ResolversPare
 export type FactionMatComboResolvers<ContextType = any, ParentType extends ResolversParentTypes['FactionMatCombo'] = ResolversParentTypes['FactionMatCombo']> = ResolversObject<{
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,
+  tier?: Resolver<ResolversTypes['Tier'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
@@ -462,6 +475,13 @@ export type PlayerMatchResultResolvers<ContextType = any, ParentType extends Res
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
+export type TierResolvers<ContextType = any, ParentType extends ResolversParentTypes['Tier'] = ResolversParentTypes['Tier']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  rank?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
 export interface UploadScalarConfig extends GraphQLScalarTypeConfig<ResolversTypes['Upload'], any> {
   name: 'Upload'
 }
@@ -483,6 +503,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   MatchConnection?: MatchConnectionResolvers<ContextType>,
   MatchEdge?: MatchEdgeResolvers<ContextType>,
   PlayerMatchResult?: PlayerMatchResultResolvers<ContextType>,
+  Tier?: TierResolvers<ContextType>,
   Upload?: GraphQLScalarType,
 }>;
 
