@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
+import MatComboTier from './mat-combo-tier';
 
 @Entity()
 export default class Faction {
@@ -12,7 +13,10 @@ export default class Faction {
 
   @OneToMany(
     () => PlayerMatchResult,
-    playerMatchResult => playerMatchResult.faction
+    (playerMatchResult) => playerMatchResult.faction
   )
   playerMatchResults: PlayerMatchResult[];
+
+  @OneToMany(() => MatComboTier, (matComboTier) => matComboTier.faction)
+  matComboTiers: MatComboTier[];
 }
