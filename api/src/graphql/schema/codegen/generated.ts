@@ -213,6 +213,7 @@ export type Tier = {
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
+  factionMatCombos: Array<FactionMatCombo>;
 };
 
 export enum CacheControlScope {
@@ -479,6 +480,7 @@ export type TierResolvers<ContextType = any, ParentType extends ResolversParentT
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   rank?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  factionMatCombos?: Resolver<Array<ResolversTypes['FactionMatCombo']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

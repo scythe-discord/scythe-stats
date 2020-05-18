@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server';
 import { getRepository } from 'typeorm';
 
-import { Tier } from '../../../db/entities';
+import { Tier, MatComboTier } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -13,6 +13,7 @@ export const typeDef = gql`
     id: Int!
     name: String!
     rank: Int!
+    factionMatCombos: [FactionMatCombo!]!
   }
 `;
 
@@ -23,6 +24,20 @@ export const resolvers: Schema.Resolvers = {
       const tiers = await tierRepo.find();
 
       return tiers;
+    },
+  },
+  Tier: {
+    factionMatCombos: async (tier) => {
+      const matComboTierRepo = getRepository(MatComboTier);
+
+      const matComboTiers = await matComboTierRepo.find({
+        where: {
+          tier,
+        },
+        relations: ['faction', 'playerMat'],
+      });
+
+      return matComboTiers;
     },
   },
 };

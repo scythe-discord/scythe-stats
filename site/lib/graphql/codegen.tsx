@@ -211,6 +211,7 @@ export type Tier = {
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
+  factionMatCombos: Array<FactionMatCombo>;
 };
 
 export enum CacheControlScope {
