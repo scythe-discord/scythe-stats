@@ -355,6 +355,28 @@ export type PlayersByNameQuery = (
   ) }
 );
 
+export type TiersQueryVariables = {};
+
+
+export type TiersQuery = (
+  { __typename?: 'Query' }
+  & { tiers: Array<(
+    { __typename?: 'Tier' }
+    & Pick<Tier, 'id' | 'name' | 'rank'>
+    & { factionMatCombos: Array<(
+      { __typename?: 'FactionMatCombo' }
+      & Pick<FactionMatCombo, 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
+      & { faction: (
+        { __typename?: 'Faction' }
+        & Pick<Faction, 'id' | 'name'>
+      ), playerMat: (
+        { __typename?: 'PlayerMat' }
+        & Pick<PlayerMat, 'id' | 'name'>
+      ) }
+    )> }
+  )> }
+);
+
 export type TopPlayersQueryVariables = {
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
@@ -631,6 +653,55 @@ export function usePlayersByNameLazyQuery(baseOptions?: ApolloReactHooks.LazyQue
 export type PlayersByNameQueryHookResult = ReturnType<typeof usePlayersByNameQuery>;
 export type PlayersByNameLazyQueryHookResult = ReturnType<typeof usePlayersByNameLazyQuery>;
 export type PlayersByNameQueryResult = ApolloReactCommon.QueryResult<PlayersByNameQuery, PlayersByNameQueryVariables>;
+export const TiersDocument = gql`
+    query tiers {
+  tiers {
+    id
+    name
+    rank
+    factionMatCombos {
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+      totalWins
+      totalMatches
+      avgCoinsOnWin
+      avgRoundsOnWin
+      leastRoundsForWin
+    }
+  }
+}
+    `;
+
+/**
+ * __useTiersQuery__
+ *
+ * To run a query within a React component, call `useTiersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useTiersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useTiersQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useTiersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TiersQuery, TiersQueryVariables>) {
+        return ApolloReactHooks.useQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+      }
+export function useTiersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TiersQuery, TiersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+        }
+export type TiersQueryHookResult = ReturnType<typeof useTiersQuery>;
+export type TiersLazyQueryHookResult = ReturnType<typeof useTiersLazyQuery>;
+export type TiersQueryResult = ApolloReactCommon.QueryResult<TiersQuery, TiersQueryVariables>;
 export const TopPlayersDocument = gql`
     query topPlayers($first: Int!, $after: String, $fromDate: String) {
   playersByWins(first: $first, after: $after, fromDate: $fromDate) {

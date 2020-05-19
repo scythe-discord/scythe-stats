@@ -1,0 +1,22 @@
+query tiers {
+  tiers {
+    id
+    name
+    rank
+    factionMatCombos {
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+      totalWins
+      totalMatches
+      avgCoinsOnWin
+      avgRoundsOnWin
+      leastRoundsForWin
+    }
+  }
+}

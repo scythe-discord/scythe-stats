@@ -49,6 +49,11 @@ export default () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
+        <Link href="/tiers" passHref={true}>
+          <StyledLink>Tier List</StyledLink>
+        </Link>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem>
         <StyledLink
           href="https://discord.gg/dcRcxy2"
           target="_blank"
