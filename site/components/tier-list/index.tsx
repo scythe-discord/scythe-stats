@@ -26,7 +26,10 @@ const CenteredBodyCell = withStyle(StyledBodyCell, {
   display: 'flex',
   alignItems: 'center',
   justifyContent: 'center',
-  padding: '15px 10px',
+  paddingTop: '15px',
+  paddingBottom: '15px',
+  paddingLeft: '10px',
+  paddingRight: '10px',
 });
 
 const TierLabelCell = withStyle(CenteredBodyCell, {
