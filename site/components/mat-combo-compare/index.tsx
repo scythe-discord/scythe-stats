@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
-import { HeadingXLarge } from 'baseui/typography';
+import { HeadingXLarge, LabelMedium } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
@@ -82,7 +82,6 @@ const MatComboCompare: FC<Props> = ({
         className={css({
           display: 'flex',
           alignItems: 'center',
-          margin: '20px 0',
         })}
       >
         <FactionIcon
@@ -98,18 +97,41 @@ const MatComboCompare: FC<Props> = ({
       </div>
       <div
         className={css({
-          display: 'flex',
           height: '500px',
+          margin: '20px 0',
         })}
       >
-        <SamePlayerMatWinRates
-          combos={playerMatToCombos[selectedPlayerMatId]}
-          selectedFactionId={selectedFactionId}
-        />
-        <SameFactionWinRates
-          combos={factionToCombos[selectedFactionId]}
-          selectedPlayerMatId={selectedPlayerMatId}
-        />
+        <div
+          className={css({
+            display: 'inline-flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '50%',
+            height: '100%',
+          })}
+        >
+          <LabelMedium>{selectedPlayerMat.name} win rates</LabelMedium>
+          <SamePlayerMatWinRates
+            combos={playerMatToCombos[selectedPlayerMatId]}
+            selectedFactionId={selectedFactionId}
+          />
+        </div>
+
+        <div
+          className={css({
+            display: 'inline-flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            width: '50%',
+            height: '100%',
+          })}
+        >
+          <LabelMedium>{selectedFaction.name} win rates</LabelMedium>
+          <SameFactionWinRates
+            combos={factionToCombos[selectedFactionId]}
+            selectedPlayerMatId={selectedPlayerMatId}
+          />
+        </div>
       </div>
     </>
   );

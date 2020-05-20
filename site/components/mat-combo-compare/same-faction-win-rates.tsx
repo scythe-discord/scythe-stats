@@ -48,10 +48,10 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
   );
 
   return (
-    <ResponsiveContainer id="same-faction-win-rates" width="50%" height="100%">
+    <ResponsiveContainer id="same-faction-win-rates" width="100%" height="100%">
       <BarChart
         barCategoryGap="15%"
-        margin={{ top: 5, right: 5, bottom: 10, left: 5 }}
+        margin={{ top: 10, right: 5, bottom: 10, left: 15 }}
         data={data}
       >
         <Tooltip

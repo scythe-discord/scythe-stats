@@ -66,7 +66,14 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
           selectedMatCombo={selectedMatCombo}
           onClickMatCombo={onClickMatCombo}
         />
-        <MatComboCompare tiers={tiers} selectedMatCombo={selectedMatCombo} />
+        <div
+          className={css({
+            margin: '20px 0',
+            padding: '20px 0',
+          })}
+        >
+          <MatComboCompare tiers={tiers} selectedMatCombo={selectedMatCombo} />
+        </div>
       </div>
     </div>
   );
