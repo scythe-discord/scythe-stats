@@ -29,7 +29,7 @@ const TierLabelCell = withStyle(CenteredBodyCell, {
 });
 
 const TierList: FC<Props> = ({ tiers, playerMats }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   const orderedTiers = tiers.tiers.sort((a, b) => {
     if (a.rank > b.rank) {
@@ -40,51 +40,65 @@ const TierList: FC<Props> = ({ tiers, playerMats }) => {
   });
 
   return (
-    <StyledTable $gridTemplateColumns="80px auto auto auto auto auto auto auto">
-      <CenteredHeadCell />
-      {playerMats.playerMats.map(({ name }) => (
-        <CenteredHeadCell>{name}</CenteredHeadCell>
-      ))}
-      {orderedTiers.map(({ name, factionMatCombos }, i) => {
-        const playerMatToFactions: {
-          [key: string]: Pick<GQL.Faction, 'id' | 'name'>[];
-        } = {};
-        factionMatCombos.forEach(({ faction, playerMat }) => {
-          if (!playerMatToFactions[playerMat.id]) {
-            playerMatToFactions[playerMat.id] = [];
-          }
-          playerMatToFactions[playerMat.id].push(faction);
-        });
+    <>
+      <StyledTable $gridTemplateColumns="80px auto auto auto auto auto auto auto">
+        <CenteredHeadCell />
+        {playerMats.playerMats.map(({ name }) => (
+          <CenteredHeadCell>{name}</CenteredHeadCell>
+        ))}
+        {orderedTiers.map(({ name, factionMatCombos }, i) => {
+          const playerMatToFactions: {
+            [key: string]: Pick<GQL.Faction, 'id' | 'name'>[];
+          } = {};
+          factionMatCombos.forEach(({ faction, playerMat }) => {
+            if (!playerMatToFactions[playerMat.id]) {
+              playerMatToFactions[playerMat.id] = [];
+            }
+            playerMatToFactions[playerMat.id].push(faction);
+          });
 
-        const striped = i % 2 !== 0;
+          const striped = i % 2 !== 0;
 
-        return (
-          <>
-            <TierLabelCell $striped={striped}>{name}</TierLabelCell>
-            {playerMats.playerMats.map(({ id }) => {
-              const factions = playerMatToFactions[id];
-              return (
-                <CenteredBodyCell $striped={striped}>
-                  {factions ? (
-                    factions.map(({ name }) => (
-                      <FactionIcon
-                        faction={name}
-                        size={42}
-                        className={css({
-                          margin: '0 5px',
-                        })}
-                      />
-                    ))
-                  ) : (
-                    <div />
-                  )}
-                </CenteredBodyCell>
-              );
-            })}
-          </>
-        );
-      })}
-    </StyledTable>
+          return (
+            <>
+              <TierLabelCell $striped={striped}>{name}</TierLabelCell>
+              {playerMats.playerMats.map(({ id }) => {
+                const factions = playerMatToFactions[id];
+                return (
+                  <CenteredBodyCell $striped={striped}>
+                    {factions ? (
+                      factions.map(({ name }) => (
+                        <FactionIcon
+                          faction={name}
+                          size={42}
+                          className={css({
+                            margin: '0 5px',
+                          })}
+                        />
+                      ))
+                    ) : (
+                      <div />
+                    )}
+                  </CenteredBodyCell>
+                );
+              })}
+            </>
+          );
+        })}
+      </StyledTable>
+      <small
+        className={css({
+          display: 'block',
+          color: theme.colors.primary,
+          margin: '15px 0 10px',
+        })}
+      >
+        This tier list was created by members of our Discord community, and may
+        not necessarily reflect collected stats. Thanks to @FOMOF,
+        @AxlPrototype, @JoyDivision, @Mr. Derp, @Reyl, and @w0j0 for creating
+        this list.
+      </small>
+    </>
   );
 };
 
