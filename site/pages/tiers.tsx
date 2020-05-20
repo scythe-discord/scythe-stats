@@ -3,7 +3,7 @@ import { NextComponentType } from 'next';
 import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
 
-import { SiteHeader, TierList } from '../components';
+import { SiteHeader, TierList, MatComboCompare } from '../components';
 import GQL from '../lib/graphql';
 
 interface Props {
@@ -66,6 +66,7 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
           selectedMatCombo={selectedMatCombo}
           onClickMatCombo={onClickMatCombo}
         />
+        <MatComboCompare tiers={tiers} selectedMatCombo={selectedMatCombo} />
       </div>
     </div>
   );
