@@ -1,3 +1,4 @@
+import { useCallback, useState } from 'react';
 import { NextComponentType } from 'next';
 import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
@@ -8,13 +9,33 @@ import GQL from '../lib/graphql';
 interface Props {
   tiers: GQL.TiersQuery;
   playerMats: GQL.PlayerMatsQuery;
+  initialMatCombo: {
+    factionId: number;
+    playerMatId: number;
+  };
 }
 
 const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
   tiers,
   playerMats,
+  initialMatCombo,
 }) => {
   const [css, theme] = useStyletron();
+
+  const [selectedMatCombo, setSelectedMatCombo] = useState<{
+    factionId: number;
+    playerMatId: number;
+  }>(initialMatCombo);
+
+  const onClickMatCombo = useCallback(
+    (factionId: number, playerMatId: number) => {
+      setSelectedMatCombo({
+        factionId,
+        playerMatId,
+      });
+    },
+    []
+  );
 
   return (
     <div
@@ -39,7 +60,12 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
           },
         })}
       >
-        <TierList tiers={tiers} playerMats={playerMats} />
+        <TierList
+          tiers={tiers}
+          playerMats={playerMats}
+          selectedMatCombo={selectedMatCombo}
+          onClickMatCombo={onClickMatCombo}
+        />
       </div>
     </div>
   );
@@ -58,9 +84,20 @@ TiersPage.getInitialProps = async (ctx) => {
     query: GQL.PlayerMatsDocument,
   });
 
+  const randomTier =
+    tiers.tiers[Math.floor(Math.random() * tiers.tiers.length)];
+  const randomMatCombo =
+    randomTier.factionMatCombos[
+      Math.floor(Math.random() * randomTier.factionMatCombos.length)
+    ];
+
   return {
     tiers,
     playerMats,
+    initialMatCombo: {
+      factionId: randomMatCombo.faction.id,
+      playerMatId: randomMatCombo.playerMat.id,
+    },
   };
 };
 

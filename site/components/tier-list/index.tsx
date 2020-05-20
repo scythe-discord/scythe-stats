@@ -1,13 +1,19 @@
-import { FC } from 'react';
+import { FC, Fragment } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell, StyledBodyCell } from 'baseui/table-grid';
 
 import GQL from '../../lib/graphql';
-import FactionIcon from '../faction-icon';
+
+import MatComboIcon from './mat-combo-icon';
 
 interface Props {
   tiers: GQL.TiersQuery;
   playerMats: GQL.PlayerMatsQuery;
+  selectedMatCombo: {
+    factionId: number;
+    playerMatId: number;
+  };
+  onClickMatCombo: (factionId: number, playerMatId: number) => void;
 }
 
 const CenteredHeadCell = withStyle(StyledHeadCell, {
@@ -28,7 +34,12 @@ const TierLabelCell = withStyle(CenteredBodyCell, {
   fontWeight: 600,
 });
 
-const TierList: FC<Props> = ({ tiers, playerMats }) => {
+const TierList: FC<Props> = ({
+  tiers,
+  playerMats,
+  selectedMatCombo,
+  onClickMatCombo,
+}) => {
   const [css, theme] = useStyletron();
 
   const orderedTiers = tiers.tiers.sort((a, b) => {
@@ -43,10 +54,10 @@ const TierList: FC<Props> = ({ tiers, playerMats }) => {
     <>
       <StyledTable $gridTemplateColumns="80px auto auto auto auto auto auto auto">
         <CenteredHeadCell />
-        {playerMats.playerMats.map(({ name }) => (
-          <CenteredHeadCell>{name}</CenteredHeadCell>
+        {playerMats.playerMats.map(({ id, name }) => (
+          <CenteredHeadCell key={id}>{name}</CenteredHeadCell>
         ))}
-        {orderedTiers.map(({ name, factionMatCombos }, i) => {
+        {orderedTiers.map(({ id: tierId, name, factionMatCombos }, i) => {
           const playerMatToFactions: {
             [key: string]: Pick<GQL.Faction, 'id' | 'name'>[];
           } = {};
@@ -60,20 +71,27 @@ const TierList: FC<Props> = ({ tiers, playerMats }) => {
           const striped = i % 2 !== 0;
 
           return (
-            <>
+            <Fragment key={name}>
               <TierLabelCell $striped={striped}>{name}</TierLabelCell>
-              {playerMats.playerMats.map(({ id }) => {
-                const factions = playerMatToFactions[id];
+              {playerMats.playerMats.map(({ id: playerMatId }) => {
+                const factions = playerMatToFactions[playerMatId];
                 return (
-                  <CenteredBodyCell $striped={striped}>
+                  <CenteredBodyCell
+                    key={`${tierId}:${playerMatId}`}
+                    $striped={striped}
+                  >
                     {factions ? (
-                      factions.map(({ name }) => (
-                        <FactionIcon
-                          faction={name}
-                          size={42}
-                          className={css({
-                            margin: '0 5px',
-                          })}
+                      factions.map(({ id: factionId, name }) => (
+                        <MatComboIcon
+                          key={`${factionId}:${playerMatId}`}
+                          factionId={factionId}
+                          playerMatId={playerMatId}
+                          factionName={name}
+                          isSelected={
+                            selectedMatCombo.factionId === factionId &&
+                            selectedMatCombo.playerMatId === playerMatId
+                          }
+                          onClick={onClickMatCombo}
                         />
                       ))
                     ) : (
@@ -82,7 +100,7 @@ const TierList: FC<Props> = ({ tiers, playerMats }) => {
                   </CenteredBodyCell>
                 );
               })}
-            </>
+            </Fragment>
           );
         })}
       </StyledTable>
