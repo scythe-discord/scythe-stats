@@ -25,16 +25,16 @@ interface Props {
 const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
   const [_, theme] = useStyletron();
   const orderedFactions = combos.sort((a, b) => {
-    if (a.faction.id === selectedFactionId) {
-      return -1;
-    } else if (b.faction.id === selectedFactionId) {
-      return 1;
-    } else if (a.faction.id < b.faction.id) {
+    if (a.faction.id < b.faction.id) {
       return -1;
     }
 
     return 1;
   });
+
+  const selectedIndex = orderedFactions.findIndex(
+    ({ faction }) => faction.id === selectedFactionId
+  );
 
   const data = orderedFactions.map(({ totalMatches, totalWins }, idx) => {
     const winRate = (100 * totalWins) / totalMatches;
@@ -84,7 +84,15 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
         />
         <Bar dataKey="value" fill="#1f78c1">
           {data.map((_, index) => (
-            <Cell cursor="pointer" key={`cell-${index}`} />
+            <Cell
+              cursor="pointer"
+              key={`cell-${index}`}
+              fill={
+                index === selectedIndex
+                  ? theme.colors.positive300
+                  : theme.colors.accent500
+              }
+            />
           ))}
         </Bar>
       </BarChart>

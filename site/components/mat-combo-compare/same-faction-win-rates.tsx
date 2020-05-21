@@ -25,16 +25,16 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
   const [_, theme] = useStyletron();
 
   const orderedPlayerMats = combos.sort((a, b) => {
-    if (a.playerMat.id === selectedPlayerMatId) {
-      return -1;
-    } else if (b.playerMat.id === selectedPlayerMatId) {
-      return 1;
-    } else if (a.playerMat.id < b.playerMat.id) {
+    if (a.playerMat.id < b.playerMat.id) {
       return -1;
     }
 
     return 1;
   });
+
+  const selectedIndex = orderedPlayerMats.findIndex(
+    ({ playerMat }) => playerMat.id === selectedPlayerMatId
+  );
 
   const data = orderedPlayerMats.map(
     ({ playerMat, totalMatches, totalWins }) => {
@@ -73,10 +73,17 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
             return `${val}%`;
           }}
         />
-
         <Bar dataKey="value" fill="#1f78c1">
           {data.map((_, index) => (
-            <Cell cursor="pointer" key={`cell-${index}`} />
+            <Cell
+              cursor="pointer"
+              key={`cell-${index}`}
+              fill={
+                index === selectedIndex
+                  ? theme.colors.positive300
+                  : theme.colors.accent500
+              }
+            />
           ))}
         </Bar>
       </BarChart>
