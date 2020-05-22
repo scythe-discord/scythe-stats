@@ -53,7 +53,7 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
     >
       <BarChart
         barCategoryGap="15%"
-        margin={{ top: 10, right: 15, bottom: 15, left: 5 }}
+        margin={{ top: 10, right: 5, bottom: 15, left: 15 }}
         data={data}
       >
         <Tooltip

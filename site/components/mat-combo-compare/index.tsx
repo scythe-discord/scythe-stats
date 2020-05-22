@@ -1,10 +1,19 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
-import { HeadingXLarge, LabelMedium } from 'baseui/typography';
+import {
+  HeadingXLarge,
+  LabelMedium,
+  LabelLarge,
+  HeadingLarge,
+  HeadingMedium,
+  HeadingSmall,
+  HeadingXSmall,
+} from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
 
+import ComboSnippet from './combo-snippet';
 import SamePlayerMatWinRates from './same-player-mat-win-rates';
 import SameFactionWinRates from './same-faction-win-rates';
 
@@ -34,6 +43,12 @@ const MatComboCompare: FC<Props> = ({
     };
   } = {};
 
+  const factionComboToTier: {
+    [key: string]: {
+      [key: string]: Pick<GQL.Tier, 'id' | 'name' | 'rank'>;
+    };
+  } = {};
+
   // Used for displaying a combo's win rate, relative to other player mats
   // of the same faction
   const factionToCombos: {
@@ -52,13 +67,20 @@ const MatComboCompare: FC<Props> = ({
     })[];
   } = {};
 
-  tiers.tiers.forEach(({ factionMatCombos }) => {
-    factionMatCombos.forEach((combo) => {
+  tiers.tiers.forEach((tier) => {
+    tier.factionMatCombos.forEach((combo) => {
       if (!factionCombosMap[combo.faction.id]) {
         factionCombosMap[combo.faction.id] = {};
       }
 
       factionCombosMap[combo.faction.id][combo.playerMat.id] = combo;
+
+      if (!factionComboToTier[combo.faction.id]) {
+        factionComboToTier[combo.faction.id] = {};
+      }
+
+      factionComboToTier[combo.faction.id][combo.playerMat.id] = tier;
+
       if (!factionToCombos[combo.faction.id]) {
         factionToCombos[combo.faction.id] = [];
       }
@@ -77,28 +99,61 @@ const MatComboCompare: FC<Props> = ({
   } = factionCombosMap[selectedFactionId][selectedPlayerMatId];
 
   return (
-    <>
+    <div
+      className={css({
+        display: 'flex',
+        minHeight: '400px',
+      })}
+    >
       <div
         className={css({
           display: 'flex',
-          alignItems: 'center',
+          flexDirection: 'column',
+          justifyContent: 'space-between',
         })}
       >
-        <FactionIcon
+        <div
           className={css({
-            margin: '0 15px 0 0',
+            display: 'flex',
+            alignItems: 'center',
+            margin: '0 0 30px',
           })}
-          faction={selectedFaction.name}
-          size={64}
+        >
+          <FactionIcon
+            className={css({
+              margin: '0 15px 0 0',
+              flex: '0 0 auto',
+            })}
+            faction={selectedFaction.name}
+            size={64}
+          />
+          <HeadingXLarge
+            overrides={{
+              Block: {
+                style: {
+                  flex: '0 0 auto',
+                  margin: 0,
+                },
+              },
+            }}
+          >
+            {selectedFaction.name} {selectedPlayerMat.name}
+          </HeadingXLarge>
+        </div>
+        <ComboSnippet
+          className={css({
+            minWidth: '350px',
+          })}
+          combo={factionCombosMap[selectedFactionId][selectedPlayerMatId]}
+          tier={factionComboToTier[selectedFactionId][selectedPlayerMatId]}
         />
-        <HeadingXLarge>
-          {selectedFaction.name} {selectedPlayerMat.name}
-        </HeadingXLarge>
       </div>
       <div
         className={css({
-          height: '500px',
-          margin: '20px 0',
+          display: 'flex',
+          flex: '1 1 auto',
+          margin: '0 0 0 50px',
+          minWidth: 0,
         })}
       >
         <div
@@ -106,34 +161,55 @@ const MatComboCompare: FC<Props> = ({
             display: 'inline-flex',
             flexDirection: 'column',
             alignItems: 'center',
-            width: '50%',
+            flex: '1 1 65%',
+            minWidth: 0,
             height: '100%',
           })}
         >
-          <LabelMedium>{selectedPlayerMat.name} win rates</LabelMedium>
-          <SamePlayerMatWinRates
-            combos={playerMatToCombos[selectedPlayerMatId]}
-            selectedFactionId={selectedFactionId}
-          />
-        </div>
-
-        <div
-          className={css({
-            display: 'inline-flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            width: '50%',
-            height: '100%',
-          })}
-        >
-          <LabelMedium>{selectedFaction.name} win rates</LabelMedium>
+          <HeadingXSmall
+            overrides={{
+              Block: {
+                style: {
+                  margin: '0 0 20px',
+                },
+              },
+            }}
+          >
+            {selectedFaction.name} win rates
+          </HeadingXSmall>
           <SameFactionWinRates
             combos={factionToCombos[selectedFactionId]}
             selectedPlayerMatId={selectedPlayerMatId}
           />
         </div>
+        <div
+          className={css({
+            display: 'inline-flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            flex: '1 1 35%',
+            minWidth: 0,
+            height: '100%',
+          })}
+        >
+          <HeadingXSmall
+            overrides={{
+              Block: {
+                style: {
+                  margin: '0 0 20px',
+                },
+              },
+            }}
+          >
+            {selectedPlayerMat.name} win rates
+          </HeadingXSmall>
+          <SamePlayerMatWinRates
+            combos={playerMatToCombos[selectedPlayerMatId]}
+            selectedFactionId={selectedFactionId}
+          />
+        </div>
       </div>
-    </>
+    </div>
   );
 };
 
