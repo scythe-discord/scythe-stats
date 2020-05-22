@@ -109,6 +109,8 @@ const MatComboCompare: FC<Props> = ({
           display: 'flex',
           flexDirection: 'column',
           justifyContent: 'space-between',
+          // To prevent shifting win rate charts when switching
+          width: '425px',
         })}
       >
         <div
