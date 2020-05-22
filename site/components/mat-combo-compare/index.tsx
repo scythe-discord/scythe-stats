@@ -15,6 +15,7 @@ interface Props {
     factionId: number;
     playerMatId: number;
   };
+  onClickMatCombo: (factionId: number, playerMatId: number) => void;
 }
 
 const MatComboCompare: FC<Props> = ({
@@ -23,6 +24,7 @@ const MatComboCompare: FC<Props> = ({
     factionId: selectedFactionId,
     playerMatId: selectedPlayerMatId,
   },
+  onClickMatCombo,
 }) => {
   const [css] = useStyletron();
 
@@ -177,6 +179,7 @@ const MatComboCompare: FC<Props> = ({
           <SameFactionWinRates
             combos={factionToCombos[selectedFactionId]}
             selectedPlayerMatId={selectedPlayerMatId}
+            onClickMatCombo={onClickMatCombo}
           />
         </div>
         <div
@@ -203,6 +206,7 @@ const MatComboCompare: FC<Props> = ({
           <SamePlayerMatWinRates
             combos={playerMatToCombos[selectedPlayerMatId]}
             selectedFactionId={selectedFactionId}
+            onClickMatCombo={onClickMatCombo}
           />
         </div>
       </div>

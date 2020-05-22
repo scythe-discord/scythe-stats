@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import {
   ResponsiveContainer,
@@ -19,11 +19,15 @@ interface Props {
     playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
   })[];
   selectedPlayerMatId: number;
+  onClickMatCombo: (factionId: number, playerMatId: number) => void;
 }
 
-const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
+const SameFactionWinRates: FC<Props> = ({
+  combos,
+  selectedPlayerMatId,
+  onClickMatCombo,
+}) => {
   const [_, theme] = useStyletron();
-
   const orderedPlayerMats = combos.sort((a, b) => {
     if (a.playerMat.id < b.playerMat.id) {
       return -1;
@@ -31,6 +35,18 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
 
     return 1;
   });
+  const onClickBar = useCallback(
+    ({ name }) => {
+      const combo = orderedPlayerMats.find(
+        (combo) => combo.playerMat.name === name
+      );
+
+      if (combo) {
+        onClickMatCombo(combo.faction.id, combo.playerMat.id);
+      }
+    },
+    [orderedPlayerMats, onClickMatCombo]
+  );
 
   const selectedIndex = orderedPlayerMats.findIndex(
     ({ playerMat }) => playerMat.id === selectedPlayerMatId
@@ -73,7 +89,7 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
             return `${val}%`;
           }}
         />
-        <Bar dataKey="value" fill="#1f78c1">
+        <Bar dataKey="value" fill="#1f78c1" onClick={onClickBar}>
           {data.map((_, index) => (
             <Cell
               cursor="pointer"

@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import {
   ResponsiveContainer,
@@ -20,9 +20,14 @@ interface Props {
     playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
   })[];
   selectedFactionId: number;
+  onClickMatCombo: (factionId: number, playerMatId: number) => void;
 }
 
-const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
+const SamePlayerMatWinRates: FC<Props> = ({
+  combos,
+  selectedFactionId,
+  onClickMatCombo,
+}) => {
   const [_, theme] = useStyletron();
   const orderedFactions = combos.sort((a, b) => {
     if (a.faction.id < b.faction.id) {
@@ -31,6 +36,25 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
 
     return 1;
   });
+  const onClickBar = useCallback(
+    ({ idx }) => {
+      const combo = orderedFactions[idx];
+      onClickMatCombo(combo.faction.id, combo.playerMat.id);
+    },
+    [orderedFactions, onClickMatCombo]
+  );
+  const onClickFactionIcon = useCallback(
+    (factionId: number) => {
+      const combo = orderedFactions.find(
+        (combo) => combo.faction.id === factionId
+      );
+
+      if (combo) {
+        onClickMatCombo(combo.faction.id, combo.playerMat.id);
+      }
+    },
+    [orderedFactions, onClickMatCombo]
+  );
 
   const selectedIndex = orderedFactions.findIndex(
     ({ faction }) => faction.id === selectedFactionId
@@ -78,6 +102,7 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
             <FactionChartIcon
               combos={orderedFactions}
               selectedFactionId={selectedFactionId}
+              onClick={onClickFactionIcon}
             />
           }
         />
@@ -87,7 +112,7 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
             return `${val}%`;
           }}
         />
-        <Bar dataKey="value" fill="#1f78c1">
+        <Bar dataKey="value" fill="#1f78c1" onClick={onClickBar}>
           {data.map((_, index) => (
             <Cell
               cursor="pointer"

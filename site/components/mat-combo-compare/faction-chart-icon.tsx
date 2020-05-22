@@ -1,4 +1,4 @@
-import { FC } from 'react';
+import { FC, useCallback } from 'react';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
@@ -14,6 +14,7 @@ interface Props {
     faction: Pick<GQL.Faction, 'id' | 'name'>;
     playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
   }[];
+  onClick: (factionId: number) => void;
   selectedFactionId: number;
   // ... where the last two optional props are actually just here to be removed
   // because React doesn't recognize these attributes
@@ -29,6 +30,7 @@ const FactionChartIcon: FC<Props> = ({
   visibleTicksCount,
   // eslint-disable-next-line
   verticalAnchor,
+  onClick,
   ...props
 }) => {
   if (!payload) {
@@ -38,6 +40,11 @@ const FactionChartIcon: FC<Props> = ({
   const combo = combos[payload.value];
   const isSelected = combo.faction.id === selectedFactionId;
 
+  const onClickWrapper = useCallback(() => onClick(combo.faction.id), [
+    onClick,
+    combo,
+  ]);
+
   return (
     <g
       // Crude way to center the icon on its tick
@@ -45,7 +52,12 @@ const FactionChartIcon: FC<Props> = ({
       cursor="pointer"
       opacity={isSelected ? 1 : 0.65}
     >
-      <foreignObject {...props} width={ICON_SIZE} height={ICON_SIZE}>
+      <foreignObject
+        {...props}
+        width={ICON_SIZE}
+        height={ICON_SIZE}
+        onClick={onClickWrapper}
+      >
         <FactionIcon faction={combo.faction.name} size={ICON_SIZE} />
       </foreignObject>
     </g>
