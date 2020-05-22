@@ -25,6 +25,11 @@ interface Props {
   combo: Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
     faction: Pick<GQL.Faction, 'id' | 'name'>;
     playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+    topPlayers: Array<
+      Pick<GQL.PlayerFactionStats, 'totalWins'> & {
+        player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+      }
+    >;
   };
   tier: Pick<GQL.Tier, 'id' | 'name' | 'rank'>;
   className?: string;
@@ -32,6 +37,8 @@ interface Props {
 
 const ComboSnippet: FC<Props> = ({ combo, tier, className }) => {
   const [css, theme] = useStyletron();
+
+  const topPlayer = combo.topPlayers.length ? combo.topPlayers[0] : null;
 
   return (
     <div className={className}>
@@ -63,6 +70,17 @@ const ComboSnippet: FC<Props> = ({ combo, tier, className }) => {
         >
           <ListItemLabel>Total Wins</ListItemLabel>
         </ListItem>
+        {topPlayer && (
+          <ListItem
+            endEnhancer={() => (
+              <SnippetEndEnhancer>
+                {topPlayer.player.displayName} ({topPlayer.totalWins} Wins)
+              </SnippetEndEnhancer>
+            )}
+          >
+            <ListItemLabel>Top Player</ListItemLabel>
+          </ListItem>
+        )}
       </ul>
     </div>
   );

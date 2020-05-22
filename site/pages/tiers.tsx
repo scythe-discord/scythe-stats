@@ -87,6 +87,9 @@ TiersPage.getInitialProps = async (ctx) => {
     GQL.TiersQueryVariables
   >({
     query: GQL.TiersDocument,
+    variables: {
+      numTopPlayers: 1,
+    },
   });
   const { data: playerMats } = await apolloClient.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,

@@ -19,6 +19,7 @@ export const typeDef = gql`
   type FactionMatCombo {
     faction: Faction!
     playerMat: PlayerMat!
+    topPlayers(first: Int!): [PlayerFactionStats!]!
     tier: Tier!
     totalWins: Int!
     totalMatches: Int!
@@ -42,6 +43,31 @@ export const resolvers: Schema.Resolvers = {
       });
 
       return matComboTier.tier;
+    },
+    topPlayers: async (
+      { faction: { id: factionId }, playerMat: { id: playerMatId } },
+      { first }
+    ) => {
+      const matchRepository = getRepository(Match);
+      const playersWithWins = await matchRepository
+        .createQueryBuilder('match')
+        .innerJoin('match.winner', 'winner')
+        .innerJoin('winner.player', 'player')
+        .where(
+          'winner."factionId" = :factionId AND winner."playerMatId" = :playerMatId',
+          { factionId, playerMatId }
+        )
+        .groupBy('player.id')
+        .select('COUNT(player.id)', 'totalWins')
+        .addSelect('player.*')
+        .orderBy('"totalWins"', 'DESC')
+        .limit(first)
+        .getRawMany();
+
+      return playersWithWins.map(({ totalWins, ...playerDetails }) => ({
+        player: playerDetails,
+        totalWins,
+      }));
     },
     totalWins: async ({ faction, playerMat }) => {
       const matchRepo = getRepository(Match);

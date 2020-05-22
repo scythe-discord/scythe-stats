@@ -1,14 +1,6 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
-import {
-  HeadingXLarge,
-  LabelMedium,
-  LabelLarge,
-  HeadingLarge,
-  HeadingMedium,
-  HeadingSmall,
-  HeadingXSmall,
-} from 'baseui/typography';
+import { HeadingXLarge, HeadingXSmall } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
@@ -39,6 +31,11 @@ const MatComboCompare: FC<Props> = ({
       [key: string]: Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
         faction: Pick<GQL.Faction, 'id' | 'name'>;
         playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+        topPlayers: Array<
+          Pick<GQL.PlayerFactionStats, 'totalWins'> & {
+            player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+          }
+        >;
       };
     };
   } = {};

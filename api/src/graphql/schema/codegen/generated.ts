@@ -122,12 +122,18 @@ export type FactionMatCombo = {
    __typename?: 'FactionMatCombo';
   faction: Faction;
   playerMat: PlayerMat;
+  topPlayers: Array<PlayerFactionStats>;
   tier: Tier;
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin: Scalars['Int'];
+};
+
+
+export type FactionMatComboTopPlayersArgs = {
+  first: Scalars['Int'];
 };
 
 export type FactionStatsWithPlayerCount = {
@@ -409,6 +415,7 @@ export type FactionResolvers<ContextType = any, ParentType extends ResolversPare
 export type FactionMatComboResolvers<ContextType = any, ParentType extends ResolversParentTypes['FactionMatCombo'] = ResolversParentTypes['FactionMatCombo']> = ResolversObject<{
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,
+  topPlayers?: Resolver<Array<ResolversTypes['PlayerFactionStats']>, ParentType, ContextType, RequireFields<FactionMatComboTopPlayersArgs, 'first'>>,
   tier?: Resolver<ResolversTypes['Tier'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,

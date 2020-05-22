@@ -1,4 +1,4 @@
-query tiers {
+query tiers($numTopPlayers: Int!) {
   tiers {
     id
     name
@@ -11,6 +11,14 @@ query tiers {
       playerMat {
         id
         name
+      }
+      topPlayers(first: $numTopPlayers) {
+        player {
+          id
+          displayName
+          steamId
+        }
+        totalWins
       }
       totalWins
       totalMatches

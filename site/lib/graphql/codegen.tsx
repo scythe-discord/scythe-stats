@@ -120,12 +120,18 @@ export type FactionMatCombo = {
    __typename?: 'FactionMatCombo';
   faction: Faction;
   playerMat: PlayerMat;
+  topPlayers: Array<PlayerFactionStats>;
   tier: Tier;
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin: Scalars['Int'];
+};
+
+
+export type FactionMatComboTopPlayersArgs = {
+  first: Scalars['Int'];
 };
 
 export type FactionStatsWithPlayerCount = {
@@ -355,7 +361,9 @@ export type PlayersByNameQuery = (
   ) }
 );
 
-export type TiersQueryVariables = {};
+export type TiersQueryVariables = {
+  numTopPlayers: Scalars['Int'];
+};
 
 
 export type TiersQuery = (
@@ -372,7 +380,14 @@ export type TiersQuery = (
       ), playerMat: (
         { __typename?: 'PlayerMat' }
         & Pick<PlayerMat, 'id' | 'name'>
-      ) }
+      ), topPlayers: Array<(
+        { __typename?: 'PlayerFactionStats' }
+        & Pick<PlayerFactionStats, 'totalWins'>
+        & { player: (
+          { __typename?: 'Player' }
+          & Pick<Player, 'id' | 'displayName' | 'steamId'>
+        ) }
+      )> }
     )> }
   )> }
 );
@@ -654,7 +669,7 @@ export type PlayersByNameQueryHookResult = ReturnType<typeof usePlayersByNameQue
 export type PlayersByNameLazyQueryHookResult = ReturnType<typeof usePlayersByNameLazyQuery>;
 export type PlayersByNameQueryResult = ApolloReactCommon.QueryResult<PlayersByNameQuery, PlayersByNameQueryVariables>;
 export const TiersDocument = gql`
-    query tiers {
+    query tiers($numTopPlayers: Int!) {
   tiers {
     id
     name
@@ -667,6 +682,14 @@ export const TiersDocument = gql`
       playerMat {
         id
         name
+      }
+      topPlayers(first: $numTopPlayers) {
+        player {
+          id
+          displayName
+          steamId
+        }
+        totalWins
       }
       totalWins
       totalMatches
@@ -690,6 +713,7 @@ export const TiersDocument = gql`
  * @example
  * const { data, loading, error } = useTiersQuery({
  *   variables: {
+ *      numTopPlayers: // value for 'numTopPlayers'
  *   },
  * });
  */
