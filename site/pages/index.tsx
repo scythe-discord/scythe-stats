@@ -29,6 +29,7 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
   return (
     <div
       className={css({
+        minHeight: '100vh',
         backgroundColor: theme.colors.backgroundPrimary,
       })}
     >
