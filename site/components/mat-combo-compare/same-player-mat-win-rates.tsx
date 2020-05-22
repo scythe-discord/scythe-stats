@@ -74,7 +74,12 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
         <CartesianGrid strokeDasharray="5 5" />
         <XAxis
           dataKey="idx"
-          tick={<FactionChartIcon combos={orderedFactions} />}
+          tick={
+            <FactionChartIcon
+              combos={orderedFactions}
+              selectedFactionId={selectedFactionId}
+            />
+          }
         />
         <YAxis
           width={40}
@@ -87,11 +92,7 @@ const SamePlayerMatWinRates: FC<Props> = ({ combos, selectedFactionId }) => {
             <Cell
               cursor="pointer"
               key={`cell-${index}`}
-              fill={
-                index === selectedIndex
-                  ? theme.colors.positive300
-                  : theme.colors.accent500
-              }
+              opacity={index === selectedIndex ? 1 : 0.5}
             />
           ))}
         </Bar>

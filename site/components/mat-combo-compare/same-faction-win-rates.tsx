@@ -78,11 +78,7 @@ const SameFactionWinRates: FC<Props> = ({ combos, selectedPlayerMatId }) => {
             <Cell
               cursor="pointer"
               key={`cell-${index}`}
-              fill={
-                index === selectedIndex
-                  ? theme.colors.positive300
-                  : theme.colors.accent500
-              }
+              opacity={index === selectedIndex ? 1 : 0.5}
             />
           ))}
         </Bar>

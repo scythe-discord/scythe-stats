@@ -14,6 +14,7 @@ interface Props {
     faction: Pick<GQL.Faction, 'id' | 'name'>;
     playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
   }[];
+  selectedFactionId: number;
   // ... where the last two optional props are actually just here to be removed
   // because React doesn't recognize these attributes
   visibleTicksCount?: any;
@@ -23,6 +24,7 @@ interface Props {
 const FactionChartIcon: FC<Props> = ({
   payload,
   combos,
+  selectedFactionId,
   // eslint-disable-next-line
   visibleTicksCount,
   // eslint-disable-next-line
@@ -34,12 +36,14 @@ const FactionChartIcon: FC<Props> = ({
   }
 
   const combo = combos[payload.value];
+  const isSelected = combo.faction.id === selectedFactionId;
 
   return (
     <g
       // Crude way to center the icon on its tick
       transform="translate(-18)"
       cursor="pointer"
+      opacity={isSelected ? 1 : 0.65}
     >
       <foreignObject {...props} width={ICON_SIZE} height={ICON_SIZE}>
         <FactionIcon faction={combo.faction.name} size={ICON_SIZE} />
