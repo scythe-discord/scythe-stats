@@ -6,7 +6,7 @@ import MatchRow from './match-row';
 
 const CenteredHeadCell = withStyle(StyledHeadCell, {
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 });
 
 export interface MatchDetailsRow {
@@ -32,7 +32,7 @@ export const MatchDetails: FC<Props> = ({ rows, className }) => {
       <CenteredHeadCell>Player Mat</CenteredHeadCell>
       <CenteredHeadCell>Coins</CenteredHeadCell>
       {rows.map((row, index) => {
-        const striped = index % 2 === 0;
+        const striped = index % 2 !== 0;
         return <MatchRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>

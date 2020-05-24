@@ -27,7 +27,7 @@ const FactionMatStats: FC<Props> = ({ factionMatCombos, className }) => {
       totalMatches,
       avgCoinsOnWin,
       avgRoundsOnWin,
-      leastRoundsForWin
+      leastRoundsForWin,
     }) => {
       return {
         playerMatName: playerMat.name,
@@ -35,7 +35,7 @@ const FactionMatStats: FC<Props> = ({ factionMatCombos, className }) => {
         totalMatches,
         avgCoinsOnWin,
         avgRoundsOnWin,
-        leastRoundsForWin
+        leastRoundsForWin,
       };
     }
   );
@@ -52,7 +52,7 @@ const FactionMatStats: FC<Props> = ({ factionMatCombos, className }) => {
       <StyledHeadCell>Avg Rounds in Wins</StyledHeadCell>
       <StyledHeadCell>Fastest Game</StyledHeadCell>
       {rows.map((row, index) => {
-        const striped = index % 2 === 0;
+        const striped = index % 2 !== 0;
         return <FactionMatStatsRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>

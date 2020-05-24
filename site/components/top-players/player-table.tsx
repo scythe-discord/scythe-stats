@@ -20,7 +20,7 @@ const PlayerTable: FC<Props> = ({ players, className }) => {
     return {
       displayName,
       totalWins,
-      totalMatches
+      totalMatches,
     };
   });
 
@@ -30,7 +30,7 @@ const PlayerTable: FC<Props> = ({ players, className }) => {
       <StyledHeadCell>Total Wins</StyledHeadCell>
       <StyledHeadCell>Win Rate</StyledHeadCell>
       {rows.map((row, index) => {
-        const striped = index % 2 === 0;
+        const striped = index % 2 !== 0;
         return <PlayerRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>
