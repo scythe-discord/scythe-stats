@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 
 import Schema from './codegen';
 import { fromGlobalId } from 'graphql-relay';
@@ -21,7 +21,7 @@ export const resolvers: Schema.Resolvers = {
     // @ts-ignore: TS complains that the type string may not be a type of
     // an actual Node, but having this actually happen in practice in unlikely
     __resolveType: (node) => {
-      const { type } = fromGlobalId(node.id);
+      const { type } = fromGlobalId(node.id as string);
 
       return type;
     },

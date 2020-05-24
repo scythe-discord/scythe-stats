@@ -1,4 +1,4 @@
-import { ApolloServer } from 'apollo-server';
+import { ApolloServer } from 'apollo-server-express';
 
 import { GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
 

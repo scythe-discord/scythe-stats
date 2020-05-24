@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { toGlobalId, connectionFromArray } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
@@ -50,25 +50,25 @@ export const resolvers: Schema.Resolvers = {
           'winner',
           'winner.player',
           'winner.faction',
-          'winner.playerMat'
+          'winner.playerMat',
         ],
         order: {
-          datePlayed: 'DESC'
-        }
+          datePlayed: 'DESC',
+        },
       });
 
-      const formattedMatches = matches.map(match => ({
+      const formattedMatches = matches.map((match) => ({
         id: toGlobalId('Match', match.id.toString()),
         datePlayed: match.datePlayed.toISOString(),
         playerResults: match.playerMatchResults,
         winner: match.winner,
-        numRounds: match.numRounds
+        numRounds: match.numRounds,
       }));
 
       return connectionFromArray(formattedMatches, args);
-    }
+    },
   },
   Match: {
-    id: match => toGlobalId('Match', match.id.toString())
-  }
+    id: (match) => toGlobalId('Match', match.id.toString()),
+  },
 };

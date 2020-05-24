@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
 import { Match } from '../../../db/entities';
@@ -29,7 +29,7 @@ export const resolvers: Schema.Resolvers = {
 
       const relevantMatches = (await builder
         .where(
-          qb =>
+          (qb) =>
             `match.id IN ${qb
               .subQuery()
               .select('match.id')
@@ -50,7 +50,7 @@ export const resolvers: Schema.Resolvers = {
         if (!stats[playerCount]) {
           stats[playerCount] = {
             totalWins: 0,
-            totalMatches: 0
+            totalMatches: 0,
           };
         }
 
@@ -61,10 +61,10 @@ export const resolvers: Schema.Resolvers = {
         stats[playerCount].totalMatches++;
       });
 
-      return Object.keys(stats).map(key => ({
+      return Object.keys(stats).map((key) => ({
         ...stats[key],
-        playerCount: parseInt(key)
+        playerCount: parseInt(key),
       }));
-    }
-  }
+    },
+  },
 };

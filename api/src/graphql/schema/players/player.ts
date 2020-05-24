@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { toGlobalId, fromGlobalId } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
@@ -36,10 +36,10 @@ export const resolvers: Schema.Resolvers = {
       const playerRepo = getRepository(Player);
       const player = await playerRepo.findOne(id);
       return player || null;
-    }
+    },
   },
   Player: {
-    id: player => toGlobalId('Player', player.id.toString()),
+    id: (player) => toGlobalId('Player', player.id.toString()),
     totalWins: async (player, { factionId, fromDate }) => {
       const matchRepo = getRepository(Match);
       let query = matchRepo
@@ -49,7 +49,7 @@ export const resolvers: Schema.Resolvers = {
 
       if (factionId) {
         query = query.andWhere('winner."factionId" = :factionId', {
-          factionId
+          factionId,
         });
       }
 
@@ -68,7 +68,7 @@ export const resolvers: Schema.Resolvers = {
 
       if (factionId) {
         query = query.andWhere('result."factionId" = :factionId', {
-          factionId
+          factionId,
         });
       }
 
@@ -80,6 +80,6 @@ export const resolvers: Schema.Resolvers = {
 
       const matches = await query.getCount();
       return matches;
-    }
-  }
+    },
+  },
 };

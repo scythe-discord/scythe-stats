@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { getRepository, getManager, EntityManager } from 'typeorm';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 

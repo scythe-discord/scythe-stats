@@ -1,11 +1,11 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
 import {
   Faction,
   Match,
   PlayerMatchResult,
-  PlayerMat
+  PlayerMat,
 } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -36,7 +36,7 @@ export const resolvers: Schema.Resolvers = {
     faction: async (_, { id }) => {
       const factionRepo = getRepository(Faction);
       const faction = await factionRepo.findOneOrFail({
-        id
+        id,
       });
 
       return faction;
@@ -45,10 +45,10 @@ export const resolvers: Schema.Resolvers = {
       const factionRepo = getRepository(Faction);
       const allFactions = await factionRepo.find();
       return allFactions;
-    }
+    },
   },
   Faction: {
-    totalWins: async faction => {
+    totalWins: async (faction) => {
       const matchRepo = getRepository(Match);
       const wins = await matchRepo
         .createQueryBuilder('match')
@@ -57,22 +57,22 @@ export const resolvers: Schema.Resolvers = {
         .getCount();
       return wins;
     },
-    totalMatches: async faction => {
+    totalMatches: async (faction) => {
       const playerMatchResultRepo = getRepository(PlayerMatchResult);
       const matches = await playerMatchResultRepo
         .createQueryBuilder('result')
         .where('result."factionId" = :factionId', {
-          factionId: faction.id
+          factionId: faction.id,
         })
         .getCount();
       return matches;
     },
-    factionMatCombos: async faction => {
+    factionMatCombos: async (faction) => {
       const playerMatRepo = getRepository(PlayerMat);
       const playerMats = await playerMatRepo.find();
-      return playerMats.map(playerMat => ({
+      return playerMats.map((playerMat) => ({
         faction,
-        playerMat
+        playerMat,
       }));
     },
     topPlayers: async ({ id: factionId }, { first }) => {
@@ -91,8 +91,8 @@ export const resolvers: Schema.Resolvers = {
 
       return playersWithWins.map(({ totalWins, ...playerDetails }) => ({
         player: playerDetails,
-        totalWins
+        totalWins,
       }));
-    }
-  }
+    },
+  },
 };

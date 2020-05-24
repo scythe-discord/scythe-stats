@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { connectionFromArray } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 

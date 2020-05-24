@@ -12,7 +12,8 @@
   "dependencies": {
     "@types/graphql-relay": "^0.6.0",
     "@types/lodash": "^4.14.150",
-    "apollo-server": "^2.13.1",
+    "apollo-server-express": "^2.13.1",
+    "express": "^4.17.1",
     "graphql": "^15.0.0",
     "graphql-relay": "^0.6.0",
     "lodash": "^4.17.15",

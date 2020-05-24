@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { connectionFromArray } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
@@ -34,7 +34,7 @@ export const resolvers: Schema.Resolvers = {
 
       if (factionId) {
         query = query.andWhere('winner."factionId" = :factionId', {
-          factionId
+          factionId,
         });
       }
 
@@ -55,6 +55,6 @@ export const resolvers: Schema.Resolvers = {
       });
 
       return connectionFromArray(playersWithWins, { first, after });
-    }
-  }
+    },
+  },
 };

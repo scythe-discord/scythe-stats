@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server';
+import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
 import { Tier, MatComboTier } from '../../../db/entities';
