@@ -5,6 +5,8 @@ import { StyledLink as BaseLink } from 'baseui/link';
 import { LabelLarge } from 'baseui/typography';
 import Link from 'next/link';
 import classNames from 'classnames';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
 
 import BuyMeACoffee from './buy-me-a-coffee';
 
@@ -15,17 +17,13 @@ const SpacedNavigationItem = ({
   className?: string;
   children: ReactNode;
 }) => {
-  const [css, theme] = useStyletron();
+  const [css] = useStyletron();
 
   return (
     <StyledNavigationItem
       className={classNames(
         css({
-          margin: '0 5px',
-
-          [theme.mediaQuery.large]: {
-            margin: '0 15px',
-          },
+          margin: '0 12px',
         }),
         className
       )}
@@ -41,6 +39,7 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
 }));
 
 export default () => {
+  const [css] = useStyletron();
   return (
     <>
       <SpacedNavigationItem>
@@ -53,25 +52,11 @@ export default () => {
           <StyledLink>Tier List</StyledLink>
         </Link>
       </SpacedNavigationItem>
-      <SpacedNavigationItem>
-        <StyledLink
-          href="https://discord.gg/dcRcxy2"
-          target="_blank"
-          rel="noopener"
-        >
-          Discord
-        </StyledLink>
-      </SpacedNavigationItem>
-      <SpacedNavigationItem>
-        <StyledLink
-          href="https://github.com/shibrady/scythe-stats"
-          target="_blank"
-          rel="noopener"
-        >
-          Contribute
-        </StyledLink>
-      </SpacedNavigationItem>
-      <SpacedNavigationItem>
+      <SpacedNavigationItem
+        className={css({
+          paddingRight: '20px',
+        })}
+      >
         <LabelLarge
           overrides={{
             Block: {
@@ -84,9 +69,39 @@ export default () => {
           /
         </LabelLarge>
       </SpacedNavigationItem>
-      <StyledNavigationItem>
+      <SpacedNavigationItem
+        className={css({
+          paddingLeft: 0,
+        })}
+      >
+        <StyledLink
+          href="https://discord.gg/dcRcxy2"
+          target="_blank"
+          rel="noopener"
+        >
+          <FontAwesomeIcon icon={faDiscord} size="lg" />
+        </StyledLink>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem
+        className={css({
+          paddingLeft: 0,
+        })}
+      >
+        <StyledLink
+          href="https://github.com/shibrady/scythe-stats"
+          target="_blank"
+          rel="noopener"
+        >
+          <FontAwesomeIcon icon={faGithub} size="lg" />
+        </StyledLink>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem
+        className={css({
+          paddingLeft: 0,
+        })}
+      >
         <BuyMeACoffee />
-      </StyledNavigationItem>
+      </SpacedNavigationItem>
     </>
   );
 };

@@ -2,7 +2,7 @@ import { FC, SVGProps } from 'react';
 import { useStyletron } from 'baseui';
 import { StyledLink } from 'baseui/link';
 
-const Logo: FC<SVGProps<SVGSVGElement>> = props => (
+const Logo: FC<SVGProps<SVGSVGElement>> = (props) => (
   <svg width="24px" height="36px" viewBox="0 0 24 36" version="1.1" {...props}>
     <title>Buy Me a Coffee</title>
     <desc>Created with Sketch.</desc>
@@ -64,7 +64,11 @@ const Logo: FC<SVGProps<SVGSVGElement>> = props => (
   </svg>
 );
 
-export default () => {
+interface Props {
+  displayLabel?: boolean;
+}
+
+const BuyMeACoffee: FC<Props> = ({ displayLabel }) => {
   const [css] = useStyletron();
 
   return (
@@ -72,24 +76,28 @@ export default () => {
       className={css({
         display: 'flex',
         alignItems: 'center',
-        textDecoration: 'none'
+        textDecoration: 'none',
       })}
       target="_blank"
       href="https://www.buymeacoffee.com/Qianpou"
       rel="noopener"
     >
-      <span
-        className={css({
-          marginRight: '15px'
-        })}
-      >
-        Buy me a coffee
-      </span>
+      {displayLabel ? (
+        <span
+          className={css({
+            marginRight: '15px',
+          })}
+        >
+          Buy me a coffee
+        </span>
+      ) : null}
       <Logo
         className={css({
-          width: '20px'
+          width: '20px',
         })}
       />
     </StyledLink>
   );
 };
+
+export default BuyMeACoffee;

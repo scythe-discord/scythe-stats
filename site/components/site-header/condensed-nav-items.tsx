@@ -10,7 +10,7 @@ import Link from 'next/link';
 import BuyMeACoffee from './buy-me-a-coffee';
 
 const StyledLink = withStyle(BaseLink as any, {
-  textDecoration: 'none'
+  textDecoration: 'none',
 });
 
 const SpacedNavigationItem: FC<{
@@ -21,12 +21,12 @@ const SpacedNavigationItem: FC<{
       overrides={{
         Content: {
           style: {
-            fontSize: '18px'
-          }
+            fontSize: '18px',
+          },
         },
         Root: {},
         ArtworkContainer: {},
-        EndEnhancerContainer: {}
+        EndEnhancerContainer: {},
       }}
     >
       {children}
@@ -57,7 +57,7 @@ export default () => {
         <nav>
           <ul
             className={css({
-              padding: '0'
+              padding: '0',
             })}
           >
             <SpacedNavigationItem>
@@ -84,7 +84,7 @@ export default () => {
               </StyledLink>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <BuyMeACoffee />
+              <BuyMeACoffee displayLabel={true} />
             </SpacedNavigationItem>
           </ul>
         </nav>
