@@ -46,7 +46,12 @@ export const resolvers: Schema.Resolvers = {
           };
         } catch (e) {
           // Token is no longer valid - invalidate stored session info
-          delete context.session['discordTokenInfo'];
+          context.res.clearCookie('connect.sid', { path: '/' });
+          context.session.destroy((err: any) => {
+            if (err) {
+              console.error('Failed to destroy session', context.session, err);
+            }
+          });
         }
       }
       return null;

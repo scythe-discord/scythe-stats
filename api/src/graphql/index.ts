@@ -6,7 +6,7 @@ import schema from './schema';
 
 export const graphqlServer = new ApolloServer({
   ...schema,
-  context: ({ req }) => {
+  context: ({ req, res }) => {
     // Is this a great way to handle this...?
     // Nope! But it'll do for now
     let isAdmin = false;
@@ -22,6 +22,7 @@ export const graphqlServer = new ApolloServer({
       clientIp: req.headers['x-forwarded-for'],
       session: req.session,
       req: req,
+      res: res,
     };
   },
 });

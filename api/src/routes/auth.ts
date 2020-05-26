@@ -55,10 +55,15 @@ router.get('/login', async (req, res) => {
 
 router.get('/logout', async (req, res) => {
   if (req.session) {
-    delete req.session['discordTokenInfo'];
+    req.session.destroy((err) => {
+      res.clearCookie('connect.sid', { path: '/' }).redirect(SITE_URL);
+      if (err) {
+        console.error('Failed to destroy session', req.session, err);
+      }
+    });
+  } else {
+    res.redirect(SITE_URL);
   }
-
-  res.redirect(SITE_URL);
 });
 
 export default router;
