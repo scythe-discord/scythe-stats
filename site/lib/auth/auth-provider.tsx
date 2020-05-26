@@ -1,4 +1,4 @@
-import { FC, createContext } from 'react';
+import { FC, createContext, useEffect, useState } from 'react';
 
 import GQL from '../graphql';
 
@@ -12,8 +12,20 @@ export const AuthContext = createContext<AuthContextInfo>({
   loading: false,
 });
 
-export const AuthProvider: FC = (props) => {
-  const { data, loading } = GQL.useDiscordMeQuery();
+interface Props {
+  initAuthCheck: boolean;
+}
+
+export const AuthProvider: FC<Props> = ({ initAuthCheck, ...rest }) => {
+  const [loadDiscordMe, { data, loading }] = GQL.useDiscordMeLazyQuery();
+  const [initLoadComplete, setInitLoadComplete] = useState(false);
+
+  useEffect(() => {
+    if (initAuthCheck && !initLoadComplete) {
+      loadDiscordMe();
+      setInitLoadComplete(true);
+    }
+  }, [initAuthCheck, initLoadComplete]);
 
   const discordMe = data && data.discordMe ? data.discordMe : null;
 
@@ -23,7 +35,7 @@ export const AuthProvider: FC = (props) => {
         discordMe,
         loading,
       }}
-      {...props}
+      {...rest}
     />
   );
 };

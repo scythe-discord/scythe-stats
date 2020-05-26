@@ -17,11 +17,12 @@ import { GRAPHQL_API_URL } from '../lib/env';
 
 interface Props {
   apollo: ApolloClient<any>;
+  initAuthCheck: boolean;
 }
 
 class Site extends App<Props> {
   render() {
-    const { Component, pageProps, apollo } = this.props;
+    const { Component, pageProps, apollo, initAuthCheck } = this.props;
     return (
       <>
         <Head>
@@ -40,7 +41,7 @@ class Site extends App<Props> {
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
           <BaseProvider theme={Theme}>
             <ApolloProvider client={apollo}>
-              <AuthProvider>
+              <AuthProvider initAuthCheck={initAuthCheck}>
                 <Component {...pageProps} />
               </AuthProvider>
             </ApolloProvider>
@@ -53,7 +54,12 @@ class Site extends App<Props> {
 
 Site.getInitialProps = async (appContext) => {
   const appProps = await App.getInitialProps(appContext);
-  return { ...appProps };
+
+  const initAuthCheck = !!(
+    appContext.ctx.req && appContext.ctx.req.headers.cookie
+  );
+
+  return { ...appProps, initAuthCheck };
 };
 
 export default withApollo(({ initialState }) => {
