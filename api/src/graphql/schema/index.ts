@@ -1,6 +1,7 @@
 import { gql } from 'apollo-server-express';
 import { merge } from 'lodash';
 
+import { typeDef as authTypeDef, resolvers as authResolvers } from './auth';
 import {
   typeDef as factionsTypeDef,
   resolvers as factionsResolvers,
@@ -37,6 +38,7 @@ export default {
     Query,
     Mutation,
     relayTypeDef,
+    ...authTypeDef,
     ...playerMatsTypeDef,
     ...factionsTypeDef,
     ...playerTypeDef,
@@ -44,6 +46,7 @@ export default {
     ...tierTypeDef,
   ],
   resolvers: merge(
+    authResolvers,
     relayResolvers,
     playerMatsResolvers,
     factionsResolvers,

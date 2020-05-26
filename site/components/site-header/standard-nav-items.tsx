@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { ReactNode, FC } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
@@ -8,6 +8,9 @@ import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
 
+import GQL from '../../lib/graphql';
+
+import DiscordAuthItem from './discord-auth-item';
 import BuyMeACoffee from './buy-me-a-coffee';
 
 const SpacedNavigationItem = ({
@@ -23,7 +26,7 @@ const SpacedNavigationItem = ({
     <StyledNavigationItem
       className={classNames(
         css({
-          margin: '0 12px',
+          margin: '0 15px',
         }),
         className
       )}
@@ -38,7 +41,12 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
   textDecoration: 'none',
 }));
 
-export default () => {
+interface Props {
+  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
+  isAuthLoading: boolean;
+}
+
+const StandardNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
   const [css] = useStyletron();
   return (
     <>
@@ -51,6 +59,9 @@ export default () => {
         <Link href="/tiers" passHref={true}>
           <StyledLink>Tier List</StyledLink>
         </Link>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem>
+        <DiscordAuthItem discordMe={discordMe} isAuthLoading={isAuthLoading} />
       </SpacedNavigationItem>
       <SpacedNavigationItem
         className={css({
@@ -105,3 +116,5 @@ export default () => {
     </>
   );
 };
+
+export default StandardNavItems;

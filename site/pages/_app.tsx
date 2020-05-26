@@ -1,12 +1,17 @@
 import App from 'next/app';
 import Head from 'next/head';
-import ApolloClient, { InMemoryCache } from 'apollo-boost';
+import { ApolloClient } from 'apollo-client';
+import { InMemoryCache } from 'apollo-cache-inmemory';
+import { HttpLink } from 'apollo-link-http';
+import { onError } from 'apollo-link-error';
+import { ApolloLink } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from 'next-with-apollo';
 import { BaseProvider } from 'baseui';
 import { Provider as StyletronProvider } from 'styletron-react';
 
 import { styletron, debug } from '../styletron';
+import { AuthProvider } from '../lib/auth';
 import Theme from '../lib/theme';
 import { GRAPHQL_API_URL } from '../lib/env';
 
@@ -35,7 +40,9 @@ class Site extends App<Props> {
         <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
           <BaseProvider theme={Theme}>
             <ApolloProvider client={apollo}>
-              <Component {...pageProps} />
+              <AuthProvider>
+                <Component {...pageProps} />
+              </AuthProvider>
             </ApolloProvider>
           </BaseProvider>
         </StyletronProvider>
@@ -44,14 +51,29 @@ class Site extends App<Props> {
   }
 }
 
-Site.getInitialProps = async appContext => {
+Site.getInitialProps = async (appContext) => {
   const appProps = await App.getInitialProps(appContext);
   return { ...appProps };
 };
 
 export default withApollo(({ initialState }) => {
   return new ApolloClient({
-    uri: GRAPHQL_API_URL,
-    cache: new InMemoryCache().restore(initialState || {})
+    link: ApolloLink.from([
+      onError(({ graphQLErrors, networkError }) => {
+        if (graphQLErrors)
+          graphQLErrors.forEach(({ message, locations, path }) =>
+            console.log(
+              `[GraphQL error]: Message: ${message}, Location: ${locations}, Path: ${path}`
+            )
+          );
+        if (networkError) console.log(`[Network error]: ${networkError}`);
+      }),
+      new HttpLink({
+        uri: GRAPHQL_API_URL,
+        credentials:
+          process.env.NODE_ENV === 'production' ? 'same-origin' : 'include',
+      }),
+    ]),
+    cache: new InMemoryCache().restore(initialState || {}),
   });
 })(Site);

@@ -1,3 +1,4 @@
+import { useContext } from 'react';
 import { useStyletron } from 'baseui';
 import {
   HeaderNavigation,
@@ -8,11 +9,14 @@ import {
 import { Block } from 'baseui/block';
 import { LabelLarge } from 'baseui/typography';
 
+import { AuthContext } from '../../lib/auth';
+
 import StandardNavItems from './standard-nav-items';
 import CondensedNavItems from './condensed-nav-items';
 
 export default () => {
   const [css, theme] = useStyletron();
+  const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
 
   return (
     <HeaderNavigation
@@ -61,7 +65,10 @@ export default () => {
         </Block>
         <Block display={['none', 'none', 'flex']}>
           <StyledNavigationList $align={ALIGN.right}>
-            <StandardNavItems />
+            <StandardNavItems
+              discordMe={discordMe}
+              isAuthLoading={isAuthLoading}
+            />
           </StyledNavigationList>
         </Block>
       </div>

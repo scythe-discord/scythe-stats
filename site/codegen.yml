@@ -11,4 +11,4 @@ generates:
       withComponent: false
       withHOC: false
       withHooks: true
-      gqlImport: apollo-boost#gql
+      gqlImport: graphql-tag

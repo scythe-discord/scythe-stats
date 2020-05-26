@@ -10,7 +10,8 @@
   },
   "scripts": {
     "dev:db": "docker run --rm --name scythe-stats-db -v scythe-db:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
-    "dev:api": "yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
+    "dev:redis": "docker run --rm --name scythe-stats-redis -v scythe-redis:/data -p 6379:6379 -d redis:latest redis-server --appendonly yes --requirepass \"redis\"",
+    "dev:api": "set DEBUG=express-session & yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
     "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project bot/tsconfig.json bot/src/index.ts",
     "dev:site": "yarn --cwd site next",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",

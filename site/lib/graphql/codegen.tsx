@@ -1,4 +1,4 @@
-import { gql } from 'apollo-boost';
+import gql from 'graphql-tag';
 import * as ApolloReactCommon from '@apollo/react-common';
 import * as ApolloReactHooks from '@apollo/react-hooks';
 export type Maybe<T> = T | null;
@@ -16,6 +16,7 @@ export type Scalars = {
 export type Query = {
    __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  discordMe?: Maybe<DiscordUser>;
   playerMat: PlayerMat;
   playerMats: Array<PlayerMat>;
   faction: Faction;
@@ -86,6 +87,13 @@ export type PageInfo = {
   hasPreviousPage?: Maybe<Scalars['Boolean']>;
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
+};
+
+export type DiscordUser = {
+   __typename?: 'DiscordUser';
+  id: Scalars['String'];
+  username: Scalars['String'];
+  discriminator: Scalars['String'];
 };
 
 export type PlayerMat = {
@@ -255,6 +263,17 @@ export type LogMatchMutation = (
       { __typename?: 'PlayerMatchResult' }
       & Pick<PlayerMatchResult, 'id'>
     ) }
+  )> }
+);
+
+export type DiscordMeQueryVariables = {};
+
+
+export type DiscordMeQuery = (
+  { __typename?: 'Query' }
+  & { discordMe?: Maybe<(
+    { __typename?: 'DiscordUser' }
+    & Pick<DiscordUser, 'id' | 'username' | 'discriminator'>
   )> }
 );
 
@@ -470,6 +489,40 @@ export function useLogMatchMutation(baseOptions?: ApolloReactHooks.MutationHookO
 export type LogMatchMutationHookResult = ReturnType<typeof useLogMatchMutation>;
 export type LogMatchMutationResult = ApolloReactCommon.MutationResult<LogMatchMutation>;
 export type LogMatchMutationOptions = ApolloReactCommon.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
+export const DiscordMeDocument = gql`
+    query discordMe {
+  discordMe {
+    id
+    username
+    discriminator
+  }
+}
+    `;
+
+/**
+ * __useDiscordMeQuery__
+ *
+ * To run a query within a React component, call `useDiscordMeQuery` and pass it any options that fit your needs.
+ * When your component renders, `useDiscordMeQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useDiscordMeQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useDiscordMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
+        return ApolloReactHooks.useQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+      }
+export function useDiscordMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+        }
+export type DiscordMeQueryHookResult = ReturnType<typeof useDiscordMeQuery>;
+export type DiscordMeLazyQueryHookResult = ReturnType<typeof useDiscordMeLazyQuery>;
+export type DiscordMeQueryResult = ApolloReactCommon.QueryResult<DiscordMeQuery, DiscordMeQueryVariables>;
 export const FactionStatsDocument = gql`
     query factionStats($numTopPlayers: Int!) {
   factions {

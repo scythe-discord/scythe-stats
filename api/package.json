@@ -10,17 +10,27 @@
     "node": ">=12.0.0"
   },
   "dependencies": {
+    "@types/connect-redis": "^0.0.14",
+    "@types/express-session": "^1.17.0",
     "@types/graphql-relay": "^0.6.0",
     "@types/lodash": "^4.14.150",
+    "@types/redis": "^2.8.21",
+    "@types/url-join": "^4.0.0",
     "apollo-server-express": "^2.13.1",
+    "connect-redis": "^4.0.4",
+    "cors": "^2.8.5",
     "express": "^4.17.1",
+    "express-session": "^1.17.1",
+    "got": "^11.1.4",
     "graphql": "^15.0.0",
     "graphql-relay": "^0.6.0",
     "lodash": "^4.17.15",
     "pg": "^8.2.0",
     "rate-limiter-flexible": "^2.1.4",
+    "redis": "^3.0.2",
     "reflect-metadata": "^0.1.13",
-    "typeorm": "^0.2.24"
+    "typeorm": "^0.2.24",
+    "url-join": "^4.0.1"
   },
   "devDependencies": {
     "@graphql-codegen/cli": "^1.13.5",

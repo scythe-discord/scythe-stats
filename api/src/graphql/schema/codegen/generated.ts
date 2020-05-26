@@ -18,6 +18,7 @@ export type Scalars = {
 export type Query = {
    __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  discordMe?: Maybe<DiscordUser>;
   playerMat: PlayerMat;
   playerMats: Array<PlayerMat>;
   faction: Faction;
@@ -88,6 +89,13 @@ export type PageInfo = {
   hasPreviousPage?: Maybe<Scalars['Boolean']>;
   startCursor?: Maybe<Scalars['String']>;
   endCursor?: Maybe<Scalars['String']>;
+};
+
+export type DiscordUser = {
+   __typename?: 'DiscordUser';
+  id: Scalars['String'];
+  username: Scalars['String'];
+  discriminator: Scalars['String'];
 };
 
 export type PlayerMat = {
@@ -310,6 +318,7 @@ export type ResolversTypes = ResolversObject<{
   Mutation: ResolverTypeWrapper<{}>,
   Node: ResolversTypes['Player'] | ResolversTypes['Match'],
   PageInfo: ResolverTypeWrapper<PageInfo>,
+  DiscordUser: ResolverTypeWrapper<DiscordUser>,
   PlayerMat: ResolverTypeWrapper<PlayerMatModel>,
   PlayerFactionStats: ResolverTypeWrapper<Omit<PlayerFactionStats, 'player'> & { player: ResolversTypes['Player'] }>,
   Faction: ResolverTypeWrapper<FactionModel>,
@@ -339,6 +348,7 @@ export type ResolversParentTypes = ResolversObject<{
   Mutation: {},
   Node: ResolversParentTypes['Player'] | ResolversParentTypes['Match'],
   PageInfo: PageInfo,
+  DiscordUser: DiscordUser,
   PlayerMat: PlayerMatModel,
   PlayerFactionStats: Omit<PlayerFactionStats, 'player'> & { player: ResolversParentTypes['Player'] },
   Faction: FactionModel,
@@ -360,6 +370,7 @@ export type ResolversParentTypes = ResolversObject<{
 
 export type QueryResolvers<ContextType = any, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  discordMe?: Resolver<Maybe<ResolversTypes['DiscordUser']>, ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'id'>>,
   playerMats?: Resolver<Array<ResolversTypes['PlayerMat']>, ParentType, ContextType>,
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType, RequireFields<QueryFactionArgs, 'id'>>,
@@ -386,6 +397,13 @@ export type PageInfoResolvers<ContextType = any, ParentType extends ResolversPar
   hasPreviousPage?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>,
   startCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
   endCursor?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
+export type DiscordUserResolvers<ContextType = any, ParentType extends ResolversParentTypes['DiscordUser'] = ResolversParentTypes['DiscordUser']> = ResolversObject<{
+  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  discriminator?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -500,6 +518,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   Mutation?: MutationResolvers<ContextType>,
   Node?: NodeResolvers,
   PageInfo?: PageInfoResolvers<ContextType>,
+  DiscordUser?: DiscordUserResolvers<ContextType>,
   PlayerMat?: PlayerMatResolvers<ContextType>,
   PlayerFactionStats?: PlayerFactionStatsResolvers<ContextType>,
   Faction?: FactionResolvers<ContextType>,
