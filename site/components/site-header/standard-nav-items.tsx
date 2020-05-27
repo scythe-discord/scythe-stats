@@ -2,14 +2,12 @@ import { ReactNode, FC } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
-import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from 'baseui/spinner';
 import { LabelLarge } from 'baseui/typography';
 import Link from 'next/link';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
 
-import { DISCORD_OAUTH_URL } from '../../lib/auth';
 import GQL from '../../lib/graphql';
 
 import DiscordAuthItem from './discord-auth-item';
@@ -51,17 +49,6 @@ interface Props {
 const StandardNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
   const [css] = useStyletron();
 
-  let discordNavItem = null;
-  if (isAuthLoading) {
-    discordNavItem = <StyledSpinnerNext $size={SPINNER_SIZE.small} />;
-  } else if (!discordMe) {
-    discordNavItem = (
-      <StyledLink href={DISCORD_OAUTH_URL}>Login with Discord</StyledLink>
-    );
-  } else {
-    discordNavItem = <DiscordAuthItem discordMe={discordMe} />;
-  }
-
   return (
     <>
       <SpacedNavigationItem>
@@ -74,7 +61,9 @@ const StandardNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
           <StyledLink>Tier List</StyledLink>
         </Link>
       </SpacedNavigationItem>
-      <SpacedNavigationItem>{discordNavItem}</SpacedNavigationItem>
+      <SpacedNavigationItem>
+        <DiscordAuthItem discordMe={discordMe} isAuthLoading={isAuthLoading} />
+      </SpacedNavigationItem>
       <SpacedNavigationItem
         className={css({
           paddingRight: '20px',

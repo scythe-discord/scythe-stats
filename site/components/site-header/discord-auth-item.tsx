@@ -1,12 +1,17 @@
 import { FC } from 'react';
 import { useStyletron, withStyle } from 'baseui';
-import { Button, KIND, SIZE } from 'baseui/button';
+import {
+  Button,
+  KIND as BUTTON_KIND,
+  SIZE as BUTTON_SIZE,
+} from 'baseui/button';
 import { StatefulPopover } from 'baseui/popover';
+import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from 'baseui/spinner';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { API_LOGOUT_URL } from '../../lib/auth';
+import { API_LOGOUT_URL, DISCORD_OAUTH_URL } from '../../lib/auth';
 import GQL from '../../lib/graphql';
 
 const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
@@ -15,11 +20,36 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
 }));
 
 interface Props {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'>;
+  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
+  isAuthLoading: boolean;
 }
 
-const DiscordAuthItem: FC<Props> = ({ discordMe }) => {
+const DiscordAuthItem: FC<Props> = ({ discordMe, isAuthLoading }) => {
   const [css, theme] = useStyletron();
+
+  if (isAuthLoading) {
+    return <StyledSpinnerNext $size={SPINNER_SIZE.small} />;
+  }
+
+  if (!discordMe) {
+    return (
+      <Button
+        $as="a"
+        href={DISCORD_OAUTH_URL}
+        kind={BUTTON_KIND.secondary}
+        size={BUTTON_SIZE.compact}
+        overrides={{
+          BaseButton: {
+            style: {
+              fontSize: '16px',
+            },
+          },
+        }}
+      >
+        Login with Discord
+      </Button>
+    );
+  }
 
   return (
     <StatefulPopover
@@ -51,8 +81,8 @@ const DiscordAuthItem: FC<Props> = ({ discordMe }) => {
             },
           },
         }}
-        kind={KIND.secondary}
-        size={SIZE.compact}
+        kind={BUTTON_KIND.secondary}
+        size={BUTTON_SIZE.compact}
       >
         <span>{discordMe.username}</span>
         <span
