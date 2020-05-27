@@ -1,4 +1,5 @@
 import { gql } from 'apollo-server-express';
+import { Client, TextChannel } from 'discord.js';
 import { getRepository, getManager, EntityManager } from 'typeorm';
 import { RateLimiterMemory } from 'rate-limiter-flexible';
 
@@ -11,6 +12,65 @@ import {
   PlayerMat,
 } from '../../../db/entities';
 import { fetchDiscordMe, delay } from '../../../common/utils';
+import {
+  BOT_TOKEN,
+  GUILD_ID,
+  VANILLA_LOG_CHANNEL_ID,
+  SITE_URL,
+} from '../../../common/config';
+
+const postMatchLog = ({
+  numRounds,
+  playerMatchResults,
+}: Schema.MutationLogMatchArgs) => {
+  const client = new Client();
+  return client
+    .login(BOT_TOKEN)
+    .then(() => {
+      client.on('ready', () => {
+        const scytheGuild = client.guilds.cache.get(GUILD_ID);
+
+        if (!scytheGuild) {
+          throw new Error(`Unable to find guild with ID ${GUILD_ID}`);
+        }
+
+        const logChannel = scytheGuild.channels.cache.get(
+          VANILLA_LOG_CHANNEL_ID
+        ) as TextChannel;
+
+        if (!logChannel || logChannel.type !== 'text') {
+          throw new Error(
+            `Unable to find text channel with ID ${VANILLA_LOG_CHANNEL_ID}`
+          );
+        }
+
+        const matchResults = playerMatchResults
+          .map(({ displayName, faction, playerMat, coins }) => {
+            const factionEmoji = client.emojis.cache.find(
+              (emoji) => emoji.name === faction
+            );
+
+            if (!factionEmoji) {
+              throw new Error(`Unable to find emoji for faction ${faction}`);
+            }
+            return `**${displayName}** ${factionEmoji?.toString()} | ${playerMat} | **$${coins}**`;
+          })
+          .join('\n');
+
+        const output =
+          `**Game Length** | ${numRounds} Rounds\n\n` +
+          matchResults +
+          `\n\n(via ${SITE_URL})`;
+
+        logChannel.send(output).catch((e) => {
+          console.error('Failed to post match log to channel', e);
+        });
+      });
+    })
+    .catch((e) => {
+      console.error('Failed to login while posting match log', e);
+    });
+};
 
 const MAX_RETRIES = 5;
 const MAX_RETRY_DELAY = 1500;
@@ -278,6 +338,14 @@ export const resolvers: Schema.Resolvers = {
               'Something unexpected occurred while logging a match'
             );
           }
+
+          // Used asynchronously to try to post the match log to the guild, so
+          // as to not affect the end user
+          postMatchLog({
+            numRounds,
+            datePlayed,
+            playerMatchResults: loggedMatchResults,
+          });
 
           return {
             id: match.id.toString(),
