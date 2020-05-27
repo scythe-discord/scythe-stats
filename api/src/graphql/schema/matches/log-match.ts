@@ -10,7 +10,7 @@ import {
   Faction,
   PlayerMat,
 } from '../../../db/entities';
-import { delay } from '../../../common/utils';
+import { fetchDiscordMe, delay } from '../../../common/utils';
 
 const MAX_RETRIES = 5;
 const MAX_RETRY_DELAY = 1500;
@@ -212,10 +212,6 @@ export const resolvers: Schema.Resolvers = {
       { numRounds, datePlayed, playerMatchResults: loggedMatchResults },
       context
     ) => {
-      if (process.env.NODE_ENV === 'production' && !context.isAdmin) {
-        throw new Error('You do not have permission to log matches');
-      }
-
       if (context.clientIp && !context.isAdmin) {
         try {
           await rateLimiter.consume(context.clientIp, 1);
@@ -224,6 +220,12 @@ export const resolvers: Schema.Resolvers = {
             'You are sending log requests too quickly - please wait a few minutes'
           );
         }
+      }
+
+      const discordMe = await fetchDiscordMe(context);
+
+      if (!discordMe) {
+        throw new Error('You must be logged in to record matches');
       }
 
       await validateMatch(numRounds, loggedMatchResults);
