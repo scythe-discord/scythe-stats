@@ -7,6 +7,10 @@ import { Button, KIND, SIZE } from 'baseui/button';
 import { Drawer, SIZE as DRAWER_SIZE, ANCHOR } from 'baseui/drawer';
 import Link from 'next/link';
 
+import { DISCORD_OAUTH_URL } from '../../lib/auth';
+import GQL from '../../lib/graphql';
+
+import DiscordAuthItemSimple from './discord-auth-item-simple';
 import BuyMeACoffee from './buy-me-a-coffee';
 
 const StyledLink = withStyle(BaseLink as any, {
@@ -34,7 +38,12 @@ const SpacedNavigationItem: FC<{
   );
 };
 
-export default () => {
+interface Props {
+  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
+  isAuthLoading: boolean;
+}
+
+const CondensedNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
   const [css] = useStyletron();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const onMenuClick = useCallback(() => setIsDrawerOpen(true), []);
@@ -66,6 +75,9 @@ export default () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
+              <StyledLink href={DISCORD_OAUTH_URL}>Tier List</StyledLink>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
               <StyledLink
                 href="https://discord.gg/dcRcxy2"
                 target="_blank"
@@ -86,9 +98,17 @@ export default () => {
             <SpacedNavigationItem>
               <BuyMeACoffee displayLabel={true} />
             </SpacedNavigationItem>
+            <SpacedNavigationItem>
+              <DiscordAuthItemSimple
+                discordMe={discordMe}
+                isAuthLoading={isAuthLoading}
+              />
+            </SpacedNavigationItem>
           </ul>
         </nav>
       </Drawer>
     </>
   );
 };
+
+export default CondensedNavItems;

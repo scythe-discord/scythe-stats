@@ -60,7 +60,10 @@ export default () => {
         <StyledNavigationList $align={ALIGN.center}></StyledNavigationList>
         <Block display={['flex', 'flex', 'none']}>
           <StyledNavigationList $align={ALIGN.right}>
-            <CondensedNavItems />
+            <CondensedNavItems
+              discordMe={discordMe}
+              isAuthLoading={isAuthLoading}
+            />
           </StyledNavigationList>
         </Block>
         <Block display={['none', 'none', 'flex']}>
