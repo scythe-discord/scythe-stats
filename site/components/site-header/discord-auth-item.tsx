@@ -1,12 +1,12 @@
 import { FC } from 'react';
 import { useStyletron, withStyle } from 'baseui';
+import { Button, KIND, SIZE } from 'baseui/button';
 import { StatefulPopover } from 'baseui/popover';
-import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from 'baseui/spinner';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { API_LOGOUT_URL, DISCORD_OAUTH_URL } from '../../lib/auth';
+import { API_LOGOUT_URL } from '../../lib/auth';
 import GQL from '../../lib/graphql';
 
 const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
@@ -15,20 +15,11 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
 }));
 
 interface Props {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
-  isAuthLoading: boolean;
+  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'>;
 }
 
-const DiscordAuthItem: FC<Props> = ({ discordMe, isAuthLoading }) => {
+const DiscordAuthItem: FC<Props> = ({ discordMe }) => {
   const [css, theme] = useStyletron();
-
-  if (isAuthLoading) {
-    return <StyledSpinnerNext $size={SPINNER_SIZE.small} />;
-  }
-
-  if (!discordMe) {
-    return <StyledLink href={DISCORD_OAUTH_URL}>Login with Discord</StyledLink>;
-  }
 
   return (
     <StatefulPopover
@@ -52,22 +43,18 @@ const DiscordAuthItem: FC<Props> = ({ discordMe, isAuthLoading }) => {
         </div>
       )}
     >
-      <button
-        className={css({
-          backgroundColor: 'transparent',
-          border: 'none',
-          padding: 0,
-          fontSize: '16px',
-          cursor: 'pointer',
-        })}
+      <Button
+        overrides={{
+          BaseButton: {
+            style: {
+              fontSize: '16px',
+            },
+          },
+        }}
+        kind={KIND.secondary}
+        size={SIZE.compact}
       >
-        <span
-          className={css({
-            color: theme.colors.primary,
-          })}
-        >
-          {discordMe.username}
-        </span>
+        <span>{discordMe.username}</span>
         <span
           className={css({
             color: theme.colors.primary400,
@@ -76,7 +63,7 @@ const DiscordAuthItem: FC<Props> = ({ discordMe, isAuthLoading }) => {
         >
           #{discordMe.discriminator}
         </span>
-      </button>
+      </Button>
     </StatefulPopover>
   );
 };
