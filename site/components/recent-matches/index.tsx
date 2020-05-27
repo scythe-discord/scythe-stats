@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from 'react';
+import { FC, useState, useCallback, useContext } from 'react';
 import ContentLoader from 'react-content-loader';
 import { useStyletron, withStyle } from 'baseui';
 import { Button, KIND, SIZE } from 'baseui/button';
@@ -6,6 +6,7 @@ import { HeadingLarge, LabelSmall } from 'baseui/typography';
 import { StyledLink } from 'baseui/link';
 
 import GQL from '../../lib/graphql';
+import { AuthContext, DISCORD_OAUTH_URL } from '../../lib/auth';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 import Card from '../card';
 import { MatchDetails, MatchDetailsRow } from '../match-details';
@@ -51,6 +52,7 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
     null
   );
   const [isRecordModalVisible, setIsRecordModalVisible] = useState(false);
+  const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
   const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
     variables: {
@@ -191,6 +193,34 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
     );
   }
 
+  let recordMatchButton = null;
+  if (isAuthLoading) {
+    recordMatchButton = (
+      <Button kind={KIND.secondary} size={SIZE.compact} isLoading={true} />
+    );
+  } else if (!discordMe) {
+    recordMatchButton = (
+      <Button
+        $as="a"
+        href={DISCORD_OAUTH_URL}
+        kind={KIND.secondary}
+        size={SIZE.compact}
+      >
+        Login to Record Matches
+      </Button>
+    );
+  } else {
+    recordMatchButton = (
+      <Button
+        kind={KIND.secondary}
+        size={SIZE.compact}
+        onClick={onClickRecordMatch}
+      >
+        Record a Match
+      </Button>
+    );
+  }
+
   return (
     <Card>
       <div
@@ -213,13 +243,7 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
         >
           Recent Matches
         </HeadingLarge>
-        <Button
-          kind={KIND.secondary}
-          size={SIZE.compact}
-          onClick={onClickRecordMatch}
-        >
-          Record a Match
-        </Button>
+        {recordMatchButton}
       </div>
       <div
         className={css({
