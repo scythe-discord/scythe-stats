@@ -8,7 +8,6 @@ import { Drawer, SIZE as DRAWER_SIZE, ANCHOR } from 'baseui/drawer';
 import Link from 'next/link';
 
 import { DISCORD_OAUTH_URL } from '../../lib/auth';
-import GQL from '../../lib/graphql';
 
 import DiscordAuthItemSimple from './discord-auth-item-simple';
 import BuyMeACoffee from './buy-me-a-coffee';
@@ -38,12 +37,7 @@ const SpacedNavigationItem: FC<{
   );
 };
 
-interface Props {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
-  isAuthLoading: boolean;
-}
-
-const CondensedNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
+const CondensedNavItems: FC = () => {
   const [css] = useStyletron();
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const onMenuClick = useCallback(() => setIsDrawerOpen(true), []);
@@ -99,10 +93,7 @@ const CondensedNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
               <BuyMeACoffee displayLabel={true} />
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <DiscordAuthItemSimple
-                discordMe={discordMe}
-                isAuthLoading={isAuthLoading}
-              />
+              <DiscordAuthItemSimple />
             </SpacedNavigationItem>
           </ul>
         </nav>

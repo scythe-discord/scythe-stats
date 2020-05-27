@@ -1,25 +1,20 @@
-import { FC } from 'react';
+import { FC, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from 'baseui/spinner';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
 
-import { API_LOGOUT_URL, DISCORD_OAUTH_URL } from '../../lib/auth';
-import GQL from '../../lib/graphql';
+import { AuthContext, API_LOGOUT_URL, DISCORD_OAUTH_URL } from '../../lib/auth';
 
 const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
   color: $theme.colors.primary,
   textDecoration: 'none',
 }));
 
-interface Props {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
-  isAuthLoading: boolean;
-}
-
-const DiscordAuthItemSimple: FC<Props> = ({ discordMe, isAuthLoading }) => {
+const DiscordAuthItemSimple: FC = () => {
   const [css, theme] = useStyletron();
+  const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
 
   if (isAuthLoading) {
     return <StyledSpinnerNext $size={SPINNER_SIZE.small} />;

@@ -8,8 +8,6 @@ import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
 
-import GQL from '../../lib/graphql';
-
 import DiscordAuthItem from './discord-auth-item';
 import BuyMeACoffee from './buy-me-a-coffee';
 
@@ -41,12 +39,7 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
   textDecoration: 'none',
 }));
 
-interface Props {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
-  isAuthLoading: boolean;
-}
-
-const StandardNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
+const StandardNavItems: FC = () => {
   const [css] = useStyletron();
 
   return (
@@ -62,7 +55,7 @@ const StandardNavItems: FC<Props> = ({ discordMe, isAuthLoading }) => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <DiscordAuthItem discordMe={discordMe} isAuthLoading={isAuthLoading} />
+        <DiscordAuthItem />
       </SpacedNavigationItem>
       <SpacedNavigationItem
         className={css({
