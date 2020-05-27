@@ -4,14 +4,14 @@ import { GraphQLClient } from 'graphql-request';
 import {
   GAME_LOG_PREFIX,
   GRAPHQL_API_URL,
-  GRAPHQL_SERVER_BASIC_AUTH
+  GRAPHQL_SERVER_BASIC_AUTH,
 } from '../common/config';
 
 import { extractGameLog } from './extract';
 
 const LOG_MATCH_QUERY = `
-  mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!)  {
-    logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults) {
+  mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $recordingUserId: String!)  {
+    logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults, recordingUserId: $recordingUserId) {
       id
     }
   }
@@ -39,15 +39,16 @@ export const handleLogRequest = async (message: Message): Promise<void> => {
             headers: {
               authorization: `Basic ${Buffer.from(
                 GRAPHQL_SERVER_BASIC_AUTH
-              ).toString('base64')}`
-            }
+              ).toString('base64')}`,
+            },
           }
         : undefined
     );
     const data = await gqlClient.request(LOG_MATCH_QUERY, {
       numRounds: playerMatchResults.numRounds,
       datePlayed: message.createdAt.toISOString(),
-      playerMatchResults: playerMatchResults.playerScores
+      playerMatchResults: playerMatchResults.playerScores,
+      recordingUserId: message.author.id,
     });
     console.log(JSON.stringify(data, undefined, 2));
   } catch (error) {

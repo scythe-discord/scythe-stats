@@ -75,6 +75,7 @@ export type MutationLogMatchArgs = {
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput>;
+  recordingUserId?: Maybe<Scalars['String']>;
 };
 
 export type Node = {

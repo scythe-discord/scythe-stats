@@ -1,3 +1,8 @@
+export const BOT_TOKEN = process.env.BOT_TOKEN || '';
+export const GAME_LOG_PREFIX = process.env.GAME_LOG_PREFIX || '';
+export const GUILD_ID = process.env.GUILD_ID || '';
+export const VANILLA_LOG_CHANNEL_ID = process.env.VANILLA_LOG_CHANNEL_ID || '';
+
 export const DB_NAME = process.env.DB_NAME || 'scythe';
 export const DB_USERNAME = process.env.DB_USERNAME || 'postgres';
 export const DB_PASSWORD = process.env.DB_PASSWORD || 'postgres';
@@ -19,4 +24,4 @@ export const API_SERVER_PORT = process.env.API_SERVER_PORT || 4000;
 export const SITE_URL = process.env.SITE_URL || 'http://localhost:3000';
 
 export const GRAPHQL_SERVER_BASIC_AUTH =
-  process.env.GRAPHQL_SERVER_BASIC_AUTH || '';
+  process.env.GRAPHQL_SERVER_BASIC_AUTH || 'bancrimmil';

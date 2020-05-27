@@ -26,6 +26,7 @@ export const typeDef = gql`
       numRounds: Int!
       datePlayed: String!
       playerMatchResults: [PlayerMatchResultInput!]!
+      recordingUserId: String
     ): Match
   }
 
@@ -209,7 +210,12 @@ export const resolvers: Schema.Resolvers = {
   Mutation: {
     logMatch: async (
       _,
-      { numRounds, datePlayed, playerMatchResults: loggedMatchResults },
+      {
+        numRounds,
+        datePlayed,
+        playerMatchResults: loggedMatchResults,
+        recordingUserId: loggedRecordingUserId,
+      },
       context
     ) => {
       if (context.clientIp && !context.isAdmin) {
@@ -222,10 +228,19 @@ export const resolvers: Schema.Resolvers = {
         }
       }
 
-      const discordMe = await fetchDiscordMe(context);
+      let recordingUserId = '';
+      if (context.isAdmin && loggedRecordingUserId) {
+        recordingUserId = loggedRecordingUserId;
+      } else if (loggedRecordingUserId) {
+        throw new Error('You are not authorized to record this match');
+      } else {
+        const discordMe = await fetchDiscordMe(context);
 
-      if (!discordMe) {
-        throw new Error('You must be logged in to record matches');
+        if (!discordMe) {
+          throw new Error('You must be logged in to record matches');
+        }
+
+        recordingUserId = discordMe.id;
       }
 
       await validateMatch(numRounds, loggedMatchResults);
@@ -243,6 +258,7 @@ export const resolvers: Schema.Resolvers = {
                 await transactionalEntityManager.create(Match, {
                   numRounds,
                   datePlayed,
+                  recordingUserId,
                 })
               );
 
@@ -275,6 +291,7 @@ export const resolvers: Schema.Resolvers = {
               coins: result.coins,
             })),
             winner: match.winner,
+            recordingUserId,
           };
         } catch (error) {
           // Wait some random amount of time so quick bursts of logs

@@ -4,7 +4,7 @@ import {
   Column,
   OneToMany,
   OneToOne,
-  JoinColumn
+  JoinColumn,
 } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
@@ -20,9 +20,12 @@ export default class Match {
   @Column()
   datePlayed: Date;
 
+  @Column({ type: 'varchar', nullable: true })
+  recordingUserId: string;
+
   @OneToMany(
     () => PlayerMatchResult,
-    playerMatchResult => playerMatchResult.match
+    (playerMatchResult) => playerMatchResult.match
   )
   playerMatchResults: PlayerMatchResult[];
 
