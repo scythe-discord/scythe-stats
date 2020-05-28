@@ -67,7 +67,7 @@ const SameFactionWinRates: FC<Props> = ({
     <ResponsiveContainer id="same-faction-win-rates" width="100%" height="100%">
       <BarChart
         barCategoryGap="15%"
-        margin={{ top: 10, right: 15, bottom: 10, left: 5 }}
+        margin={{ top: 10, right: 15, bottom: 0, left: 5 }}
         data={data}
       >
         <Tooltip

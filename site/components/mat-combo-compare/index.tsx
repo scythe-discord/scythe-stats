@@ -3,6 +3,7 @@ import { useStyletron } from 'baseui';
 import { HeadingXLarge, HeadingXSmall } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
+import { getFactionMatImg, getPlayerMatImg } from '../../lib/scythe';
 import FactionIcon from '../faction-icon';
 
 import ComboSnippet from './combo-snippet';
@@ -101,16 +102,12 @@ const MatComboCompare: FC<Props> = ({
     <div
       className={css({
         display: 'flex',
-        minHeight: '400px',
       })}
     >
       <div
         className={css({
           display: 'flex',
           flexDirection: 'column',
-          justifyContent: 'space-between',
-          // To prevent shifting win rate charts when switching
-          width: '425px',
         })}
       >
         <div
@@ -141,13 +138,26 @@ const MatComboCompare: FC<Props> = ({
             {selectedFaction.name} {selectedPlayerMat.name}
           </HeadingXLarge>
         </div>
-        <ComboSnippet
+        <div
           className={css({
-            minWidth: '350px',
+            display: 'flex',
+            flexDirection: 'column',
           })}
-          combo={factionCombosMap[selectedFactionId][selectedPlayerMatId]}
-          tier={factionComboToTier[selectedFactionId][selectedPlayerMatId]}
-        />
+        >
+          <img
+            src={getFactionMatImg(selectedFaction.name)}
+            className={css({
+              width: '500px',
+              marginBottom: '20px',
+            })}
+          ></img>
+          <img
+            src={getPlayerMatImg(selectedPlayerMat.name)}
+            className={css({
+              width: '500px',
+            })}
+          ></img>
+        </div>
       </div>
       <div
         className={css({
@@ -162,7 +172,7 @@ const MatComboCompare: FC<Props> = ({
             display: 'inline-flex',
             flexDirection: 'column',
             alignItems: 'center',
-            flex: '1 1 65%',
+            flex: '1 1 50%',
             minWidth: 0,
             height: '100%',
           })}
@@ -189,7 +199,7 @@ const MatComboCompare: FC<Props> = ({
             display: 'inline-flex',
             flexDirection: 'column',
             alignItems: 'center',
-            flex: '1 1 35%',
+            flex: '1 1 50%',
             minWidth: 0,
             height: '100%',
           })}

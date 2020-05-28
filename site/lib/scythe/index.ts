@@ -1,1 +1,1 @@
-export * from './factions';
+export * from './images';
