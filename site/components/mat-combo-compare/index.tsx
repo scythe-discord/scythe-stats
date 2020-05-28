@@ -3,10 +3,9 @@ import { useStyletron } from 'baseui';
 import { HeadingXLarge, HeadingXSmall } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
-import { getFactionMatImg, getPlayerMatImg } from '../../lib/scythe';
 import FactionIcon from '../faction-icon';
+import { FactionMatImg, PlayerMatImg } from '../mat-images';
 
-import ComboSnippet from './combo-snippet';
 import SamePlayerMatWinRates from './same-player-mat-win-rates';
 import SameFactionWinRates from './same-faction-win-rates';
 
@@ -144,19 +143,8 @@ const MatComboCompare: FC<Props> = ({
             flexDirection: 'column',
           })}
         >
-          <img
-            src={getFactionMatImg(selectedFaction.name)}
-            className={css({
-              width: '500px',
-              marginBottom: '20px',
-            })}
-          ></img>
-          <img
-            src={getPlayerMatImg(selectedPlayerMat.name)}
-            className={css({
-              width: '500px',
-            })}
-          ></img>
+          <FactionMatImg factionName={selectedFaction.name} />
+          <PlayerMatImg playerMatName={selectedPlayerMat.name} />
         </div>
       </div>
       <div
