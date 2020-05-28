@@ -2,11 +2,13 @@ mutation logMatch(
   $numRounds: Int!
   $datePlayed: String!
   $playerMatchResults: [PlayerMatchResultInput!]!
+  $shouldPostMatchLog: Boolean!
 ) {
   logMatch(
     numRounds: $numRounds
     datePlayed: $datePlayed
     playerMatchResults: $playerMatchResults
+    shouldPostMatchLog: $shouldPostMatchLog
   ) {
     id
     datePlayed

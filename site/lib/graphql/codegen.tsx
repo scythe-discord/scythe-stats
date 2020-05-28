@@ -75,6 +75,7 @@ export type MutationLogMatchArgs = {
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput>;
+  shouldPostMatchLog: Scalars['Boolean'];
   recordingUserId?: Maybe<Scalars['String']>;
 };
 
@@ -239,6 +240,7 @@ export type LogMatchMutationVariables = {
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput>;
+  shouldPostMatchLog: Scalars['Boolean'];
 };
 
 
@@ -435,8 +437,8 @@ export type TopPlayersQuery = (
 
 
 export const LogMatchDocument = gql`
-    mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!) {
-  logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults) {
+    mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $shouldPostMatchLog: Boolean!) {
+  logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults, shouldPostMatchLog: $shouldPostMatchLog) {
     id
     datePlayed
     numRounds
@@ -481,6 +483,7 @@ export type LogMatchMutationFn = ApolloReactCommon.MutationFunction<LogMatchMuta
  *      numRounds: // value for 'numRounds'
  *      datePlayed: // value for 'datePlayed'
  *      playerMatchResults: // value for 'playerMatchResults'
+ *      shouldPostMatchLog: // value for 'shouldPostMatchLog'
  *   },
  * });
  */

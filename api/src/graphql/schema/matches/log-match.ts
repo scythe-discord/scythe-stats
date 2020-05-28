@@ -22,7 +22,7 @@ import {
 const postMatchLog = ({
   numRounds,
   playerMatchResults,
-}: Schema.MutationLogMatchArgs) => {
+}: Pick<Schema.MutationLogMatchArgs, 'numRounds' | 'playerMatchResults'>) => {
   const client = new Client();
   return client
     .login(BOT_TOKEN)
@@ -86,6 +86,7 @@ export const typeDef = gql`
       numRounds: Int!
       datePlayed: String!
       playerMatchResults: [PlayerMatchResultInput!]!
+      shouldPostMatchLog: Boolean!
       recordingUserId: String
     ): Match
   }
@@ -275,6 +276,7 @@ export const resolvers: Schema.Resolvers = {
         datePlayed,
         playerMatchResults: loggedMatchResults,
         recordingUserId: loggedRecordingUserId,
+        shouldPostMatchLog,
       },
       context
     ) => {
@@ -339,13 +341,14 @@ export const resolvers: Schema.Resolvers = {
             );
           }
 
-          // Used asynchronously to try to post the match log to the guild, so
-          // as to not affect the end user
-          postMatchLog({
-            numRounds,
-            datePlayed,
-            playerMatchResults: loggedMatchResults,
-          });
+          if (shouldPostMatchLog) {
+            // Used asynchronously to try to post the match log to the guild, so
+            // as to not affect the end user
+            postMatchLog({
+              numRounds,
+              playerMatchResults: loggedMatchResults,
+            });
+          }
 
           return {
             id: match.id.toString(),

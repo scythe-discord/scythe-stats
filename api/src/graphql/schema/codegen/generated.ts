@@ -77,6 +77,7 @@ export type MutationLogMatchArgs = {
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput>;
+  shouldPostMatchLog: Scalars['Boolean'];
   recordingUserId?: Maybe<Scalars['String']>;
 };
 
@@ -385,7 +386,7 @@ export type QueryResolvers<ContextType = any, ParentType extends ResolversParent
 
 export type MutationResolvers<ContextType = any, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>,
-  logMatch?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<MutationLogMatchArgs, 'numRounds' | 'datePlayed' | 'playerMatchResults'>>,
+  logMatch?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<MutationLogMatchArgs, 'numRounds' | 'datePlayed' | 'playerMatchResults' | 'shouldPostMatchLog'>>,
 }>;
 
 export type NodeResolvers<ContextType = any, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{

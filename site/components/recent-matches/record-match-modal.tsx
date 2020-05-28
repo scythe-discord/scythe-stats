@@ -15,6 +15,7 @@ import {
   SIZE,
 } from 'baseui/modal';
 import { Notification, KIND as NOTIFICATION_KIND } from 'baseui/notification';
+import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 import { Value, OnChangeParams } from 'baseui/select';
 
 import GQL from '../../lib/graphql';
@@ -61,6 +62,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
       ...defaultPlayerEntry,
     },
   ]);
+  const [shouldPostMatchLog, setShouldPostMatchLog] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
   const [
     logMatchMutation,
@@ -118,6 +120,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           datePlayed: new Date().toISOString(),
           numRounds: numRoundsAsNum,
           playerMatchResults,
+          shouldPostMatchLog,
         },
       });
 
@@ -365,6 +368,20 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         >
           Add a Player
         </Button>
+        <Checkbox
+          overrides={{
+            Root: {
+              style: {
+                margin: '25px 0 0',
+              },
+            },
+          }}
+          checked={shouldPostMatchLog}
+          onChange={(e) => setShouldPostMatchLog(e.currentTarget.checked)}
+          labelPlacement={LABEL_PLACEMENT.right}
+        >
+          Post this match in the Discord
+        </Checkbox>
       </ModalBody>
       <ModalFooter>
         <ModalButton kind={KIND.tertiary} onClick={onCancel}>
