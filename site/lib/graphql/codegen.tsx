@@ -102,6 +102,7 @@ export type PlayerMat = {
    __typename?: 'PlayerMat';
   id: Scalars['Int'];
   name: Scalars['String'];
+  abbrev: Scalars['String'];
 };
 
 export type PlayerFactionStats = {
@@ -401,7 +402,7 @@ export type TiersQuery = (
         & Pick<Faction, 'id' | 'name'>
       ), playerMat: (
         { __typename?: 'PlayerMat' }
-        & Pick<PlayerMat, 'id' | 'name'>
+        & Pick<PlayerMat, 'id' | 'name' | 'abbrev'>
       ), topPlayers: Array<(
         { __typename?: 'PlayerFactionStats' }
         & Pick<PlayerFactionStats, 'totalWins'>
@@ -739,6 +740,7 @@ export const TiersDocument = gql`
       playerMat {
         id
         name
+        abbrev
       }
       topPlayers(first: $numTopPlayers) {
         player {

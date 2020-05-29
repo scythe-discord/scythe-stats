@@ -32,7 +32,7 @@ const MatComboCompare: FC<Props> = ({
     [key: string]: {
       [key: string]: Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
         faction: Pick<GQL.Faction, 'id' | 'name'>;
-        playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+        playerMat: Pick<GQL.PlayerMat, 'id' | 'name' | 'abbrev'>;
         topPlayers: Array<
           Pick<GQL.PlayerFactionStats, 'totalWins'> & {
             player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
@@ -53,7 +53,7 @@ const MatComboCompare: FC<Props> = ({
   const factionToCombos: {
     [key: string]: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
       faction: Pick<GQL.Faction, 'id' | 'name'>;
-      playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+      playerMat: Pick<GQL.PlayerMat, 'id' | 'name' | 'abbrev'>;
     })[];
   } = {};
 
@@ -62,7 +62,7 @@ const MatComboCompare: FC<Props> = ({
   const playerMatToCombos: {
     [key: string]: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
       faction: Pick<GQL.Faction, 'id' | 'name'>;
-      playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+      playerMat: Pick<GQL.PlayerMat, 'id' | 'name' | 'abbrev'>;
     })[];
   } = {};
 

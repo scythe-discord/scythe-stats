@@ -11,6 +11,9 @@ export default class PlayerMat {
   @Column({ unique: true })
   name: string;
 
+  @Column({ unique: true })
+  abbrev: string;
+
   @OneToMany(
     () => PlayerMatchResult,
     (playerMatchResult) => playerMatchResult.playerMat

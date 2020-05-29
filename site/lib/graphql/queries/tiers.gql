@@ -11,6 +11,7 @@ query tiers($numTopPlayers: Int!) {
       playerMat {
         id
         name
+        abbrev
       }
       topPlayers(first: $numTopPlayers) {
         player {

@@ -104,6 +104,7 @@ export type PlayerMat = {
    __typename?: 'PlayerMat';
   id: Scalars['Int'];
   name: Scalars['String'];
+  abbrev: Scalars['String'];
 };
 
 export type PlayerFactionStats = {
@@ -412,6 +413,7 @@ export type DiscordUserResolvers<ContextType = any, ParentType extends Resolvers
 export type PlayerMatResolvers<ContextType = any, ParentType extends ResolversParentTypes['PlayerMat'] = ResolversParentTypes['PlayerMat']> = ResolversObject<{
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
+  abbrev?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

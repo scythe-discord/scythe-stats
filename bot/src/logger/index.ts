@@ -10,8 +10,8 @@ import {
 import { extractGameLog } from './extract';
 
 const LOG_MATCH_QUERY = `
-  mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $recordingUserId: String!)  {
-    logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults, recordingUserId: $recordingUserId) {
+  mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $shouldPostMatchLog: Boolean! $recordingUserId: String!)  {
+    logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults, shouldPostMatchLog: $shouldPostMatchLog, recordingUserId: $recordingUserId) {
       id
     }
   }
@@ -49,6 +49,7 @@ export const handleLogRequest = async (message: Message): Promise<void> => {
       datePlayed: message.createdAt.toISOString(),
       playerMatchResults: playerMatchResults.playerScores,
       recordingUserId: message.author.id,
+      shouldPostMatchLog: false,
     });
     console.log(JSON.stringify(data, undefined, 2));
   } catch (error) {

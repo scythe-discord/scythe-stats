@@ -13,6 +13,7 @@ export const typeDef = gql`
   type PlayerMat {
     id: Int!
     name: String!
+    abbrev: String!
   }
 `;
 

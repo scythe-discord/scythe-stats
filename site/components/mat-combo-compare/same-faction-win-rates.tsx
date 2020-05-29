@@ -16,7 +16,7 @@ import GQL from '../../lib/graphql';
 interface Props {
   combos: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
     faction: Pick<GQL.Faction, 'id' | 'name'>;
-    playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+    playerMat: Pick<GQL.PlayerMat, 'id' | 'name' | 'abbrev'>;
   })[];
   selectedPlayerMatId: number;
   onClickMatCombo: (factionId: number, playerMatId: number) => void;
@@ -52,16 +52,14 @@ const SameFactionWinRates: FC<Props> = ({
     ({ playerMat }) => playerMat.id === selectedPlayerMatId
   );
 
-  const data = orderedPlayerMats.map(
-    ({ playerMat, totalMatches, totalWins }) => {
-      const winRate = (100 * totalWins) / totalMatches;
+  const data = orderedPlayerMats.map(({ totalMatches, totalWins }, i) => {
+    const winRate = (100 * totalWins) / totalMatches;
 
-      return {
-        name: playerMat.name.substr(0, 4),
-        value: winRate,
-      };
-    }
-  );
+    return {
+      idx: i,
+      value: winRate,
+    };
+  });
 
   return (
     <ResponsiveContainer id="same-faction-win-rates" width="100%" height="100%">
@@ -76,13 +74,23 @@ const SameFactionWinRates: FC<Props> = ({
             fill: theme.colors.primary700,
             strokeDasharray: 'none',
           }}
+          labelFormatter={(idx: number) => {
+            const { playerMat } = orderedPlayerMats[idx];
+            return playerMat.name;
+          }}
           formatter={(value: string) => {
             const winRate = `${Number(value).toFixed(2)}%`;
             return [winRate, 'Win Rate'];
           }}
         />
         <CartesianGrid strokeDasharray="5 5" />
-        <XAxis dataKey="name" />
+        <XAxis
+          dataKey="idx"
+          tickFormatter={(idx) => {
+            const { playerMat } = orderedPlayerMats[idx];
+            return playerMat.abbrev;
+          }}
+        />
         <YAxis
           width={40}
           tickFormatter={(val) => {
