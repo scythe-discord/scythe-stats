@@ -77,7 +77,7 @@ const SamePlayerMatWinRates: FC<Props> = ({
     >
       <BarChart
         barCategoryGap="15%"
-        margin={{ top: 10, right: 5, bottom: 15, left: 15 }}
+        margin={{ top: 0, right: 0, bottom: 15, left: 0 }}
         data={data}
       >
         <Tooltip

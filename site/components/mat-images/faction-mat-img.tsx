@@ -21,7 +21,6 @@ const FactionMatImg: FC<Props> = ({ factionName, className }) => {
         className={classNames(
           css({
             margin: '10px 0',
-            width: '500px',
             cursor: 'zoom-in',
           }),
           className

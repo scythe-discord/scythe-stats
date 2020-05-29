@@ -57,7 +57,7 @@ const SameFactionWinRates: FC<Props> = ({
       const winRate = (100 * totalWins) / totalMatches;
 
       return {
-        name: playerMat.name,
+        name: playerMat.name.substr(0, 4),
         value: winRate,
       };
     }
@@ -67,7 +67,7 @@ const SameFactionWinRates: FC<Props> = ({
     <ResponsiveContainer id="same-faction-win-rates" width="100%" height="100%">
       <BarChart
         barCategoryGap="15%"
-        margin={{ top: 10, right: 15, bottom: 0, left: 5 }}
+        margin={{ top: 0, right: 0, bottom: 0, left: 0 }}
         data={data}
       >
         <Tooltip

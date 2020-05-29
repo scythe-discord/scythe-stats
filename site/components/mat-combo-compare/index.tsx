@@ -1,6 +1,6 @@
 import { FC } from 'react';
 import { useStyletron } from 'baseui';
-import { HeadingXLarge, HeadingXSmall } from 'baseui/typography';
+import { HeadingXLarge, HeadingSmall } from 'baseui/typography';
 
 import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
@@ -26,7 +26,7 @@ const MatComboCompare: FC<Props> = ({
   },
   onClickMatCombo,
 }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   const factionCombosMap: {
     [key: string]: {
@@ -101,24 +101,34 @@ const MatComboCompare: FC<Props> = ({
     <div
       className={css({
         display: 'flex',
+        flexDirection: 'column',
+
+        [theme.mediaQuery.large]: {
+          flexDirection: 'row',
+        },
       })}
     >
       <div
         className={css({
           display: 'flex',
           flexDirection: 'column',
+
+          alignItems: 'center',
+
+          [theme.mediaQuery.medium]: {
+            alignItems: 'stretch',
+          },
         })}
       >
         <div
           className={css({
             display: 'flex',
             alignItems: 'center',
-            margin: '0 0 30px',
+            margin: '0 0 15px',
           })}
         >
           <FactionIcon
             className={css({
-              margin: '0 15px 0 0',
               flex: '0 0 auto',
             })}
             faction={selectedFaction.name}
@@ -128,8 +138,7 @@ const MatComboCompare: FC<Props> = ({
             overrides={{
               Block: {
                 style: {
-                  flex: '0 0 auto',
-                  margin: 0,
+                  margin: '0 0 0 15px',
                 },
               },
             }}
@@ -141,31 +150,99 @@ const MatComboCompare: FC<Props> = ({
           className={css({
             display: 'flex',
             flexDirection: 'column',
+            alignItems: 'center',
+            minWidth: 0,
+
+            [theme.mediaQuery.medium]: {
+              flexDirection: 'row',
+              alignItems: 'center',
+            },
+
+            [theme.mediaQuery.large]: {
+              flexDirection: 'column',
+              alignItems: 'stretch',
+            },
           })}
         >
-          <FactionMatImg factionName={selectedFaction.name} />
-          <PlayerMatImg playerMatName={selectedPlayerMat.name} />
+          <div
+            className={css({
+              minWidth: 0,
+            })}
+          >
+            <FactionMatImg
+              factionName={selectedFaction.name}
+              className={css({
+                width: '100%',
+                minWidth: 0,
+
+                [theme.mediaQuery.medium]: {
+                  padding: '0 20px 0 0',
+                },
+
+                [theme.mediaQuery.large]: {
+                  width: '500px',
+                  padding: 0,
+                },
+              })}
+            />
+          </div>
+          <div
+            className={css({
+              minWidth: 0,
+            })}
+          >
+            <PlayerMatImg
+              playerMatName={selectedPlayerMat.name}
+              className={css({
+                width: '100%',
+                minWidth: 0,
+
+                [theme.mediaQuery.large]: {
+                  width: '500px',
+                },
+              })}
+            />
+          </div>
         </div>
       </div>
       <div
         className={css({
           display: 'flex',
-          flex: '1 1 auto',
-          margin: '0 0 0 50px',
-          minWidth: 0,
+          flexDirection: 'column',
+          margin: '20px 0 0',
+
+          [theme.mediaQuery.medium]: {
+            flexDirection: 'row',
+            flex: '1 1 auto',
+            minWidth: 0,
+          },
+
+          [theme.mediaQuery.large]: {
+            margin: '0 0 0 50px',
+          },
         })}
       >
         <div
           className={css({
-            display: 'inline-flex',
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            flex: '1 1 50%',
             minWidth: 0,
-            height: '100%',
+            margin: '0 20px 20px 0',
+
+            [theme.mediaQuery.medium]: {
+              flex: '1 1 50%',
+              alignItems: 'stretch',
+              margin: '0 20px 0 0',
+              padding: '0 10px 0 0',
+            },
+
+            [theme.mediaQuery.large]: {
+              alignItems: 'center',
+            },
           })}
         >
-          <HeadingXSmall
+          <HeadingSmall
             overrides={{
               Block: {
                 style: {
@@ -175,24 +252,43 @@ const MatComboCompare: FC<Props> = ({
             }}
           >
             {selectedFaction.name} win rates
-          </HeadingXSmall>
-          <SameFactionWinRates
-            combos={factionToCombos[selectedFactionId]}
-            selectedPlayerMatId={selectedPlayerMatId}
-            onClickMatCombo={onClickMatCombo}
-          />
+          </HeadingSmall>
+          <div
+            className={css({
+              alignSelf: 'stretch',
+              height: '350px',
+
+              [theme.mediaQuery.large]: {
+                flex: '1 1 auto',
+              },
+            })}
+          >
+            <SameFactionWinRates
+              combos={factionToCombos[selectedFactionId]}
+              selectedPlayerMatId={selectedPlayerMatId}
+              onClickMatCombo={onClickMatCombo}
+            />
+          </div>
         </div>
         <div
           className={css({
-            display: 'inline-flex',
+            display: 'flex',
             flexDirection: 'column',
             alignItems: 'center',
-            flex: '1 1 50%',
             minWidth: 0,
-            height: '100%',
+
+            [theme.mediaQuery.medium]: {
+              flex: '1 1 50%',
+              alignItems: 'stretch',
+              padding: '0 0 0 10px',
+            },
+
+            [theme.mediaQuery.large]: {
+              alignItems: 'center',
+            },
           })}
         >
-          <HeadingXSmall
+          <HeadingSmall
             overrides={{
               Block: {
                 style: {
@@ -202,12 +298,24 @@ const MatComboCompare: FC<Props> = ({
             }}
           >
             {selectedPlayerMat.name} win rates
-          </HeadingXSmall>
-          <SamePlayerMatWinRates
-            combos={playerMatToCombos[selectedPlayerMatId]}
-            selectedFactionId={selectedFactionId}
-            onClickMatCombo={onClickMatCombo}
-          />
+          </HeadingSmall>
+
+          <div
+            className={css({
+              alignSelf: 'stretch',
+              height: '350px',
+
+              [theme.mediaQuery.large]: {
+                flex: '1 1 auto',
+              },
+            })}
+          >
+            <SamePlayerMatWinRates
+              combos={playerMatToCombos[selectedPlayerMatId]}
+              selectedFactionId={selectedFactionId}
+              onClickMatCombo={onClickMatCombo}
+            />
+          </div>
         </div>
       </div>
     </div>

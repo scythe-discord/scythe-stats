@@ -19,12 +19,11 @@ const PlayerMatImg: FC<Props> = ({ playerMatName, className }) => {
       <img
         src={getPlayerMatImg(playerMatName)}
         className={classNames(
+          className,
           css({
             margin: '10px 0',
-            width: '500px',
             cursor: 'zoom-in',
-          }),
-          className
+          })
         )}
         alt={playerMatName}
         onClick={() => setIsModalVisible(true)}

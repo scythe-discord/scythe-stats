@@ -47,16 +47,15 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
       <SiteHeader />
       <div
         className={css({
-          padding: 0,
+          padding: '10px',
           margin: '0 auto',
           width: '100%',
 
           [theme.mediaQuery.medium]: {
-            padding: '20px 0',
+            padding: '20px',
           },
 
           [theme.mediaQuery.large]: {
-            padding: '20px',
             maxWidth: '1650px',
           },
         })}
@@ -69,7 +68,7 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
         />
         <div
           className={css({
-            margin: '50px 0',
+            padding: '50px 0',
           })}
         >
           <MatComboCompare
