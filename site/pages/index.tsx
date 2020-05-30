@@ -3,12 +3,7 @@ import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
 import moment from 'moment';
 
-import {
-  SiteHeader,
-  TopPlayers,
-  RecentMatches,
-  FactionsCard,
-} from '../components';
+import { TopPlayers, RecentMatches, FactionsCard } from '../components';
 import GQL from '../lib/graphql';
 
 interface Props {
@@ -33,7 +28,6 @@ const HomePage: NextComponentType<ApolloPageContext, Props, Props> = ({
         backgroundColor: theme.colors.backgroundPrimary,
       })}
     >
-      <SiteHeader />
       <div
         className={css({
           padding: 0,

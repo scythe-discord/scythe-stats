@@ -10,6 +10,7 @@ import withApollo from 'next-with-apollo';
 import { BaseProvider } from 'baseui';
 import { Provider as StyletronProvider } from 'styletron-react';
 
+import { SiteHeader } from '../components';
 import { styletron, debug } from '../styletron';
 import { AuthProvider } from '../lib/auth';
 import Theme from '../lib/theme';
@@ -42,6 +43,7 @@ class Site extends App<Props> {
           <BaseProvider theme={Theme}>
             <ApolloProvider client={apollo}>
               <AuthProvider initAuthCheck={initAuthCheck}>
+                <SiteHeader />
                 <Component {...pageProps} />
               </AuthProvider>
             </ApolloProvider>

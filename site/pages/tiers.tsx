@@ -3,7 +3,7 @@ import { NextComponentType } from 'next';
 import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
 
-import { SiteHeader, TierList, MatComboCompare } from '../components';
+import { TierList, MatComboCompare } from '../components';
 import GQL from '../lib/graphql';
 
 interface Props {
@@ -44,7 +44,6 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
         backgroundColor: theme.colors.backgroundPrimary,
       })}
     >
-      <SiteHeader />
       <div
         className={css({
           padding: '10px',
