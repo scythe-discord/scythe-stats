@@ -9,7 +9,7 @@ interface Props {
 }
 
 const TimelineLine: FC<Props> = ({ width, height, className }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
 
   return (
     <svg
@@ -17,7 +17,7 @@ const TimelineLine: FC<Props> = ({ width, height, className }) => {
       className={classNames(
         css({
           width: `${width}px`,
-          height: `${height + 2}px`
+          height: `${height + 2}px`,
         }),
         className
       )}
@@ -28,9 +28,9 @@ const TimelineLine: FC<Props> = ({ width, height, className }) => {
         y1="0"
         y2={height}
         className={css({
-          stroke: 'black',
+          stroke: theme.colors.primary400,
           strokeWidth: `${width}px`,
-          strokeLinecap: 'round'
+          strokeLinecap: 'round',
         })}
       />
     </svg>
