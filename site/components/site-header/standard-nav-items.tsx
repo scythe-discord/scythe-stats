@@ -24,7 +24,31 @@ const SpacedNavigationItem = ({
     <StyledNavigationItem
       className={classNames(
         css({
-          margin: '0 15px',
+          margin: '0 5px',
+        }),
+        className
+      )}
+    >
+      {children}
+    </StyledNavigationItem>
+  );
+};
+
+const SpacedExternalLink = ({
+  className,
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) => {
+  const [css] = useStyletron();
+
+  return (
+    <StyledNavigationItem
+      className={classNames(
+        css({
+          margin: '0 8px',
+          paddingLeft: 0,
         }),
         className
       )}
@@ -57,7 +81,7 @@ const StandardNavItems: FC = () => {
       <SpacedNavigationItem>
         <DiscordAuthItem />
       </SpacedNavigationItem>
-      <SpacedNavigationItem
+      <StyledNavigationItem
         className={css({
           paddingRight: '20px',
         })}
@@ -73,12 +97,8 @@ const StandardNavItems: FC = () => {
         >
           /
         </LabelLarge>
-      </SpacedNavigationItem>
-      <SpacedNavigationItem
-        className={css({
-          paddingLeft: 0,
-        })}
-      >
+      </StyledNavigationItem>
+      <SpacedExternalLink>
         <StyledLink
           href="https://discord.gg/dcRcxy2"
           target="_blank"
@@ -86,12 +106,8 @@ const StandardNavItems: FC = () => {
         >
           <FontAwesomeIcon icon={faDiscord} size="lg" />
         </StyledLink>
-      </SpacedNavigationItem>
-      <SpacedNavigationItem
-        className={css({
-          paddingLeft: 0,
-        })}
-      >
+      </SpacedExternalLink>
+      <SpacedExternalLink>
         <StyledLink
           href="https://github.com/shibrady/scythe-stats"
           target="_blank"
@@ -99,14 +115,10 @@ const StandardNavItems: FC = () => {
         >
           <FontAwesomeIcon icon={faGithub} size="lg" />
         </StyledLink>
-      </SpacedNavigationItem>
-      <SpacedNavigationItem
-        className={css({
-          paddingLeft: 0,
-        })}
-      >
+      </SpacedExternalLink>
+      <SpacedExternalLink>
         <BuyMeACoffee />
-      </SpacedNavigationItem>
+      </SpacedExternalLink>
     </>
   );
 };

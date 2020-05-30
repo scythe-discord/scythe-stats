@@ -3,7 +3,7 @@ import { createDarkTheme, darkThemePrimitives } from 'baseui';
 export const PRIMARY_FONT_FAMILY = 'Fira Sans, Helvetica, sans-serif, serif';
 
 const breakpoints: { [key: string]: number } = {
-  medium: 750,
+  medium: 780,
   large: 1450,
 };
 
