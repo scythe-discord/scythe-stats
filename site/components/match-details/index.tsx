@@ -1,15 +1,26 @@
 import { FC } from 'react';
-import { withStyle } from 'baseui';
+import ContentLoader from 'react-content-loader';
+import { useStyletron, withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
+import classNames from 'classnames';
+
+import GQL from '../../lib/graphql';
 
 import MatchRow from './match-row';
+
+const TIMELINE_WIDTH = 550;
+
+// Intended to style the table such that changes in height
+// (more or less players) do not shift container sizes
+// Height reflects a max 7 player game
+const MIN_MATCH_DETAILS_HEIGHT = 315;
 
 const CenteredHeadCell = withStyle(StyledHeadCell, {
   display: 'flex',
   alignItems: 'center',
 });
 
-export interface MatchDetailsRow {
+interface MatchDetailsRow {
   playerName: string;
   faction: string;
   playerMat: string;
@@ -17,24 +28,86 @@ export interface MatchDetailsRow {
 }
 
 interface Props {
-  rows: MatchDetailsRow[];
+  selectedMatch?: {
+    playerResults: Array<
+      Pick<GQL.PlayerMatchResult, 'id' | 'coins'> & {
+        player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+        faction: Pick<GQL.Faction, 'id' | 'name'>;
+        playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+      }
+    >;
+    winner: Pick<GQL.PlayerMatchResult, 'id'>;
+  };
   className?: string;
+  isLoading?: boolean;
 }
 
-export const MatchDetails: FC<Props> = ({ rows, className }) => {
+const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
+  const [css, theme] = useStyletron();
+  if (isLoading) {
+    return (
+      <ContentLoader
+        className={css({
+          margin: '40px 0 0',
+        })}
+        speed={2}
+        width={`${TIMELINE_WIDTH}px`}
+        height={`${MIN_MATCH_DETAILS_HEIGHT}px`}
+        viewBox={`0 0 ${TIMELINE_WIDTH} ${MIN_MATCH_DETAILS_HEIGHT}`}
+        backgroundColor={theme.colors.primary700}
+        foregroundColor={theme.colors.primary600}
+        uniqueKey="match-details"
+      >
+        <rect
+          x="0"
+          y="0"
+          rx="3"
+          ry="3"
+          width={`${TIMELINE_WIDTH}px`}
+          height={MIN_MATCH_DETAILS_HEIGHT}
+        />
+      </ContentLoader>
+    );
+  }
+
+  const matchDetailRows = selectedMatch
+    ? selectedMatch.playerResults.map(
+        ({
+          player: { displayName },
+          faction: { name: factionName },
+          playerMat: { name: playerMatName },
+          coins,
+        }) => {
+          return {
+            playerName: displayName,
+            faction: factionName,
+            playerMat: playerMatName,
+            coins,
+          };
+        }
+      )
+    : [];
+
   return (
     <StyledTable
-      className={className}
+      className={classNames(
+        css({
+          minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
+        }),
+        className
+      )}
       $gridTemplateColumns="auto 150px 150px 75px"
     >
       <CenteredHeadCell>Player</CenteredHeadCell>
       <CenteredHeadCell>Faction</CenteredHeadCell>
       <CenteredHeadCell>Player Mat</CenteredHeadCell>
       <CenteredHeadCell>Coins</CenteredHeadCell>
-      {rows.map((row, index) => {
+      {matchDetailRows.map((row, index) => {
         const striped = index % 2 !== 0;
         return <MatchRow key={index} {...row} striped={striped} />;
       })}
     </StyledTable>
   );
 };
+
+export default MatchDetails;
