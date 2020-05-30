@@ -27,33 +27,11 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
     []
   );
 
-  let recordMatchButton = null;
-  if (isAuthLoading) {
-    recordMatchButton = (
-      <Button kind={KIND.secondary} size={SIZE.compact} isLoading={true} />
-    );
-  } else if (!discordMe) {
-    recordMatchButton = (
-      <Button
-        $as="a"
-        href={DISCORD_OAUTH_URL}
-        kind={KIND.secondary}
-        size={SIZE.compact}
-      >
-        Login to Record Matches
-      </Button>
-    );
-  } else {
-    recordMatchButton = (
-      <Button
-        kind={KIND.secondary}
-        size={SIZE.compact}
-        onClick={onClickRecordMatch}
-      >
-        Record a Match
-      </Button>
-    );
-  }
+  const buttonAs = discordMe ? undefined : 'a';
+  const buttonHref = discordMe ? undefined : DISCORD_OAUTH_URL;
+  const buttonOnClick =
+    discordMe && !isAuthLoading ? onClickRecordMatch : undefined;
+  const buttonText = discordMe ? 'Record a Match' : 'Login to Record Matches';
 
   return (
     <>
@@ -62,7 +40,6 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
           display: 'flex',
           alignItems: 'center',
           flexWrap: 'wrap',
-          margin: '0 0 10px',
         })}
       >
         <HeadingLarge
@@ -71,14 +48,30 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
             Block: {
               style: {
                 flex: '1 1 auto',
-                margin: '0 0 10px',
+                margin: '0 0 15px',
               },
             },
           }}
         >
           Recent Matches
         </HeadingLarge>
-        {recordMatchButton}
+        <Button
+          overrides={{
+            BaseButton: {
+              style: {
+                margin: '0 0 15px',
+              },
+            },
+          }}
+          $as={buttonAs}
+          href={buttonHref}
+          kind={KIND.secondary}
+          size={SIZE.compact}
+          onClick={buttonOnClick}
+          isLoading={isAuthLoading}
+        >
+          {buttonText}
+        </Button>
       </div>
       <RecordMatchModal
         factions={factionStats.factions}
