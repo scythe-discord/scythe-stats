@@ -5,6 +5,7 @@ import { Button, KIND, SIZE as BUTTON_SIZE } from 'baseui/button';
 import { FormControl } from 'baseui/form-control';
 import { Plus } from 'baseui/icon';
 import { Input } from 'baseui/input';
+import { toaster } from 'baseui/toast';
 import {
   Modal,
   ModalHeader,
@@ -170,6 +171,9 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           },
         ]);
 
+        toaster.positive(<span>Successfully recorded your match!</span>, {
+          autoHideDuration: 3000,
+        });
         onCancel();
       } else {
         setFormError('An unknown error occurred attempting to log your match');

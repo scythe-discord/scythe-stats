@@ -8,6 +8,7 @@ import { ApolloLink } from 'apollo-link';
 import { ApolloProvider } from '@apollo/react-hooks';
 import withApollo from 'next-with-apollo';
 import { BaseProvider } from 'baseui';
+import { ToasterContainer } from 'baseui/toast';
 import { Provider as StyletronProvider } from 'styletron-react';
 
 import { SiteHeader } from '../components';
@@ -43,8 +44,10 @@ class Site extends App<Props> {
           <BaseProvider theme={Theme}>
             <ApolloProvider client={apollo}>
               <AuthProvider initAuthCheck={initAuthCheck}>
-                <SiteHeader />
-                <Component {...pageProps} />
+                <ToasterContainer>
+                  <SiteHeader />
+                  <Component {...pageProps} />
+                </ToasterContainer>
               </AuthProvider>
             </ApolloProvider>
           </BaseProvider>
