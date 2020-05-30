@@ -291,8 +291,8 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
             width={`${TIMELINE_WIDTH}px`}
             height={`${MIN_MATCH_DETAILS_HEIGHT}px`}
             viewBox={`0 0 ${TIMELINE_WIDTH} ${MIN_MATCH_DETAILS_HEIGHT}`}
-            backgroundColor={theme.colors.primary100}
-            foregroundColor={theme.colors.primary200}
+            backgroundColor={theme.colors.primary700}
+            foregroundColor={theme.colors.primary600}
             uniqueKey="match-details"
           >
             <rect
