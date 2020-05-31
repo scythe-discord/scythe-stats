@@ -284,6 +284,8 @@ export const resolvers: Schema.Resolvers = {
       },
       context
     ) => {
+      await validateMatch(numRounds, loggedMatchResults);
+
       if (context.clientIp && !context.isAdmin) {
         try {
           await rateLimiter.consume(context.clientIp, 1);
@@ -314,8 +316,6 @@ export const resolvers: Schema.Resolvers = {
 
         recordingUserId = discordMe.id;
       }
-
-      await validateMatch(numRounds, loggedMatchResults);
 
       let match: Match | undefined;
       let playerMatchResults: PlayerMatchResult[] | undefined;
