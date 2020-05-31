@@ -7,10 +7,9 @@ import GQL from '../../lib/graphql';
 import FactionIcon from '../faction-icon';
 
 const getBestPlayerMat = (
-  combos: Pick<
-    GQL.FactionMatCombo,
-    'playerMat' | 'totalWins' | 'totalMatches'
-  >[]
+  combos: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
+    playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
+  })[]
 ) => {
   let bestWinRate = -1;
   let bestPlayerMat = combos[0].playerMat;
