@@ -42,7 +42,7 @@ const PlayerMatImg: FC<Props> = ({ playerMatName, className }) => {
             })}
           >
             <img
-              src={getPlayerMatImg(playerMatName)}
+              src={getPlayerMatImg(playerMatName, true)}
               className={css({
                 minWidth: '800px',
                 width: '100%',

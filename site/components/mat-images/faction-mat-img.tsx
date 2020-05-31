@@ -42,7 +42,7 @@ const FactionMatImg: FC<Props> = ({ factionName, className }) => {
             })}
           >
             <img
-              src={getFactionMatImg(factionName)}
+              src={getFactionMatImg(factionName, true)}
               className={css({
                 minWidth: '800px',
                 width: '100%',

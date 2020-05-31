@@ -12,15 +12,15 @@ export const getFactionEmblem = (factionName: string) =>
     FACTION_ICONS_PATH,
     `${factionName.toLowerCase()}.png`
   );
-export const getFactionMatImg = (factionName: string) =>
+export const getFactionMatImg = (factionName: string, fullSize?: boolean) =>
   urljoin(
     PUBLIC_ASSETS_URL,
     FACTION_MATS_PATH,
-    `${factionName.toLowerCase()}.png`
+    `${factionName.toLowerCase()}${fullSize ? '-full' : ''}.png`
   );
-export const getPlayerMatImg = (playerMatName: string) =>
+export const getPlayerMatImg = (playerMatName: string, fullSize?: boolean) =>
   urljoin(
     PUBLIC_ASSETS_URL,
     PLAYER_MATS_PATH,
-    `${playerMatName.toLowerCase()}.png`
+    `${playerMatName.toLowerCase()}${fullSize ? '-full' : ''}.png`
   );
