@@ -48,7 +48,8 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
             Block: {
               style: {
                 flex: '1 1 auto',
-                margin: '0 0 15px',
+                marginTop: 0,
+                marginBottom: '15px',
               },
             },
           }}
@@ -59,7 +60,8 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
           overrides={{
             BaseButton: {
               style: {
-                margin: '0 0 15px',
+                marginTop: 0,
+                marginBottom: '15px',
               },
             },
           }}
