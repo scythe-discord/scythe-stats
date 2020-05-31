@@ -3,12 +3,13 @@ import Document, {
   Html,
   Head,
   Main,
-  NextScript
+  NextScript,
 } from 'next/document';
 import { Provider as StyletronProvider } from 'styletron-react';
 import { Sheet, Server } from 'styletron-engine-atomic';
 
 import { styletron } from '../styletron';
+import { GA_TRACKING_ID } from '../lib/env';
 import { PRIMARY_FONT_FAMILY } from '../lib/theme';
 
 interface Props {
@@ -17,7 +18,7 @@ interface Props {
 
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
-    const page = ctx.renderPage(App => props => (
+    const page = ctx.renderPage((App) => (props) => (
       <StyletronProvider value={styletron}>
         <App {...props} />
       </StyletronProvider>
@@ -65,9 +66,30 @@ class MyDocument extends Document<Props> {
               box-sizing: inherit;
               font-family: inherit;
             }
-          `
+          `,
             }}
           />
+          {GA_TRACKING_ID && (
+            <>
+              <script
+                async
+                src={`https://www.googletagmanager.com/gtag/js?id=${GA_TRACKING_ID}`}
+              ></script>
+              <script
+                dangerouslySetInnerHTML={{
+                  __html: `
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', '${GA_TRACKING_ID}', {
+              page_path: window.location.pathname,
+            });           
+            `,
+                }}
+              ></script>
+            </>
+          )}
         </Head>
         <body>
           <Main />

@@ -1,5 +1,6 @@
 import App from 'next/app';
 import Head from 'next/head';
+import Router from 'next/router';
 import { ApolloClient } from 'apollo-client';
 import { InMemoryCache } from 'apollo-cache-inmemory';
 import { HttpLink } from 'apollo-link-http';
@@ -16,13 +17,26 @@ import { styletron, debug } from '../styletron';
 import { AuthProvider } from '../lib/auth';
 import Theme from '../lib/theme';
 import { GRAPHQL_API_URL } from '../lib/env';
+import * as gtag from '../lib/gtag';
 
 interface Props {
   apollo: ApolloClient<any>;
   initAuthCheck: boolean;
 }
 
+const handleRouteChange = (url: string) => {
+  gtag.pageview(url);
+};
+
 class Site extends App<Props> {
+  componentDidMount() {
+    Router.events.on('routeChangeComplete', handleRouteChange);
+  }
+
+  componentWillUnmount() {
+    Router.events.off('routeChangeComplete', handleRouteChange);
+  }
+
   render() {
     const { Component, pageProps, apollo, initAuthCheck } = this.props;
     return (
