@@ -48,7 +48,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
   playerMats,
   ...modalProps
 }) => {
-  const [css] = useStyletron();
+  const [css, theme] = useStyletron();
   const client = useApolloClient();
   const [numRounds, setNumRounds] = useState<string>('');
   // Exists to provide a stable, monotonically increasing ID for player entries
@@ -387,7 +387,21 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           Post this match in the Discord
         </Checkbox>
       </ModalBody>
-      <ModalFooter>
+      <ModalFooter
+        className={css({
+          display: 'flex',
+          alignItems: 'center',
+        })}
+      >
+        <small
+          className={css({
+            color: theme.colors.primary,
+            flex: '1 1 auto',
+            textAlign: 'left',
+          })}
+        >
+          *In the event of ties, the first listed player will be the tiebreaker
+        </small>
         <ModalButton kind={KIND.tertiary} onClick={onCancel}>
           Cancel
         </ModalButton>
