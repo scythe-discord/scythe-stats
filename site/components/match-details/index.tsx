@@ -44,7 +44,7 @@ interface Props {
 
 const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
   const [css, theme] = useStyletron();
-  if (isLoading) {
+  if (isLoading || !selectedMatch) {
     return (
       <ContentLoader
         className={css({
@@ -70,23 +70,44 @@ const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
     );
   }
 
-  const matchDetailRows = selectedMatch
-    ? selectedMatch.playerResults.map(
-        ({
-          player: { displayName },
-          faction: { name: factionName },
-          playerMat: { name: playerMatName },
-          coins,
-        }) => {
-          return {
-            playerName: displayName,
-            faction: factionName,
-            playerMat: playerMatName,
-            coins,
-          };
-        }
-      )
-    : [];
+  const matchDetailRows = selectedMatch.playerResults.map(
+    ({
+      id,
+      player: { displayName },
+      faction: { name: factionName },
+      playerMat: { name: playerMatName },
+      coins,
+    }) => {
+      return {
+        id,
+        playerName: displayName,
+        faction: factionName,
+        playerMat: playerMatName,
+        coins,
+      };
+    }
+  );
+
+  matchDetailRows.sort((a, b) => {
+    if (a.coins < b.coins) {
+      return 1;
+    } else if (a.coins === b.coins) {
+      const isWinnerA = selectedMatch.winner.id === a.id;
+      const isWinnerB = selectedMatch.winner.id === b.id;
+
+      if (isWinnerA) {
+        return -1;
+      }
+
+      if (isWinnerB) {
+        return 1;
+      }
+
+      return a.id < b.id ? -1 : 1;
+    } else {
+      return -1;
+    }
+  });
 
   return (
     <StyledTable
