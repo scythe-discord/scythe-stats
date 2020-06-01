@@ -96,7 +96,9 @@ export default withApollo(({ initialState }) => {
       new HttpLink({
         uri: GRAPHQL_API_URL,
         credentials:
-          process.env.NODE_ENV === 'production' ? 'same-origin' : 'include',
+          process.env.NEXT_PUBLIC_NODE_ENV === 'production'
+            ? 'same-origin'
+            : 'include',
       }),
     ]),
     cache: new InMemoryCache().restore(initialState || {}),

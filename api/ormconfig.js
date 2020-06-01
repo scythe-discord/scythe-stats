@@ -5,10 +5,19 @@ module.exports = {
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'scythe',
-  entities: [`${__dirname}/src/db/entities/**/*.ts`],
-  migrations: [`${__dirname}/src/db/migrations/**/*.ts`],
-  subscribers: [`${__dirname}/src/db/subscribers/**/*.ts`],
+  entities:
+    process.env.NODE_ENV === 'production'
+      ? [`${__dirname}/dist/db/entities/**/*.js`]
+      : [`${__dirname}/src/db/entities/**/*.ts`],
+  migrations:
+    process.env.NODE_ENV === 'production'
+      ? [`${__dirname}/dist/db/migrations/**/*.ts`]
+      : [`${__dirname}/src/db/migrations/**/*.ts`],
+  subscribers:
+    process.env.NODE_ENV === 'production'
+      ? [`${__dirname}/dist/db/subscribers/**/*.ts`]
+      : [`${__dirname}/src/db/subscribers/**/*.ts`],
   cli: {
-    migrationsDir: 'src/db/migrations'
-  }
+    migrationsDir: 'src/db/migrations',
+  },
 };

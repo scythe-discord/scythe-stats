@@ -33,14 +33,10 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 app.use(
-  cors(
-    process.env.NODE_ENV === 'production'
-      ? undefined
-      : {
-          origin: SITE_URL,
-          credentials: true,
-        }
-  )
+  cors({
+    origin: SITE_URL,
+    credentials: true,
+  })
 );
 app.use(session(sessionConf));
 app.use('/auth', authRouter);
