@@ -25,12 +25,12 @@ const sessionConf: session.SessionOptions = {
   cookie: {},
 };
 
-if (process.env.NODE_ENV === 'production') {
-  app.set('trust proxy', 1);
-  sessionConf.cookie = {
-    secure: true,
-  };
-}
+// if (process.env.NODE_ENV === 'production') {
+//   app.set('trust proxy', 1);
+//   sessionConf.cookie = {
+//     secure: true,
+//   };
+// }
 
 app.use(
   cors({
@@ -47,6 +47,10 @@ app.listen({ port: API_SERVER_PORT }, () =>
   console.log(`🚀  Server ready at ${graphqlServer.graphqlPath}`)
 );
 
-dbConnection.then(() => {
-  console.log('Database connection ready!');
-});
+dbConnection
+  .then(() => {
+    console.log('Database connection ready!');
+  })
+  .catch((e) => {
+    console.error('Failed to connect to DB', e);
+  });
