@@ -11,8 +11,8 @@
   "scripts": {
     "dev:db": "docker run --rm --name scythe-stats-db -v scythe-db:/var/lib/postgresql/data -e POSTGRES_PASSWORD=postgres -e POSTGRES_DB=scythe -p 5432:5432 -d postgres:latest",
     "dev:redis": "docker run --rm --name scythe-stats-redis -v scythe-redis:/data -p 6379:6379 -d redis:latest redis-server --appendonly yes --requirepass \"redis\"",
-    "dev:api": "set DEBUG=express-session & yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json api/src/index.ts",
-    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project bot/tsconfig.json bot/src/index.ts",
+    "dev:api": "yarn ts-node-dev --respawn --transpileOnly --project api/tsconfig.json -r dotenv/config api/src/index.ts",
+    "dev:bot": "yarn ts-node-dev --respawn --transpileOnly --project bot/tsconfig.json -r dotenv/config bot/src/index.ts",
     "dev:site": "yarn --cwd site next",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
@@ -27,6 +27,7 @@
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
+    "dotenv": "^8.2.0",
     "eslint": "^7.0.0",
     "eslint-config-prettier": "^6.11.0",
     "eslint-plugin-baseui": "^9.76.0",

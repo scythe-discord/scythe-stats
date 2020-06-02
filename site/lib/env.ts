@@ -1,8 +1,6 @@
-export const API_URL =
-  process.env.NEXT_PUBLIC_API_URL || 'http://localhost:4000/';
+export const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
-export const GRAPHQL_API_URL =
-  process.env.NEXT_PUBLIC_GRAPHQL_API_URL || 'http://localhost:4000/graphql';
+export const GRAPHQL_API_URL = process.env.NEXT_PUBLIC_GRAPHQL_API_URL || '';
 
 export const PUBLIC_ASSETS_URL =
   process.env.NEXT_PUBLIC_PUBLIC_ASSETS_URL || '';
