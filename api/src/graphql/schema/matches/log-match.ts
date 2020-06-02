@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-express';
-import { Client, TextChannel } from 'discord.js';
+import { Client, TextChannel, MessageEmbed } from 'discord.js';
 import { getRepository, getManager, EntityManager } from 'typeorm';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 
@@ -11,7 +11,7 @@ import {
   Faction,
   PlayerMat,
 } from '../../../db/entities';
-import { fetchDiscordMe, delay } from '../../../common/utils';
+import { fetchDiscordMe, getOrdinal, delay } from '../../../common/utils';
 import { redisClient } from '../../../common/services';
 import {
   BOT_TOKEN,
@@ -28,14 +28,44 @@ const rateLimiter = new RateLimiterRedis({
   keyPrefix: 'log-match',
 });
 
-const postMatchLog = ({
-  numRounds,
-  playerMatchResults,
-}: Pick<Schema.MutationLogMatchArgs, 'numRounds' | 'playerMatchResults'>) => {
-  const client = new Client();
-  return client
-    .login(BOT_TOKEN)
-    .then(() => {
+const postMatchLog = (matchId: number) => {
+  const matchRepository = getRepository(Match);
+  return matchRepository
+    .findOneOrFail({
+      where: {
+        id: matchId,
+      },
+      relations: [
+        'playerMatchResults',
+        'playerMatchResults.player',
+        'playerMatchResults.faction',
+        'playerMatchResults.playerMat',
+        'winner',
+        'winner.player',
+        'winner.faction',
+        'winner.playerMat',
+      ],
+      order: {
+        datePlayed: 'DESC',
+      },
+    })
+    .then(({ winner, playerMatchResults, numRounds }) => {
+      const orderedMatchResults = playerMatchResults.sort((a, b) => {
+        if (a.coins < b.coins) {
+          return 1;
+        } else if (a.coins === b.coins && a.id > b.id) {
+          return 1;
+        } else {
+          return -1;
+        }
+      });
+
+      const client = new Client();
+
+      client.login(BOT_TOKEN).catch((e) => {
+        console.error('Failed to login while posting match log', e);
+      });
+
       client.on('ready', () => {
         const scytheGuild = client.guilds.cache.get(GUILD_ID);
 
@@ -53,31 +83,67 @@ const postMatchLog = ({
           );
         }
 
-        const matchResults = playerMatchResults
-          .map(({ displayName, faction, playerMat, coins }) => {
-            const factionEmoji = client.emojis.cache.find(
-              (emoji) => emoji.name === faction
+        const winnerFactionEmoji = client.emojis.cache.find(
+          (emoji) => emoji.name === winner.faction.name
+        );
+
+        if (!winnerFactionEmoji) {
+          throw new Error(
+            `Unable to find emoji for faction ${winner.faction.name}`
+          );
+        }
+        const description = `${
+          winner.player.displayName
+        } won as ${winnerFactionEmoji.toString()} ${
+          winner.playerMat.name
+        } in ${numRounds} ${numRounds === 1 ? 'round' : 'rounds'} with $${
+          winner.coins
+        } ${winner.coins === 1 ? 'coin' : 'coins'}!`;
+
+        let matchEmbed = new MessageEmbed()
+          .setColor('#05A357')
+          .setTitle('Match Log')
+          .setDescription(description)
+          .setURL(SITE_URL)
+          .setFooter('Via https://belovedpacifist.com/');
+
+        orderedMatchResults.forEach((result, i) => {
+          let fieldName = `${getOrdinal(i + 1)} place`;
+
+          if (i === 0) {
+            fieldName = ':first_place: ' + fieldName;
+          } else if (i === 1) {
+            fieldName = ':second_place: ' + fieldName;
+          } else if (i === 2) {
+            fieldName = ':third_place: ' + fieldName;
+          }
+
+          const factionEmoji = client.emojis.cache.find(
+            (emoji) => emoji.name === result.faction.name
+          );
+
+          if (!factionEmoji) {
+            throw new Error(
+              `Unable to find emoji for faction ${result.faction.name}`
             );
+          }
 
-            if (!factionEmoji) {
-              throw new Error(`Unable to find emoji for faction ${faction}`);
-            }
-            return `**${displayName}** ${factionEmoji?.toString()} | ${playerMat} | **$${coins}**`;
-          })
-          .join('\n');
+          const fieldValue = `**${
+            result.player.displayName
+          }** - ${factionEmoji.toString()} ${result.playerMat.name} - $${
+            result.coins
+          }`;
 
-        const output =
-          `**Game Length** | ${numRounds} Rounds\n\n` +
-          matchResults +
-          `\n\n(via ${SITE_URL})`;
+          matchEmbed = matchEmbed.addField(fieldName, fieldValue);
+        });
 
-        logChannel.send(output).catch((e) => {
+        logChannel.send(matchEmbed).catch((e) => {
           console.error('Failed to post match log to channel', e);
         });
       });
     })
     .catch((e) => {
-      console.error('Failed to login while posting match log', e);
+      console.error('Failed to post match log', e);
     });
 };
 
@@ -354,10 +420,7 @@ export const resolvers: Schema.Resolvers = {
           if (shouldPostMatchLog) {
             // Used asynchronously to try to post the match log to the guild, so
             // as to not affect the end user
-            postMatchLog({
-              numRounds,
-              playerMatchResults: loggedMatchResults,
-            });
+            postMatchLog(match.id);
           }
 
           return {
