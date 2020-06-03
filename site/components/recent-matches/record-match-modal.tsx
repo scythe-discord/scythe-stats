@@ -298,6 +298,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
       animate
       autoFocus
       size={SIZE.auto}
+      unstable_ModalBackdropScroll={true}
       {...modalProps}
     >
       <ModalHeader>Record Match</ModalHeader>
