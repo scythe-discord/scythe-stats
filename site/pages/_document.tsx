@@ -59,6 +59,23 @@ class MyDocument extends Document<Props> {
               };
               margin: 0;
             }
+
+            ::-webkit-scrollbar {
+              width: 12px;
+              height: 12px;
+            }
+
+            ::-webkit-scrollbar-corner {
+              background-color: #1c1c1d;
+            }
+
+            ::-webkit-scrollbar-track {
+              background-color: #1c1c1d;
+            }
+
+            ::-webkit-scrollbar-thumb {
+              background-color: #757575;
+            }
             
             *,
             *:before,
