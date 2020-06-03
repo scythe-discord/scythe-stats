@@ -290,6 +290,10 @@ const validateMatch = async (
     throw new Error('Matches must have more than 0 rounds played');
   }
 
+  if (numRounds > 50) {
+    throw new Error('The match length exceeds the max number of rounds');
+  }
+
   if (loggedMatchResults.length < 2 || loggedMatchResults.length > 7) {
     throw new Error('Matches must have 2-7 players');
   }
@@ -308,6 +312,12 @@ const validateMatch = async (
 
     if (coins < 0) {
       throw new Error('You cannot have negative coin amounts');
+    }
+
+    if (coins > 250) {
+      throw new Error(
+        "One or more players' coins exceeds the max number of coins"
+      );
     }
 
     if (
