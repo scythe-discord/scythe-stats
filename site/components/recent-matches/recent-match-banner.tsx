@@ -91,6 +91,10 @@ const RecentMatchBanner: FC<Props> = ({
         [':active']: {
           backgroundColor: theme.colors.primary600,
         },
+
+        [':focus']: {
+          outline: 'none',
+        },
       })}
       onClick={onClickWithId}
     >
