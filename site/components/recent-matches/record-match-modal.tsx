@@ -306,6 +306,10 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         className={css({
           overflow: 'auto',
           paddingBottom: '15px',
+
+          [theme.mediaQuery.medium]: {
+            overflow: 'visible',
+          },
         })}
       >
         {formError && (
