@@ -18,6 +18,26 @@ const BannerLabel: FC<{ children: ReactNode }> = ({ children }) => (
   </LabelSmall>
 );
 
+const PlayerNameLabel: FC<{ playerName: string }> = ({ playerName }) => (
+  <LabelSmall
+    overrides={{
+      Block: {
+        props: {
+          title: playerName,
+        },
+        style: {
+          whiteSpace: 'pre',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden',
+          maxWidth: '90px',
+        },
+      },
+    }}
+  >
+    {`${playerName} `}
+  </LabelSmall>
+);
+
 interface Props {
   id: string;
   displayName: string;
@@ -74,7 +94,8 @@ const RecentMatchBanner: FC<Props> = ({
       })}
       onClick={onClickWithId}
     >
-      <BannerLabel>{displayName} won as</BannerLabel>
+      <PlayerNameLabel playerName={displayName} />
+      <BannerLabel>won as</BannerLabel>
       <FactionIcon
         faction={factionName}
         size={28}
