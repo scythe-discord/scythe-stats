@@ -11,8 +11,8 @@ module.exports = {
     },
     {
       name: 'bot',
-      script: 'dist/index.js',
-      cwd: 'bot/',
+      script: 'index.js',
+      cwd: 'bot/dist',
     },
   ],
 };
