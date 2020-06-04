@@ -10,6 +10,8 @@ import { API_SERVER_PORT, SESSION_SECRET, SITE_URL } from './common/config';
 import { redisClient } from './common/services';
 import { authRouter } from './routes';
 
+const MAX_COOKIE_AGE = 1000 * 60 * 60 * 24 * 7;
+
 const app = express();
 
 const RedisStore = connectRedis(session);
@@ -22,13 +24,16 @@ const sessionConf: session.SessionOptions = {
   saveUninitialized: false,
   secret: SESSION_SECRET,
   resave: false,
-  cookie: {},
+  cookie: {
+    maxAge: MAX_COOKIE_AGE,
+  },
 };
 
 if (process.env.NODE_ENV === 'production') {
   app.set('trust proxy', 1);
   sessionConf.cookie = {
     secure: true,
+    maxAge: MAX_COOKIE_AGE,
   };
 }
 
