@@ -25,12 +25,12 @@ const sessionConf: session.SessionOptions = {
   cookie: {},
 };
 
-// if (process.env.NODE_ENV === 'production') {
-//   app.set('trust proxy', 1);
-//   sessionConf.cookie = {
-//     secure: true,
-//   };
-// }
+if (process.env.NODE_ENV === 'production') {
+  app.set('trust proxy', 1);
+  sessionConf.cookie = {
+    secure: true,
+  };
+}
 
 app.use(
   cors({
