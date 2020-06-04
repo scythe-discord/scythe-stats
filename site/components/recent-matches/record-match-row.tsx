@@ -83,7 +83,7 @@ const RecordMatchRow: FC<Props> = ({
   );
   const onChangeCoinsWrapper = useCallback(
     (e: React.FormEvent<HTMLInputElement>) =>
-      onChangeCoins(id, e.currentTarget.value),
+      onChangeCoins(id, (e.target as HTMLInputElement).value),
     [id]
   );
 
@@ -99,7 +99,7 @@ const RecordMatchRow: FC<Props> = ({
 
   const onChangePlayerInput = useCallback(
     (event: React.FormEvent<HTMLInputElement>) => {
-      playerNameRef.current = event.currentTarget.value;
+      playerNameRef.current = (event.target as HTMLInputElement).value;
       onLoadPlayerOptions();
     },
     []

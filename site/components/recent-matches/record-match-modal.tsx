@@ -329,7 +329,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
             min={1}
             type="number"
             onChange={(e) => {
-              setNumRounds(e.currentTarget.value);
+              setNumRounds((e.target as HTMLInputElement).value);
             }}
             autoFocus
             overrides={{
@@ -386,7 +386,9 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
             },
           }}
           checked={shouldPostMatchLog}
-          onChange={(e) => setShouldPostMatchLog(e.currentTarget.checked)}
+          onChange={(e) =>
+            setShouldPostMatchLog((e.target as HTMLInputElement).checked)
+          }
           labelPlacement={LABEL_PLACEMENT.right}
         >
           Post this match in the Discord
