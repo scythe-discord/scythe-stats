@@ -374,7 +374,7 @@ export const resolvers: Schema.Resolvers = {
           }
 
           throw new Error(
-            'You are sending log requests too quickly - please wait a few minutes'
+            'You are sending log requests too quickly - please try again later'
           );
         }
       }
