@@ -78,7 +78,11 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
 
   const onConfirm = useCallback(async () => {
     let error = null;
+    const intRegex = /^[1-9]\d*$/;
     const numRoundsAsNum = Number.parseInt(numRounds);
+    if (Number.isNaN(numRoundsAsNum) || !intRegex.test(numRounds)) {
+      error = 'Enter a valid number of rounds played';
+    }
     playerEntries.forEach((entry) => {
       if (
         !entry.player.length ||
@@ -92,14 +96,10 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
 
       const coinsAsNum = Number.parseInt(entry.coins);
 
-      if (Number.isNaN(coinsAsNum)) {
+      if (Number.isNaN(coinsAsNum) || !intRegex.test(entry.coins)) {
         error = 'Coins must be valid positive integers';
       }
     });
-
-    if (Number.isNaN(numRoundsAsNum)) {
-      error = 'Enter a valid number of rounds played';
-    }
 
     if (error) {
       setFormError(error);
