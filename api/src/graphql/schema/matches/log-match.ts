@@ -19,6 +19,7 @@ import {
   VANILLA_LOG_CHANNEL_ID,
   SITE_URL,
 } from '../../../common/config';
+import DiscordBlacklist from '../../../db/entities/discord-blacklist';
 
 const rateLimiter = new RateLimiterRedis({
   storeClient: redisClient,
@@ -391,6 +392,14 @@ export const resolvers: Schema.Resolvers = {
         }
 
         recordingUserId = discordMe.id;
+      }
+
+      const blacklistRepo = getRepository(DiscordBlacklist);
+      const blacklistedId = await blacklistRepo.findOne({
+        where: { discordId: recordingUserId },
+      });
+      if (blacklistedId) {
+        throw new Error('Your account has been flagged for recording matches');
       }
 
       let match: Match | undefined;
