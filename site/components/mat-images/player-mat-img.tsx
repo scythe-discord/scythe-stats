@@ -22,7 +22,7 @@ const PlayerMatImg: FC<Props> = ({ playerMatName, className }) => {
           className,
           css({
             margin: '10px 0',
-            cursor: 'zoom-in',
+            cursor: 'pointer',
           })
         )}
         alt={playerMatName}
