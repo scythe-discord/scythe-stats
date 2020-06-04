@@ -311,7 +311,7 @@ const validateMatch = async (
     } = loggedMatchResults[i];
 
     if (coins < 0) {
-      throw new Error('You cannot have negative coin amounts');
+      throw new Error('Coins must be valid positive integers');
     }
 
     if (coins > 250) {
