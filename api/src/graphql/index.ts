@@ -19,7 +19,7 @@ export const graphqlServer = new ApolloServer({
 
     return {
       isAdmin,
-      clientIp: req.headers['x-forwarded-for'] || req.connection.remoteAddress,
+      clientIp: req.headers['x-real-ip'] || req.connection.remoteAddress,
       session: req.session,
       req: req,
       res: res,
