@@ -185,7 +185,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         setFormError('An unknown error occurred attempting to log your match');
       }
     }
-  }, [playerEntries]);
+  }, [numRounds, shouldPostMatchLog, playerEntries]);
 
   const onAddPlayer = useCallback(() => {
     if (playerEntries.length >= 7) {
