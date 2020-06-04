@@ -85,6 +85,10 @@ export default withApollo(({ initialState }) => {
   return new ApolloClient({
     link: ApolloLink.from([
       onError(({ graphQLErrors, networkError }) => {
+        if (process.env.NEXT_PUBLIC_NODE_ENV === 'production') {
+          return;
+        }
+
         if (graphQLErrors)
           graphQLErrors.forEach(({ message, locations, path }) =>
             console.log(
