@@ -106,7 +106,7 @@ const postMatchLog = (matchId: number) => {
           .setTitle('Match Log')
           .setDescription(description)
           .setURL(SITE_URL)
-          .setFooter('Via https://belovedpacifist.com/');
+          .setFooter(`Via ${SITE_URL}`);
 
         orderedMatchResults.forEach((result, i) => {
           let fieldName = `${getOrdinal(i + 1)} place`;
