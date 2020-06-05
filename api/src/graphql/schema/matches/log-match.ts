@@ -1,7 +1,6 @@
 import { gql } from 'apollo-server-express';
 import { Client, TextChannel, MessageEmbed } from 'discord.js';
 import { getRepository, getManager, EntityManager } from 'typeorm';
-import { RateLimiterRedis } from 'rate-limiter-flexible';
 
 import Schema from '../codegen';
 import {
@@ -12,7 +11,6 @@ import {
   PlayerMat,
 } from '../../../db/entities';
 import { fetchDiscordMe, getOrdinal, delay } from '../../../common/utils';
-import { redisClient } from '../../../common/services';
 import {
   BOT_TOKEN,
   GUILD_ID,
@@ -20,14 +18,6 @@ import {
   SITE_URL,
 } from '../../../common/config';
 import DiscordBlacklist from '../../../db/entities/discord-blacklist';
-
-const rateLimiter = new RateLimiterRedis({
-  storeClient: redisClient,
-  points: 5, // 5 log requests
-  duration: 30, // Every 30 seconds
-  blockDuration: 3600, // If surpassed, block for an hour
-  keyPrefix: 'log-match',
-});
 
 const postMatchLog = (matchId: number) => {
   const matchRepository = getRepository(Match);
@@ -159,7 +149,7 @@ export const typeDef = gql`
       playerMatchResults: [PlayerMatchResultInput!]!
       shouldPostMatchLog: Boolean!
       recordingUserId: String
-    ): Match
+    ): Match @rateLimit(keyPrefix: "log-match")
   }
 
   input PlayerMatchResultInput {
@@ -362,22 +352,6 @@ export const resolvers: Schema.Resolvers = {
       context
     ) => {
       await validateMatch(numRounds, loggedMatchResults);
-
-      if (context.clientIp && !context.isAdmin) {
-        try {
-          await rateLimiter.consume(context.clientIp, 1);
-        } catch (rejRes) {
-          if (rejRes instanceof Error) {
-            throw new Error(
-              'An unknown error occurred attempting to log your match - please try again'
-            );
-          }
-
-          throw new Error(
-            'You are sending log requests too quickly - please try again later'
-          );
-        }
-      }
 
       let recordingUserId = '';
       if (context.isAdmin && loggedRecordingUserId) {

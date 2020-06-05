@@ -20,6 +20,7 @@ import {
 } from './players';
 import { typeDef as tierTypeDef, resolvers as tierResolvers } from './tiers';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
+import { RateLimitDirective, rateLimitDirectiveTypeDef } from './directives';
 
 export const Query = gql`
   type Query {
@@ -38,6 +39,7 @@ export default {
     Query,
     Mutation,
     relayTypeDef,
+    rateLimitDirectiveTypeDef,
     ...authTypeDef,
     ...playerMatsTypeDef,
     ...factionsTypeDef,
@@ -54,4 +56,7 @@ export default {
     matchResolvers,
     tierResolvers
   ),
+  schemaDirectives: {
+    rateLimit: RateLimitDirective,
+  },
 };
