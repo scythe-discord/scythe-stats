@@ -31,25 +31,20 @@ const postMatchLog = (matchId: number) => {
         'playerMatchResults.player',
         'playerMatchResults.faction',
         'playerMatchResults.playerMat',
-        'winner',
-        'winner.player',
-        'winner.faction',
-        'winner.playerMat',
       ],
-      order: {
-        datePlayed: 'DESC',
-      },
     })
-    .then(({ winner, playerMatchResults, numRounds }) => {
+    .then(({ playerMatchResults, numRounds }) => {
       const orderedMatchResults = playerMatchResults.sort((a, b) => {
         if (a.coins < b.coins) {
           return 1;
-        } else if (a.coins === b.coins && a.id > b.id) {
+        } else if (a.coins === b.coins && a.tieOrder > b.tieOrder) {
           return 1;
         } else {
           return -1;
         }
       });
+
+      const winner = orderedMatchResults[0];
 
       const client = new Client();
 
