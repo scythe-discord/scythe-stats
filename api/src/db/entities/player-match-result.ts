@@ -1,4 +1,10 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  Unique,
+} from 'typeorm';
 
 import Faction from './faction';
 import PlayerMat from './player-mat';
@@ -6,6 +12,10 @@ import Player from './player';
 import Match from './match';
 
 @Entity()
+@Unique(['match', 'faction'])
+@Unique(['match', 'playerMat'])
+@Unique(['match', 'player'])
+@Unique(['match', 'coins', 'tieOrder'])
 export default class PlayerMatchResult {
   @PrimaryGeneratedColumn()
   id: number;
