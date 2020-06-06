@@ -21,6 +21,7 @@ query matches($first: Int!, $after: String) {
             name
           }
           coins
+          tieOrder
         }
         winner {
           id

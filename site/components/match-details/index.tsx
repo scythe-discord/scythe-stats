@@ -30,7 +30,7 @@ interface MatchDetailsRow {
 interface Props {
   selectedMatch?: {
     playerResults: Array<
-      Pick<GQL.PlayerMatchResult, 'id' | 'coins'> & {
+      Pick<GQL.PlayerMatchResult, 'id' | 'coins' | 'tieOrder'> & {
         player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
         faction: Pick<GQL.Faction, 'id' | 'name'>;
         playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
@@ -77,6 +77,7 @@ const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
       faction: { name: factionName },
       playerMat: { name: playerMatName },
       coins,
+      tieOrder,
     }) => {
       return {
         id,
@@ -84,29 +85,17 @@ const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
         faction: factionName,
         playerMat: playerMatName,
         coins,
+        tieOrder,
       };
     }
   );
 
   matchDetailRows.sort((a, b) => {
-    if (a.coins < b.coins) {
+    if (a.coins < b.coins || (a.coins === b.coins && a.tieOrder > b.tieOrder)) {
       return 1;
-    } else if (a.coins === b.coins) {
-      const isWinnerA = selectedMatch.winner.id === a.id;
-      const isWinnerB = selectedMatch.winner.id === b.id;
-
-      if (isWinnerA) {
-        return -1;
-      }
-
-      if (isWinnerB) {
-        return 1;
-      }
-
-      return a.id < b.id ? -1 : 1;
-    } else {
-      return -1;
     }
+
+    return -1;
   });
 
   return (

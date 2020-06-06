@@ -330,7 +330,7 @@ export type MatchesQuery = (
         & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
         & { playerResults: Array<(
           { __typename?: 'PlayerMatchResult' }
-          & Pick<PlayerMatchResult, 'id' | 'coins'>
+          & Pick<PlayerMatchResult, 'id' | 'coins' | 'tieOrder'>
           & { player: (
             { __typename?: 'Player' }
             & Pick<Player, 'id' | 'displayName' | 'steamId'>
@@ -613,6 +613,7 @@ export const MatchesDocument = gql`
             name
           }
           coins
+          tieOrder
         }
         winner {
           id
