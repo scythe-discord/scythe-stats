@@ -227,14 +227,34 @@ const formPlayerMatchResults = async (
   loggedMatchResults: Schema.PlayerMatchResultInput[]
 ): Promise<PlayerMatchResult[]> => {
   const playerMatchResults: PlayerMatchResult[] = [];
-  for (let i = 0; i < loggedMatchResults.length; i++) {
+  const origIndices: { [key: string]: number } = {};
+  loggedMatchResults.forEach(
+    (result, i) => (origIndices[result.displayName] = i)
+  );
+
+  const orderedLoggedMatchResults = [...loggedMatchResults].sort((a, b) => {
+    if (a.coins < b.coins) {
+      return 1;
+    } else if (
+      a.coins === b.coins &&
+      origIndices[a.displayName] > origIndices[b.displayName]
+    ) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+
+  let prevResult = null;
+  let prevTieOrder = 0;
+  for (let i = 0; i < orderedLoggedMatchResults.length; i++) {
     const {
       displayName,
       steamId,
       faction: factionName,
       playerMat: playerMatName,
       coins,
-    } = loggedMatchResults[i];
+    } = orderedLoggedMatchResults[i];
 
     const faction = await entityManager.findOneOrFail(Faction, {
       where: { name: factionName },
@@ -247,6 +267,8 @@ const formPlayerMatchResults = async (
       displayName,
       steamId
     );
+    const tieOrder =
+      prevResult && prevResult.coins === coins ? prevTieOrder + 1 : 0;
     const playerMatchResult = await entityManager.save(
       await entityManager.create(PlayerMatchResult, {
         match,
@@ -254,23 +276,16 @@ const formPlayerMatchResults = async (
         playerMat,
         player,
         coins,
+        tieOrder,
       })
     );
 
     playerMatchResults.push(playerMatchResult);
+
+    prevTieOrder = tieOrder;
+    prevResult = orderedLoggedMatchResults[i];
   }
   return playerMatchResults;
-};
-
-const findMatchWinner = (playerMatchResults: PlayerMatchResult[]) => {
-  let winner = playerMatchResults[0];
-  playerMatchResults.forEach((result) => {
-    if (result.coins > winner.coins) {
-      winner = result;
-    }
-  });
-
-  return winner;
 };
 
 const validateMatch = async (
@@ -399,7 +414,6 @@ export const resolvers: Schema.Resolvers = {
                 loggedMatchResults
               );
 
-              match.winner = findMatchWinner(playerMatchResults);
               await transactionalEntityManager.save(match);
             }
           );
@@ -426,6 +440,7 @@ export const resolvers: Schema.Resolvers = {
               faction: result.faction,
               playerMat: result.playerMat,
               coins: result.coins,
+              tieOrder: result.tieOrder,
             })),
             winner: match.winner,
             recordingUserId,
