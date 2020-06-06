@@ -213,6 +213,7 @@ export type PlayerMatchResult = {
   faction: Faction;
   playerMat: PlayerMat;
   coins: Scalars['Int'];
+  tieOrder: Scalars['Int'];
 };
 
 export type PlayerMatchResultInput = {

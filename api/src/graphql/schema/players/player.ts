@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 import { toGlobalId, fromGlobalId } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
-import { Match, PlayerMatchResult, Player } from '../../../db/entities';
+import { PlayerMatchResult, Player } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -41,14 +41,26 @@ export const resolvers: Schema.Resolvers = {
   Player: {
     id: (player) => toGlobalId('Player', player.id.toString()),
     totalWins: async (player, { factionId, fromDate }) => {
-      const matchRepo = getRepository(Match);
-      let query = matchRepo
-        .createQueryBuilder('match')
-        .innerJoin('match.winner', 'winner')
-        .where('winner."playerId" = :playerId', { playerId: player.id });
+      const pmrRepo = getRepository(PlayerMatchResult);
+      let query = pmrRepo
+        .createQueryBuilder('pmr')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.match', 'match')
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr.coins = "maxCoins"')
+        .andWhere('pmr."playerId" = :playerId', { playerId: player.id });
 
       if (factionId) {
-        query = query.andWhere('winner."factionId" = :factionId', {
+        query = query.andWhere('pmr."factionId" = :factionId', {
           factionId,
         });
       }

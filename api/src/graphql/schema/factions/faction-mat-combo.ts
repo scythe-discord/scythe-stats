@@ -4,7 +4,6 @@ import { getRepository } from 'typeorm';
 import {
   Faction,
   PlayerMat,
-  Match,
   PlayerMatchResult,
   MatComboTier,
 } from '../../../db/entities';
@@ -48,19 +47,32 @@ export const resolvers: Schema.Resolvers = {
       { faction: { id: factionId }, playerMat: { id: playerMatId } },
       { first }
     ) => {
-      const matchRepository = getRepository(Match);
-      const playersWithWins = await matchRepository
-        .createQueryBuilder('match')
-        .innerJoin('match.winner', 'winner')
-        .innerJoin('winner.player', 'player')
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const playersWithWins = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr."playerId")', 'totalWins')
+        .addSelect('player.*')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.player', 'player')
         .where(
-          'winner."factionId" = :factionId AND winner."playerMatId" = :playerMatId',
-          { factionId, playerMatId }
+          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
+          {
+            factionId,
+            playerMatId,
+          }
         )
         .groupBy('player.id')
-        .select('COUNT(player.id)', 'totalWins')
-        .addSelect('player.*')
         .orderBy('"totalWins"', 'DESC')
+        .addOrderBy('player.id', 'ASC')
         .limit(first)
         .getRawMany();
 
@@ -70,15 +82,28 @@ export const resolvers: Schema.Resolvers = {
       }));
     },
     totalWins: async ({ faction, playerMat }) => {
-      const matchRepo = getRepository(Match);
-      const wins = await matchRepo
-        .createQueryBuilder('match')
-        .innerJoinAndSelect('match.winner', 'winner')
-        .where('winner."factionId" = :factionId', { factionId: faction.id })
-        .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id,
-        })
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const wins = await pmrRepo
+        .createQueryBuilder('pmr')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .where(
+          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
+          {
+            factionId: faction.id,
+            playerMatId: playerMat.id,
+          }
+        )
         .getCount();
+
       return wins;
     },
     totalMatches: async ({ faction, playerMat }) => {
@@ -95,43 +120,81 @@ export const resolvers: Schema.Resolvers = {
       return matches;
     },
     avgCoinsOnWin: async ({ faction, playerMat }) => {
-      const matchRepo = getRepository(Match);
-      const res = await matchRepo
-        .createQueryBuilder('match')
-        .select('AVG(winner.coins)', 'avg')
-        .innerJoin('match.winner', 'winner')
-        .where('winner."factionId" = :factionId', { factionId: faction.id })
-        .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id,
-        })
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const res = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('AVG(pmr.coins)', 'avg')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .where(
+          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
+          {
+            factionId: faction.id,
+            playerMatId: playerMat.id,
+          }
+        )
         .getRawOne();
 
       return Math.floor(parseFloat(res['avg'])) || 0;
     },
     avgRoundsOnWin: async ({ faction, playerMat }) => {
-      const matchRepo = getRepository(Match);
-      const res = await matchRepo
-        .createQueryBuilder('match')
-        .select('AVG(match.numRounds)', 'avg')
-        .innerJoin('match.winner', 'winner')
-        .where('winner."factionId" = :factionId', { factionId: faction.id })
-        .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id,
-        })
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const res = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('AVG(match."numRounds")', 'avg')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.match', 'match')
+        .where(
+          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
+          {
+            factionId: faction.id,
+            playerMatId: playerMat.id,
+          }
+        )
         .getRawOne();
 
       return parseFloat(res['avg']) || 0;
     },
     leastRoundsForWin: async ({ faction, playerMat }) => {
-      const matchRepo = getRepository(Match);
-      const res = await matchRepo
-        .createQueryBuilder('match')
-        .select('MIN(match.numRounds)', 'min')
-        .innerJoin('match.winner', 'winner')
-        .where('winner."factionId" = :factionId', { factionId: faction.id })
-        .andWhere('winner."playerMatId" = :playerMatId', {
-          playerMatId: playerMat.id,
-        })
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const res = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('MIN(match."numRounds")', 'min')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.match', 'match')
+        .where(
+          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
+          {
+            factionId: faction.id,
+            playerMatId: playerMat.id,
+          }
+        )
         .getRawOne();
 
       return res['min'] || 0;

@@ -215,6 +215,7 @@ export type PlayerMatchResult = {
   faction: Faction;
   playerMat: PlayerMat;
   coins: Scalars['Int'];
+  tieOrder: Scalars['Int'];
 };
 
 export type PlayerMatchResultInput = {
@@ -502,6 +503,7 @@ export type PlayerMatchResultResolvers<ContextType = any, ParentType extends Res
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>,
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>,
   coins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  tieOrder?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

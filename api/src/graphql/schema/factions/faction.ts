@@ -1,12 +1,7 @@
 import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
-import {
-  Faction,
-  Match,
-  PlayerMatchResult,
-  PlayerMat,
-} from '../../../db/entities';
+import { Faction, PlayerMatchResult, PlayerMat } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -49,11 +44,23 @@ export const resolvers: Schema.Resolvers = {
   },
   Faction: {
     totalWins: async (faction) => {
-      const matchRepo = getRepository(Match);
-      const wins = await matchRepo
-        .createQueryBuilder('match')
-        .innerJoinAndSelect('match.winner', 'winner')
-        .where('winner."factionId" = :factionId', { factionId: faction.id })
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const wins = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('pmr.id')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .where('pmr."tieOrder" = 0 AND pmr."factionId" = :factionId', {
+          factionId: faction.id,
+        })
         .getCount();
       return wins;
     },
@@ -76,16 +83,28 @@ export const resolvers: Schema.Resolvers = {
       }));
     },
     topPlayers: async ({ id: factionId }, { first }) => {
-      const matchRepository = getRepository(Match);
-      const playersWithWins = await matchRepository
-        .createQueryBuilder('match')
-        .innerJoin('match.winner', 'winner')
-        .innerJoin('winner.player', 'player')
-        .where('winner."factionId" = :factionId', { factionId })
-        .groupBy('player.id')
-        .select('COUNT(player.id)', 'totalWins')
+      const pmrRepo = getRepository(PlayerMatchResult);
+      const playersWithWins = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr."playerId")', 'totalWins')
         .addSelect('player.*')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.player', 'player')
+        .where('pmr."tieOrder" = 0 AND pmr."factionId" = :factionId', {
+          factionId,
+        })
+        .groupBy('player.id')
         .orderBy('"totalWins"', 'DESC')
+        .addOrderBy('player.id', 'ASC')
         .limit(first)
         .getRawMany();
 

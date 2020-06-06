@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 import { connectionFromArray } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
-import { Match, Player } from '../../../db/entities';
+import { Player, PlayerMatchResult } from '../../../db/entities';
 import Schema from '../codegen';
 
 interface PlayerWithWinCount extends Player {
@@ -23,17 +23,31 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     playersByWins: async (_, { first, after, factionId, fromDate }) => {
-      const matchRepository = getRepository(Match);
-      let query = matchRepository
-        .createQueryBuilder('match')
-        .innerJoin('match.winner', 'winner')
-        .innerJoin('winner.player', 'player')
+      const pmrRepo = getRepository(PlayerMatchResult);
+      let query = pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr."playerId")', 'playerWins')
+        .addSelect('player.*')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin('pmr.match', 'match')
+        .innerJoin('pmr.player', 'player')
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr.coins = "maxCoins"')
         .groupBy('player.id')
-        .select('COUNT(player.id)', 'playerWins')
-        .addSelect('player.*');
+        .orderBy('"playerWins"', 'DESC')
+        .addOrderBy('player.id', 'ASC');
 
       if (factionId) {
-        query = query.andWhere('winner."factionId" = :factionId', {
+        query = query.andWhere('pmr."factionId" = :factionId', {
           factionId,
         });
       }
@@ -43,16 +57,6 @@ export const resolvers: Schema.Resolvers = {
       }
 
       const playersWithWins = (await query.getRawMany()) as PlayerWithWinCount[];
-
-      playersWithWins.sort((a, b) => {
-        const playerWinsA = parseInt(a.playerWins);
-        const playerWinsB = parseInt(b.playerWins);
-        if (playerWinsA === playerWinsB) {
-          return b.id - a.id;
-        }
-
-        return playerWinsB - playerWinsA;
-      });
 
       return connectionFromArray(playersWithWins, { first, after });
     },

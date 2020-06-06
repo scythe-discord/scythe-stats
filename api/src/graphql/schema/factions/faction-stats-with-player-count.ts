@@ -1,13 +1,8 @@
 import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
-import { Match } from '../../../db/entities';
+import { Match, PlayerMatchResult } from '../../../db/entities';
 import Schema from '../codegen';
-
-interface WinningFactionWithPlayerCount {
-  playerCount: string;
-  winnerFactionId: number;
-}
 
 export const typeDef = gql`
   type FactionStatsWithPlayerCount {
@@ -20,51 +15,81 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Faction: {
     statsByPlayerCount: async ({ id }) => {
-      const stats: {
-        [key: string]: { totalWins: number; totalMatches: number };
-      } = {};
-      const matchRepo = getRepository(Match);
+      const pmrRepo = getRepository(PlayerMatchResult);
 
-      const builder = matchRepo.createQueryBuilder('match');
-
-      const relevantMatches = (await builder
-        .where(
+      const totalMatchesByPlayerCount = (await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT("playerCounts"."playerCount")', 'totalMatches')
+        .addSelect('"playerCounts"."playerCount"', 'playerCount')
+        .innerJoin(
           (qb) =>
-            `match.id IN ${qb
-              .subQuery()
-              .select('match.id')
+            qb
               .from(Match, 'match')
-              .innerJoin('match.playerMatchResults', 'results')
-              .where('results."factionId" = :factionId', { factionId: id })
-              .getQuery()}`
+              .select('COUNT(pmr.id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'pmr')
+              .groupBy('match.id'),
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
         )
-        .innerJoin('match.playerMatchResults', 'results')
-        .innerJoin('match.winner', 'winner')
-        .groupBy('match.id')
-        .addGroupBy('winner."factionId"')
-        .select('COUNT(results.id)', 'playerCount')
-        .addSelect('winner."factionId"', 'winnerFactionId')
-        .getRawMany()) as WinningFactionWithPlayerCount[];
+        .where('pmr."factionId" = :factionId', {
+          factionId: id,
+        })
+        .groupBy('"playerCounts"."playerCount"')
+        .getRawMany()) as {
+        totalMatches: string;
+        playerCount: string;
+      }[];
 
-      relevantMatches.forEach(({ playerCount, winnerFactionId }) => {
-        if (!stats[playerCount]) {
-          stats[playerCount] = {
-            totalWins: 0,
-            totalMatches: 0,
+      const totalWinsByPlayerCount = (await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT("playerCounts"."playerCount")', 'totalWins')
+        .addSelect('"playerCounts"."playerCount"', 'playerCount')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'temp')
+              .select('MAX(temp.coins)', 'maxCoins')
+              .addSelect('temp."matchId"')
+              .groupBy('temp."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(Match, 'match')
+              .select('COUNT(pmr.id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'pmr')
+              .groupBy('match.id'),
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        )
+        .where('pmr."tieOrder" = 0 AND pmr."factionId" = :factionId', {
+          factionId: id,
+        })
+        .groupBy('"playerCounts"."playerCount"')
+        .getRawMany()) as {
+        totalWins: string;
+        playerCount: string;
+      }[];
+
+      return totalMatchesByPlayerCount
+        .map((totalMatchInfo) => {
+          const totalWinInfo = totalWinsByPlayerCount.find(
+            ({ playerCount }) => playerCount === totalMatchInfo.playerCount
+          );
+
+          return {
+            playerCount: Number.parseInt(totalMatchInfo.playerCount),
+            totalMatches: Number.parseInt(totalMatchInfo.totalMatches),
+            totalWins: totalWinInfo
+              ? Number.parseInt(totalWinInfo.totalWins)
+              : 0,
           };
-        }
-
-        if (winnerFactionId === id) {
-          stats[playerCount].totalWins++;
-        }
-
-        stats[playerCount].totalMatches++;
-      });
-
-      return Object.keys(stats).map((key) => ({
-        ...stats[key],
-        playerCount: parseInt(key),
-      }));
+        })
+        .sort((a, b) => (a.playerCount < b.playerCount ? -1 : 1));
     },
   },
 };
