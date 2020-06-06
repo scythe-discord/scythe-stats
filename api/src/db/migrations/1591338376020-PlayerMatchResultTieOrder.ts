@@ -36,14 +36,17 @@ export class PlayerMatchResultTieOrder1591338376020
       });
 
       let prevResult: any = null;
-      orderedMatchResults.forEach(async (result) => {
+      orderedMatchResults.forEach((result) => {
         if (prevResult !== null && prevResult.coins === result.coins) {
           result.tieOrder = prevResult.tieOrder + 1;
-          await queryRunner.query(
-            `UPDATE player_match_result SET "tieOrder"=${result.tieOrder} WHERE id=${result.id}`
-          );
         }
         prevResult = result;
+      });
+
+      orderedMatchResults.forEach(async (result) => {
+        await queryRunner.query(
+          `UPDATE player_match_result SET "tieOrder"=${result.tieOrder} WHERE id=${result.id}`
+        );
       });
     });
   }
