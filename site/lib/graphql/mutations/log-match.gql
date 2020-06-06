@@ -29,6 +29,7 @@ mutation logMatch(
         name
       }
       coins
+      tieOrder
     }
     winner {
       id
