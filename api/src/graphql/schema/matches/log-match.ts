@@ -9,6 +9,7 @@ import {
   PlayerMatchResult,
   Faction,
   PlayerMat,
+  DiscordBlacklist,
 } from '../../../db/entities';
 import { fetchDiscordMe, getOrdinal, delay } from '../../../common/utils';
 import {
@@ -17,7 +18,6 @@ import {
   VANILLA_LOG_CHANNEL_ID,
   SITE_URL,
 } from '../../../common/config';
-import DiscordBlacklist from '../../../db/entities/discord-blacklist';
 
 const postMatchLog = (matchId: number) => {
   const matchRepository = getRepository(Match);
