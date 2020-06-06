@@ -11,11 +11,11 @@ module.exports = {
       : [`${__dirname}/src/db/entities/**/*.ts`],
   migrations:
     process.env.NODE_ENV === 'production'
-      ? [`${__dirname}/dist/db/migrations/**/*.ts`]
+      ? [`${__dirname}/dist/db/migrations/**/*.js`]
       : [`${__dirname}/src/db/migrations/**/*.ts`],
   subscribers:
     process.env.NODE_ENV === 'production'
-      ? [`${__dirname}/dist/db/subscribers/**/*.ts`]
+      ? [`${__dirname}/dist/db/subscribers/**/*.js`]
       : [`${__dirname}/src/db/subscribers/**/*.ts`],
   cli: {
     migrationsDir: 'src/db/migrations',
