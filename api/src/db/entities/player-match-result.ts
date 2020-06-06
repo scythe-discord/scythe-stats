@@ -13,39 +13,26 @@ export default class PlayerMatchResult {
   @Column()
   coins: number;
 
-  @ManyToOne(
-    () => Player,
-    player => player.playerMatchResults,
-    {
-      onDelete: 'CASCADE'
-    }
-  )
+  @Column({ default: 0 })
+  tieOrder: number;
+
+  @ManyToOne(() => Player, (player) => player.playerMatchResults, {
+    onDelete: 'CASCADE',
+  })
   player: Player;
 
-  @ManyToOne(
-    () => Faction,
-    faction => faction.playerMatchResults,
-    {
-      onDelete: 'CASCADE'
-    }
-  )
+  @ManyToOne(() => Faction, (faction) => faction.playerMatchResults, {
+    onDelete: 'CASCADE',
+  })
   faction: Faction;
 
-  @ManyToOne(
-    () => PlayerMat,
-    playerMat => playerMat.playerMatchResults,
-    {
-      onDelete: 'CASCADE'
-    }
-  )
+  @ManyToOne(() => PlayerMat, (playerMat) => playerMat.playerMatchResults, {
+    onDelete: 'CASCADE',
+  })
   playerMat: PlayerMat;
 
-  @ManyToOne(
-    () => Match,
-    match => match.playerMatchResults,
-    {
-      onDelete: 'CASCADE'
-    }
-  )
+  @ManyToOne(() => Match, (match) => match.playerMatchResults, {
+    onDelete: 'CASCADE',
+  })
   match: Match;
 }
