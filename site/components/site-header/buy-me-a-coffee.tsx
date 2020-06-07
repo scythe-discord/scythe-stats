@@ -79,7 +79,7 @@ const BuyMeACoffee: FC<Props> = ({ displayLabel }) => {
         textDecoration: 'none',
       })}
       target="_blank"
-      href="https://www.buymeacoffee.com/Qianpou"
+      href="https://buymeacoff.ee/belovedpacifist"
       rel="noopener"
     >
       {displayLabel ? (
