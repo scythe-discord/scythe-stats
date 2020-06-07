@@ -7,8 +7,6 @@ import { Button, KIND, SIZE } from 'baseui/button';
 import { Drawer, SIZE as DRAWER_SIZE, ANCHOR } from 'baseui/drawer';
 import Link from 'next/link';
 
-import { DISCORD_OAUTH_URL } from '../../lib/auth';
-
 import DiscordAuthItemSimple from './discord-auth-item-simple';
 import BuyMeACoffee from './buy-me-a-coffee';
 
@@ -69,7 +67,9 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <StyledLink href={DISCORD_OAUTH_URL}>Tier List</StyledLink>
+              <Link href="/tiers" passHref={true}>
+                <StyledLink>Tier List</StyledLink>
+              </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
               <StyledLink
