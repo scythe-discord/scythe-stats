@@ -259,8 +259,8 @@ const formPlayerMatchResults = async (
     });
     const player = await findOrCreatePlayer(
       entityManager,
-      displayName,
-      steamId
+      displayName.trim(),
+      steamId ? steamId.trim() : steamId
     );
     const tieOrder =
       prevResult && prevResult.coins === coins ? prevTieOrder + 1 : 0;
