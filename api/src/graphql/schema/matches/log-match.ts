@@ -18,6 +18,26 @@ import {
   SITE_URL,
 } from '../../../common/config';
 
+export const typeDef = gql`
+  extend type Mutation {
+    logMatch(
+      numRounds: Int!
+      datePlayed: String!
+      playerMatchResults: [PlayerMatchResultInput!]!
+      shouldPostMatchLog: Boolean!
+      recordingUserId: String
+    ): Match @rateLimit(keyPrefix: "log-match")
+  }
+
+  input PlayerMatchResultInput {
+    displayName: String!
+    steamId: String
+    faction: String!
+    playerMat: String!
+    coins: Int!
+  }
+`;
+
 const postMatchLog = (matchId: number) => {
   const matchRepository = getRepository(Match);
   return matchRepository
@@ -131,26 +151,6 @@ const postMatchLog = (matchId: number) => {
       console.error('Failed to post match log', e);
     });
 };
-
-export const typeDef = gql`
-  extend type Mutation {
-    logMatch(
-      numRounds: Int!
-      datePlayed: String!
-      playerMatchResults: [PlayerMatchResultInput!]!
-      shouldPostMatchLog: Boolean!
-      recordingUserId: String
-    ): Match @rateLimit(keyPrefix: "log-match")
-  }
-
-  input PlayerMatchResultInput {
-    displayName: String!
-    steamId: String
-    faction: String!
-    playerMat: String!
-    coins: Int!
-  }
-`;
 
 const validateMatch = async (
   numRounds: number,
