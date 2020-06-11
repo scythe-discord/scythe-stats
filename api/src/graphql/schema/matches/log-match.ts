@@ -1,17 +1,16 @@
 import { gql } from 'apollo-server-express';
 import { Client, TextChannel, MessageEmbed } from 'discord.js';
-import { getRepository, getManager, EntityManager } from 'typeorm';
+import { getRepository, getCustomRepository } from 'typeorm';
 
 import Schema from '../codegen';
 import {
   Match,
-  Player,
-  PlayerMatchResult,
   Faction,
   PlayerMat,
   DiscordBlacklist,
 } from '../../../db/entities';
-import { fetchDiscordMe, getOrdinal, delay } from '../../../common/utils';
+import { MatchRepository } from '../../../db/repositories';
+import { fetchDiscordMe, getOrdinal } from '../../../common/utils';
 import {
   BOT_TOKEN,
   GUILD_ID,
@@ -133,9 +132,6 @@ const postMatchLog = (matchId: number) => {
     });
 };
 
-const MAX_RETRIES = 5;
-const MAX_RETRY_DELAY = 1500;
-
 export const typeDef = gql`
   extend type Mutation {
     logMatch(
@@ -155,133 +151,6 @@ export const typeDef = gql`
     coins: Int!
   }
 `;
-
-const mergeFloatingPlayers = async (
-  entityManager: EntityManager,
-  player: Player
-): Promise<void> => {
-  const floatingPlayer = await entityManager.findOne(Player, {
-    displayName: player.displayName,
-    steamId: null,
-  });
-
-  if (floatingPlayer) {
-    await entityManager.update(
-      PlayerMatchResult,
-      { player: floatingPlayer },
-      { player }
-    );
-    await entityManager.delete(Player, { id: floatingPlayer.id });
-  }
-};
-
-const findOrCreatePlayer = async (
-  entityManager: EntityManager,
-  displayName: string,
-  steamId: string | null = null
-): Promise<Player> => {
-  const playerFilter = steamId
-    ? {
-        steamId,
-      }
-    : {
-        displayName,
-      };
-
-  const existingPlayer = await entityManager.findOne(Player, {
-    where: playerFilter,
-  });
-
-  if (existingPlayer) {
-    if (existingPlayer.displayName !== displayName) {
-      existingPlayer.displayName = displayName;
-      await entityManager.save(existingPlayer);
-      await mergeFloatingPlayers(entityManager, existingPlayer);
-    }
-
-    return existingPlayer;
-  }
-
-  const newPlayer = await entityManager.save(
-    await entityManager.create(Player, {
-      displayName,
-      steamId,
-    })
-  );
-
-  if (steamId) {
-    await mergeFloatingPlayers(entityManager, newPlayer);
-  }
-
-  return newPlayer;
-};
-
-const formPlayerMatchResults = async (
-  entityManager: EntityManager,
-  match: Match,
-  loggedMatchResults: Schema.PlayerMatchResultInput[]
-): Promise<PlayerMatchResult[]> => {
-  const playerMatchResults: PlayerMatchResult[] = [];
-  const origIndices: { [key: string]: number } = {};
-  loggedMatchResults.forEach(
-    (result, i) => (origIndices[result.displayName] = i)
-  );
-
-  const orderedLoggedMatchResults = [...loggedMatchResults].sort((a, b) => {
-    if (a.coins < b.coins) {
-      return 1;
-    } else if (
-      a.coins === b.coins &&
-      origIndices[a.displayName] > origIndices[b.displayName]
-    ) {
-      return 1;
-    } else {
-      return -1;
-    }
-  });
-
-  let prevResult = null;
-  let prevTieOrder = 0;
-  for (let i = 0; i < orderedLoggedMatchResults.length; i++) {
-    const {
-      displayName,
-      steamId,
-      faction: factionName,
-      playerMat: playerMatName,
-      coins,
-    } = orderedLoggedMatchResults[i];
-
-    const faction = await entityManager.findOneOrFail(Faction, {
-      where: { name: factionName },
-    });
-    const playerMat = await entityManager.findOneOrFail(PlayerMat, {
-      where: { name: playerMatName },
-    });
-    const player = await findOrCreatePlayer(
-      entityManager,
-      displayName.trim(),
-      steamId ? steamId.trim() : steamId
-    );
-    const tieOrder =
-      prevResult && prevResult.coins === coins ? prevTieOrder + 1 : 0;
-    const playerMatchResult = await entityManager.save(
-      await entityManager.create(PlayerMatchResult, {
-        match,
-        faction,
-        playerMat,
-        player,
-        coins,
-        tieOrder,
-      })
-    );
-
-    playerMatchResults.push(playerMatchResult);
-
-    prevTieOrder = tieOrder;
-    prevResult = orderedLoggedMatchResults[i];
-  }
-  return playerMatchResults;
-};
 
 const validateMatch = async (
   numRounds: number,
@@ -386,74 +255,35 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('Your account has been flagged for recording matches');
       }
 
-      let match: Match | undefined;
-      let playerMatchResults: PlayerMatchResult[] | undefined;
+      const matchRepo = getCustomRepository(MatchRepository);
+      const match = await matchRepo.logMatch(
+        numRounds,
+        datePlayed,
+        loggedMatchResults,
+        recordingUserId
+      );
 
-      let numAttempts = 0;
-      while (numAttempts < MAX_RETRIES) {
-        try {
-          await getManager().transaction(
-            'SERIALIZABLE',
-            async (transactionalEntityManager) => {
-              match = await transactionalEntityManager.save(
-                await transactionalEntityManager.create(Match, {
-                  numRounds,
-                  datePlayed,
-                  recordingUserId,
-                })
-              );
-
-              playerMatchResults = await formPlayerMatchResults(
-                transactionalEntityManager,
-                match,
-                loggedMatchResults
-              );
-
-              await transactionalEntityManager.save(match);
-            }
-          );
-
-          if (!match || !playerMatchResults) {
-            throw new Error(
-              'Something unexpected occurred while logging a match'
-            );
-          }
-
-          if (shouldPostMatchLog) {
-            // Used asynchronously to try to post the match log to the guild, so
-            // as to not affect the end user
-            postMatchLog(match.id);
-          }
-
-          return {
-            id: match.id.toString(),
-            datePlayed: match.datePlayed.toString(),
-            numRounds: match.numRounds,
-            playerResults: playerMatchResults.map((result) => ({
-              id: result.id,
-              player: result.player,
-              faction: result.faction,
-              playerMat: result.playerMat,
-              coins: result.coins,
-              tieOrder: result.tieOrder,
-            })),
-            winner: match.winner,
-            recordingUserId,
-          };
-        } catch (error) {
-          // Wait some random amount of time so quick bursts of logs
-          // (e.g. from a bot script) have a less likely chance to conflict
-          // again
-          await delay(Math.random() * MAX_RETRY_DELAY);
-          numAttempts++;
-
-          if (numAttempts === MAX_RETRIES) {
-            console.error('Failed to log match', error);
-          }
-        }
+      if (shouldPostMatchLog) {
+        // Used asynchronously to try to post the match log to the guild, so
+        // as to not affect the end user
+        postMatchLog(match.id);
       }
 
-      return null;
+      return {
+        id: match.id.toString(),
+        datePlayed: match.datePlayed.toString(),
+        numRounds: match.numRounds,
+        playerResults: match.playerMatchResults.map((result) => ({
+          id: result.id,
+          player: result.player,
+          faction: result.faction,
+          playerMat: result.playerMat,
+          coins: result.coins,
+          tieOrder: result.tieOrder,
+        })),
+        winner: match.winner,
+        recordingUserId,
+      };
     },
   },
 };
