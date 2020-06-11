@@ -16,8 +16,6 @@
     "dev:site": "yarn --cwd site next",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
-    "start:api": "node api/dist/index.js",
-    "start:bot": "node bot/dist/index.js",
     "codegen:api": "yarn --cwd api graphql-codegen --config codegen.yml",
     "codegen:site": "yarn --cwd site graphql-codegen --config codegen.yml",
     "codegen": "yarn codegen:api && yarn codegen:site",
