@@ -29,7 +29,7 @@ interface MatchDetailsRow {
 
 interface Props {
   selectedMatch?: {
-    playerResults: Array<
+    playerMatchResults: Array<
       Pick<GQL.PlayerMatchResult, 'id' | 'coins' | 'tieOrder'> & {
         player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
         faction: Pick<GQL.Faction, 'id' | 'name'>;
@@ -70,7 +70,7 @@ const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
     );
   }
 
-  const matchDetailRows = selectedMatch.playerResults.map(
+  const matchDetailRows = selectedMatch.playerMatchResults.map(
     ({
       id,
       player: { displayName },

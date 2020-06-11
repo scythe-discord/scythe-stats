@@ -32,10 +32,11 @@ const RecentMatches: FC<Props> = ({
 
   if (recentMatches) {
     timelineElements = recentMatches.matches.edges.map(({ node }, idx) => {
-      const { id, datePlayed, numRounds, playerResults, winner } = node;
+      const { id, datePlayed, numRounds, playerMatchResults, winner } = node;
       // Although hypothetically this never fails to find a winner
       const winningResult =
-        playerResults.find(({ id }) => id === winner.id) || playerResults[0];
+        playerMatchResults.find(({ id }) => id === winner.id) ||
+        playerMatchResults[0];
 
       const {
         faction: { name: factionName },

@@ -1,18 +1,8 @@
 import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
-import {
-  Faction,
-  PlayerMat,
-  PlayerMatchResult,
-  MatComboTier,
-} from '../../../db/entities';
+import { PlayerMatchResult, MatComboTier } from '../../../db/entities';
 import Schema from '../codegen';
-
-export interface FactionMatComboBase {
-  faction: Faction;
-  playerMat: PlayerMat;
-}
 
 export const typeDef = gql`
   type FactionMatCombo {

@@ -190,7 +190,7 @@ export type Match = Node & {
   id: Scalars['ID'];
   datePlayed: Scalars['String'];
   numRounds: Scalars['Int'];
-  playerResults: Array<PlayerMatchResult>;
+  playerMatchResults: Array<PlayerMatchResult>;
   winner: PlayerMatchResult;
 };
 
@@ -251,7 +251,7 @@ export type LogMatchMutation = (
   & { logMatch?: Maybe<(
     { __typename?: 'Match' }
     & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
-    & { playerResults: Array<(
+    & { playerMatchResults: Array<(
       { __typename?: 'PlayerMatchResult' }
       & Pick<PlayerMatchResult, 'id' | 'coins' | 'tieOrder'>
       & { player: (
@@ -328,7 +328,7 @@ export type MatchesQuery = (
       & { node: (
         { __typename?: 'Match' }
         & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
-        & { playerResults: Array<(
+        & { playerMatchResults: Array<(
           { __typename?: 'PlayerMatchResult' }
           & Pick<PlayerMatchResult, 'id' | 'coins' | 'tieOrder'>
           & { player: (
@@ -444,7 +444,7 @@ export const LogMatchDocument = gql`
     id
     datePlayed
     numRounds
-    playerResults {
+    playerMatchResults {
       id
       player {
         id
@@ -598,7 +598,7 @@ export const MatchesDocument = gql`
         id
         datePlayed
         numRounds
-        playerResults {
+        playerMatchResults {
           id
           player {
             id

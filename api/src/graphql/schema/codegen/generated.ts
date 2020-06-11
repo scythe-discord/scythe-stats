@@ -1,6 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { FactionModel, PlayerMatModel, PlayerModel, TierModel } from '../../../db/entities';
-import { FactionMatComboBase } from '../factions/faction-mat-combo';
+import { FactionModel, PlayerMatModel, PlayerModel, TierModel, MatchModel, FactionMatComboBase } from '../../mappers';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -192,7 +191,7 @@ export type Match = Node & {
   id: Scalars['ID'];
   datePlayed: Scalars['String'];
   numRounds: Scalars['Int'];
-  playerResults: Array<PlayerMatchResult>;
+  playerMatchResults: Array<PlayerMatchResult>;
   winner: PlayerMatchResult;
 };
 
@@ -332,7 +331,7 @@ export type ResolversTypes = ResolversObject<{
   Player: ResolverTypeWrapper<PlayerModel>,
   PlayerConnection: ResolverTypeWrapper<Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversTypes['PlayerEdge']> }>,
   PlayerEdge: ResolverTypeWrapper<Omit<PlayerEdge, 'node'> & { node: ResolversTypes['Player'] }>,
-  Match: ResolverTypeWrapper<Omit<Match, 'playerResults' | 'winner'> & { playerResults: Array<ResolversTypes['PlayerMatchResult']>, winner: ResolversTypes['PlayerMatchResult'] }>,
+  Match: ResolverTypeWrapper<MatchModel>,
   MatchConnection: ResolverTypeWrapper<Omit<MatchConnection, 'edges'> & { edges: Array<ResolversTypes['MatchEdge']> }>,
   MatchEdge: ResolverTypeWrapper<Omit<MatchEdge, 'node'> & { node: ResolversTypes['Match'] }>,
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversTypes['Player'], faction: ResolversTypes['Faction'], playerMat: ResolversTypes['PlayerMat'] }>,
@@ -362,7 +361,7 @@ export type ResolversParentTypes = ResolversObject<{
   Player: PlayerModel,
   PlayerConnection: Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversParentTypes['PlayerEdge']> },
   PlayerEdge: Omit<PlayerEdge, 'node'> & { node: ResolversParentTypes['Player'] },
-  Match: Omit<Match, 'playerResults' | 'winner'> & { playerResults: Array<ResolversParentTypes['PlayerMatchResult']>, winner: ResolversParentTypes['PlayerMatchResult'] },
+  Match: MatchModel,
   MatchConnection: Omit<MatchConnection, 'edges'> & { edges: Array<ResolversParentTypes['MatchEdge']> },
   MatchEdge: Omit<MatchEdge, 'node'> & { node: ResolversParentTypes['Match'] },
   PlayerMatchResult: Omit<PlayerMatchResult, 'player' | 'faction' | 'playerMat'> & { player: ResolversParentTypes['Player'], faction: ResolversParentTypes['Faction'], playerMat: ResolversParentTypes['PlayerMat'] },
@@ -480,7 +479,7 @@ export type MatchResolvers<ContextType = any, ParentType extends ResolversParent
   id?: Resolver<ResolversTypes['ID'], ParentType, ContextType>,
   datePlayed?: Resolver<ResolversTypes['String'], ParentType, ContextType>,
   numRounds?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
-  playerResults?: Resolver<Array<ResolversTypes['PlayerMatchResult']>, ParentType, ContextType>,
+  playerMatchResults?: Resolver<Array<ResolversTypes['PlayerMatchResult']>, ParentType, ContextType>,
   winner?: Resolver<ResolversTypes['PlayerMatchResult'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;

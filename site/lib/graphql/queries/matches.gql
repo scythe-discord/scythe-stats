@@ -5,7 +5,7 @@ query matches($first: Int!, $after: String) {
         id
         datePlayed
         numRounds
-        playerResults {
+        playerMatchResults {
           id
           player {
             id

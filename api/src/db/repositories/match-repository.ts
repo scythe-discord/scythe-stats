@@ -44,7 +44,7 @@ export default class MatchRepository extends Repository<Match> {
     loggedMatchResults: LoggedMatchResult[],
     recordingUserId: string
   ): Promise<Match> => {
-    let match = null;
+    let match: Match | undefined;
     let numAttempts = 0;
     while (numAttempts < MAX_RETRIES) {
       try {
@@ -84,6 +84,10 @@ export default class MatchRepository extends Repository<Match> {
     if (!match) {
       throw new Error('Something unexpected occurred while logging a match');
     }
+
+    // Because of TypeORM quirks with saving a date resulting in
+    // storing only the string
+    match.datePlayed = new Date(match.datePlayed);
 
     return match;
   };

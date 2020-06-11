@@ -1,11 +1,4 @@
-import {
-  Entity,
-  PrimaryGeneratedColumn,
-  Column,
-  OneToMany,
-  OneToOne,
-  JoinColumn,
-} from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
 
@@ -28,11 +21,4 @@ export default class Match {
     (playerMatchResult) => playerMatchResult.match
   )
   playerMatchResults: PlayerMatchResult[];
-
-  // Exists because in cases of ties, we cannot calculate
-  // the winner solely from coins - it needs to be determined
-  // at the time of logging
-  @OneToOne(() => PlayerMatchResult)
-  @JoinColumn()
-  winner: PlayerMatchResult;
 }

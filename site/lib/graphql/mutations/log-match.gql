@@ -13,7 +13,7 @@ mutation logMatch(
     id
     datePlayed
     numRounds
-    playerResults {
+    playerMatchResults {
       id
       player {
         id

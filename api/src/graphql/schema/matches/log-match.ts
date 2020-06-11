@@ -269,21 +269,7 @@ export const resolvers: Schema.Resolvers = {
         postMatchLog(match.id);
       }
 
-      return {
-        id: match.id.toString(),
-        datePlayed: match.datePlayed.toString(),
-        numRounds: match.numRounds,
-        playerResults: match.playerMatchResults.map((result) => ({
-          id: result.id,
-          player: result.player,
-          faction: result.faction,
-          playerMat: result.playerMat,
-          coins: result.coins,
-          tieOrder: result.tieOrder,
-        })),
-        winner: match.winner,
-        recordingUserId,
-      };
+      return match;
     },
   },
 };

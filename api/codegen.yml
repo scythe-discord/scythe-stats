@@ -9,8 +9,9 @@ generates:
     config:
       useIndexSignature: true
       mappers:
-        Faction: '../../../db/entities#FactionModel'
-        PlayerMat: '../../../db/entities#PlayerMatModel'
-        Player: '../../../db/entities#PlayerModel'
-        Tier: '../../../db/entities#TierModel'
-        FactionMatCombo: '../factions/faction-mat-combo#FactionMatComboBase'
+        Faction: '../../mappers#FactionModel'
+        PlayerMat: '../../mappers#PlayerMatModel'
+        Player: '../../mappers#PlayerModel'
+        Tier: '../../mappers#TierModel'
+        Match: '../../mappers#MatchModel'
+        FactionMatCombo: '../../mappers#FactionMatComboBase'
