@@ -1,3 +1,6 @@
+const path = require('path');
+require('dotenv').config({ path: path.resolve(process.cwd(), '..', '.env') });
+
 module.exports = {
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
