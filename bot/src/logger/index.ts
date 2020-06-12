@@ -1,11 +1,7 @@
 import { Message } from 'discord.js';
 import { GraphQLClient } from 'graphql-request';
 
-import {
-  GAME_LOG_PREFIX,
-  GRAPHQL_API_URL,
-  GRAPHQL_SERVER_BASIC_AUTH,
-} from '../common/config';
+import { GRAPHQL_API_URL, GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
 
 import { extractGameLog } from './extract';
 
@@ -18,10 +14,6 @@ const LOG_MATCH_QUERY = `
 `;
 
 export const handleLogRequest = async (message: Message): Promise<void> => {
-  if (!message.content.startsWith(GAME_LOG_PREFIX)) {
-    return;
-  }
-
   const playerMatchResults = extractGameLog(message.content);
 
   if (!playerMatchResults) {

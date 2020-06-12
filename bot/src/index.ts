@@ -1,6 +1,6 @@
 import Discord from 'discord.js';
 
-import { BOT_TOKEN, GAME_LOG_PREFIX } from './common/config';
+import { BOT_TOKEN } from './common/config';
 import { handleLogRequest } from './logger';
 
 const client = new Discord.Client();
@@ -12,7 +12,7 @@ client.on('ready', () => {
 });
 
 client.on('message', (message) => {
-  if (message.content.startsWith(GAME_LOG_PREFIX)) {
+  if (client.user && message.mentions.has(client.user)) {
     handleLogRequest(message);
   }
 });

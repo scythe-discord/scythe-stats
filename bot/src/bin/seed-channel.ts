@@ -1,11 +1,6 @@
 import { Client, TextChannel } from 'discord.js';
 
-import {
-  BOT_TOKEN,
-  GUILD_ID,
-  VANILLA_LOG_CHANNEL_ID,
-  GAME_LOG_PREFIX,
-} from '../common/config';
+import { BOT_TOKEN, GUILD_ID, VANILLA_LOG_CHANNEL_ID } from '../common/config';
 import { delay } from '../common/utils';
 import { handleLogRequest } from '../logger';
 
@@ -29,7 +24,7 @@ const fetchAndLogMessages = async (
   }
 
   messages.forEach(async (message) => {
-    if (message.content.startsWith(GAME_LOG_PREFIX)) {
+    if (client.user && message.mentions.has(client.user)) {
       await handleLogRequest(message);
     }
   });
