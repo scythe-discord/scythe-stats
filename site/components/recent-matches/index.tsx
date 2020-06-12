@@ -88,9 +88,10 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
     [recentMatches]
   );
 
-  const selectedMatch = recentMatches
-    ? recentMatches.matches.edges[selected].node
-    : undefined;
+  const selectedMatch =
+    recentMatches && recentMatches.matches.edges.length
+      ? recentMatches.matches.edges[selected].node
+      : undefined;
   let hasMore = false;
 
   if (recentMatches) {

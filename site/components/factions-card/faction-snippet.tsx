@@ -64,9 +64,11 @@ const StyledListItem: FC<PropsT> = (props) => {
 
 interface Props {
   faction: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>;
-  topPlayerStats: Pick<GQL.PlayerFactionStats, 'totalWins'> & {
-    player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
-  };
+  topPlayerStats:
+    | (Pick<GQL.PlayerFactionStats, 'totalWins'> & {
+        player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
+      })
+    | null;
   factionMatCombos: Array<
     Pick<
       GQL.FactionMatCombo,
@@ -88,7 +90,6 @@ const FactionSnippet: FC<Props> = ({
 }) => {
   const [css, theme] = useStyletron();
 
-  const topPlayer = topPlayerStats.player;
   const bestPlayerMat = getBestPlayerMat(factionMatCombos);
 
   return (
@@ -151,7 +152,9 @@ const FactionSnippet: FC<Props> = ({
         <StyledListItem
           endEnhancer={() => (
             <SnippetEndEnhancer>
-              {topPlayer.displayName} ({topPlayerStats.totalWins} Wins)
+              {topPlayerStats
+                ? `${topPlayerStats.player.displayName} (${topPlayerStats.totalWins} Wins)`
+                : 'No one!'}
             </SnippetEndEnhancer>
           )}
         >

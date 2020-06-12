@@ -12,13 +12,13 @@ import FactionMatStats from './faction-mat-stats';
 
 // Responsive chart containers don't play well with SSR
 const FactionWinRates = dynamic(() => import('./faction-win-rates'), {
-  ssr: false
+  ssr: false,
 });
 
 const FactionWinRatesByPlayerCount = dynamic(
   () => import('./faction-win-rates-player-count'),
   {
-    ssr: false
+    ssr: false,
   }
 );
 
@@ -41,7 +41,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
     <Card
       className={classNames(
         css({
-          display: 'flex'
+          display: 'flex',
         }),
         className
       )}
@@ -51,7 +51,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           display: 'flex',
           flexDirection: 'column',
           flex: '1 1 auto',
-          minWidth: 0
+          minWidth: 0,
         })}
       >
         <div
@@ -61,8 +61,8 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             flexDirection: 'column',
 
             [theme.mediaQuery.medium]: {
-              flexDirection: 'row'
-            }
+              flexDirection: 'row',
+            },
           })}
         >
           <FactionSnippet
@@ -71,12 +71,16 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
 
               [theme.mediaQuery.medium]: {
                 flex: '0 1 400px',
-                order: 0
-              }
+                order: 0,
+              },
             })}
             faction={selectedFaction}
             factionMatCombos={selectedFaction.factionMatCombos}
-            topPlayerStats={selectedFaction.topPlayers[0]}
+            topPlayerStats={
+              selectedFaction.topPlayers.length
+                ? selectedFaction.topPlayers[0]
+                : null
+            }
           />
           <div
             className={css({
@@ -92,17 +96,17 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
                 flex: '1 1 325px',
                 minWidth: 0,
                 height: 'auto',
-                margin: '0 0 0 50px'
-              }
+                margin: '0 0 0 50px',
+              },
             })}
           >
             <LabelMedium
               overrides={{
                 Block: {
                   style: {
-                    margin: '0 0 10px'
-                  }
-                }
+                    margin: '0 0 10px',
+                  },
+                },
               }}
             >
               faction win rates
@@ -117,7 +121,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
         <div
           className={css({
             display: 'flex',
-            flexDirection: 'column'
+            flexDirection: 'column',
           })}
         >
           <HeadingLarge
@@ -125,9 +129,9 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             overrides={{
               Block: {
                 style: {
-                  margin: '30px 0'
-                }
-              }
+                  margin: '30px 0',
+                },
+              },
             }}
           >
             Player Mat Stats
@@ -141,8 +145,8 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             [theme.mediaQuery.large]: {
               display: 'flex',
               flexDirection: 'column',
-              flex: '1 1 auto'
-            }
+              flex: '1 1 auto',
+            },
           })}
         >
           <HeadingLarge
@@ -150,9 +154,9 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             overrides={{
               Block: {
                 style: {
-                  margin: '30px 0'
-                }
-              }
+                  margin: '30px 0',
+                },
+              },
             }}
           >
             Win Rates (by player count)
@@ -162,12 +166,12 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
               height: '300px',
 
               [theme.mediaQuery.medium]: {
-                height: '400px'
+                height: '400px',
               },
 
               [theme.mediaQuery.large]: {
-                flex: '1 1 auto'
-              }
+                flex: '1 1 auto',
+              },
             })}
           >
             <FactionWinRatesByPlayerCount
