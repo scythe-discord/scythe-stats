@@ -5,7 +5,7 @@
   "main": "pages/index.tsx",
   "repository": "https://github.com/shibrady/scythe-stats",
   "author": "Brady Shi",
-  "license": "MIT",
+  "license": "GPLv3",
   "engines": {
     "node": ">=12.0.0"
   },
