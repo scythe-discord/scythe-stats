@@ -43,7 +43,19 @@ then you will similarly need to create a Discord server, and [invite your bot](h
 to that Discord server.
 
 You will also need to create an OAuth2 redirect link in your application, on the OAuth2 tab. More information can be found [here](https://discord.com/developers/docs/topics/oauth2).
-If you follow the templated `.env` file shown below, your redirect URL can just be `http://localhost:4000/auth/login`.
+If you follow the templated `.env` file shown below, your redirect URL can just be `http://localhost:4000/auth/login`, like so:
+
+![image](https://user-images.githubusercontent.com/10229473/84579274-5f54c980-ad81-11ea-9f04-63562ff8a54c.png)
+
+Be sure to save your changes:
+
+![image](https://user-images.githubusercontent.com/10229473/84579271-582dbb80-ad81-11ea-90ea-3ded32a3ea1b.png)
+
+And record these pieces of information for the `.env` file:
+
+1. Your application's **client ID**
+2. Your application's **client secret**
+3. Your bot's **token**
 
 ## Your .env file
 
