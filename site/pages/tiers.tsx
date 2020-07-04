@@ -3,8 +3,8 @@ import { NextComponentType } from 'next';
 import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
 
-import { TierList, MatComboCompare } from '../apps/tiers';
-import GQL from '../lib/graphql';
+import { TierList, MatComboCompare } from 'apps/tiers';
+import GQL from 'lib/graphql';
 
 interface Props {
   tiers: GQL.TiersQuery;

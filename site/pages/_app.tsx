@@ -12,11 +12,12 @@ import { BaseProvider } from 'baseui';
 import { ToasterContainer } from 'baseui/toast';
 import { Provider as StyletronProvider } from 'styletron-react';
 
+import { AuthProvider, SiteHeader } from 'lib/components';
+import Theme from 'lib/theme';
+import { GRAPHQL_API_URL } from 'lib/env';
+import * as gtag from 'lib/gtag';
+
 import { styletron, debug } from '../styletron';
-import { AuthProvider, SiteHeader } from '../lib/components';
-import Theme from '../lib/theme';
-import { GRAPHQL_API_URL } from '../lib/env';
-import * as gtag from '../lib/gtag';
 
 interface Props {
   apollo: ApolloClient<any>;

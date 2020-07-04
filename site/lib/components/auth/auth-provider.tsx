@@ -1,6 +1,6 @@
 import { FC, createContext, useEffect, useState } from 'react';
 
-import GQL from '../../graphql';
+import GQL from 'lib/graphql';
 
 export interface AuthContextInfo {
   discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;

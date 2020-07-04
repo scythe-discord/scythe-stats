@@ -3,8 +3,8 @@ import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
 import moment from 'moment';
 
-import { TopPlayers, RecentMatches, FactionsCard } from '../apps/landing-page';
-import GQL from '../lib/graphql';
+import { TopPlayers, RecentMatches, FactionsCard } from 'apps/landing-page';
+import GQL from 'lib/graphql';
 
 interface Props {
   factionStats: GQL.FactionStatsQuery;

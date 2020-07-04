@@ -3,8 +3,8 @@ import { useStyletron } from 'baseui';
 import { Button, KIND, SIZE } from 'baseui/button';
 import { HeadingLarge } from 'baseui/typography';
 
-import GQL from '../../../lib/graphql';
-import { AuthContext, DISCORD_OAUTH_URL } from '../../../lib/components';
+import GQL from 'lib/graphql';
+import { AuthContext, DISCORD_OAUTH_URL } from 'lib/components';
 
 import RecordMatchModal from './record-match-modal';
 

@@ -12,7 +12,8 @@ import {
   Tooltip,
 } from 'recharts';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
+
 import FactionChartIcon from './faction-chart-icon';
 
 interface Props {

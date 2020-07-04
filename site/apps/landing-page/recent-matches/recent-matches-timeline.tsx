@@ -1,6 +1,6 @@
 import { FC } from 'react';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 import { VerticalTimeline, TimelineElement } from '../vertical-timeline';
 
 import RecentMatchBanner from './recent-match-banner';

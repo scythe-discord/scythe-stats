@@ -2,7 +2,7 @@ import { FC, Fragment } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell, StyledBodyCell } from 'baseui/table-grid';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 import MatComboIcon from './mat-combo-icon';
 

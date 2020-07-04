@@ -3,7 +3,7 @@ import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 import { Modal, ModalHeader, ModalBody, SIZE } from 'baseui/modal';
 
-import { getFactionMatImg } from '../../../lib/scythe';
+import { getFactionMatImg } from 'lib/scythe';
 
 interface Props {
   factionName: string;

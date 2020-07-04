@@ -19,7 +19,7 @@ import { Notification, KIND as NOTIFICATION_KIND } from 'baseui/notification';
 import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 import { Value, OnChangeParams } from 'baseui/select';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 import RecordMatchRow from './record-match-row';
 

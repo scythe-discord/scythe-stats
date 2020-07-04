@@ -1,7 +1,7 @@
 import { FC } from 'react';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 import FactionMatStatsRow from './faction-mat-stats-row';
 

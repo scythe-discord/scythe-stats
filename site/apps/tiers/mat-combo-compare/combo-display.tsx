@@ -2,8 +2,9 @@ import { FC } from 'react';
 import { useStyletron } from 'baseui';
 import { HeadingXLarge } from 'baseui/typography';
 
-import GQL from '../../../lib/graphql';
-import FactionIcon from '../../../lib/components/faction-icon';
+import GQL from 'lib/graphql';
+import FactionIcon from 'lib/components/faction-icon';
+
 import { FactionMatImg, PlayerMatImg } from '../mat-images';
 
 interface Props {

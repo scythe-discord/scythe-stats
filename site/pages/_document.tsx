@@ -8,9 +8,10 @@ import Document, {
 import { Provider as StyletronProvider } from 'styletron-react';
 import { Sheet, Server } from 'styletron-engine-atomic';
 
+import { GA_TRACKING_ID } from 'lib/env';
+import { PRIMARY_FONT_FAMILY } from 'lib/theme';
+
 import { styletron } from '../styletron';
-import { GA_TRACKING_ID } from '../lib/env';
-import { PRIMARY_FONT_FAMILY } from '../lib/theme';
 
 interface Props {
   stylesheets: Sheet[];

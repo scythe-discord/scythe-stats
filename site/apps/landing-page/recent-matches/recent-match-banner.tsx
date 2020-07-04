@@ -2,7 +2,7 @@ import { FC, useCallback, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
 import { LabelSmall } from 'baseui/typography';
 
-import { FactionIcon } from '../../../lib/components';
+import { FactionIcon } from 'lib/components';
 
 const BannerLabel: FC<{ children: ReactNode }> = ({ children }) => (
   <LabelSmall

@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from 'recharts';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 interface Props {
   combos: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {

@@ -4,9 +4,9 @@ import { HeadingLarge, LabelMedium } from 'baseui/typography';
 import dynamic from 'next/dynamic';
 import classNames from 'classnames';
 
-import GQL from '../../../lib/graphql';
-import Card from '../card';
+import GQL from 'lib/graphql';
 
+import Card from '../card';
 import FactionSnippet from './faction-snippet';
 import FactionMatStats from './faction-mat-stats';
 

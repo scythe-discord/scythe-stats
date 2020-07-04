@@ -3,8 +3,8 @@ import { useStyletron } from 'baseui';
 import { H1, LabelMedium } from 'baseui/typography';
 import { ListItem, PropsT, ListItemLabel } from 'baseui/list';
 
-import GQL from '../../../lib/graphql';
-import { FactionIcon } from '../../../lib/components';
+import GQL from 'lib/graphql';
+import { FactionIcon } from 'lib/components';
 
 const getBestPlayerMat = (
   combos: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {

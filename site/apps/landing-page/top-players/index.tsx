@@ -3,7 +3,7 @@ import { useStyletron } from 'baseui';
 import { BlockProps } from 'baseui/block';
 import { HeadingLarge, Label1 } from 'baseui/typography';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 import Card from '../card';
 
 import PlayerTable from './player-table';

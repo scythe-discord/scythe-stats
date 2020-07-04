@@ -4,7 +4,7 @@ import { Block } from 'baseui/block';
 import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
 import classNames from 'classnames';
 
-import { getFactionEmblem } from '../../scythe';
+import { getFactionEmblem } from 'lib/scythe';
 
 interface Props {
   faction: string;

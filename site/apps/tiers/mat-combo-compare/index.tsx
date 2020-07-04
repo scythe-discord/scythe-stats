@@ -1,7 +1,7 @@
 import { FC, useMemo } from 'react';
 import { useStyletron } from 'baseui';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 import ComboDisplay from './combo-display';
 import ComboWinRatesForPlayerMat from './combo-win-rates-for-player-mat';

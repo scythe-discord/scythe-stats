@@ -1,7 +1,7 @@
 import { FC, useCallback } from 'react';
 
-import GQL from '../../../lib/graphql';
-import { FactionIcon } from '../../../lib/components';
+import GQL from 'lib/graphql';
+import { FactionIcon } from 'lib/components';
 
 const ICON_SIZE = 36;
 

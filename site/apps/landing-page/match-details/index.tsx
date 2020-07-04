@@ -4,7 +4,7 @@ import { useStyletron, withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 import classNames from 'classnames';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 import MatchRow from './match-row';
 

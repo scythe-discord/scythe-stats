@@ -6,8 +6,8 @@ import { Delete } from 'baseui/icon';
 import { Select, Value, Option, OnChangeParams, TYPE } from 'baseui/select';
 import { Input } from 'baseui/input';
 
-import GQL from '../../../lib/graphql';
-import { FactionIcon } from '../../../lib/components';
+import GQL from 'lib/graphql';
+import { FactionIcon } from 'lib/components';
 
 interface Props {
   id: number;

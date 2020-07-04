@@ -1,6 +1,6 @@
 import urljoin from 'url-join';
 
-import { API_URL, DISCORD_CLIENT_ID } from '../../env';
+import { API_URL, DISCORD_CLIENT_ID } from 'lib/env';
 
 export const API_LOGIN_URL = urljoin(API_URL, 'auth', 'login');
 export const API_LOGOUT_URL = urljoin(API_URL, 'auth', 'logout');

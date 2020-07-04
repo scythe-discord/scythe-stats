@@ -2,7 +2,7 @@ import { FC } from 'react';
 import { withStyle, useStyletron } from 'baseui';
 import { StyledBodyCell } from 'baseui/table-grid';
 
-import { FactionIcon } from '../../../lib/components';
+import { FactionIcon } from 'lib/components';
 
 interface Props {
   striped: boolean;

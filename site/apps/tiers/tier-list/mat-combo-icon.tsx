@@ -1,7 +1,7 @@
 import { FC, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 
-import { FactionIcon } from '../../../lib/components';
+import { FactionIcon } from 'lib/components';
 
 interface Props {
   factionId: number;

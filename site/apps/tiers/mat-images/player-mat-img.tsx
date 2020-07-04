@@ -3,7 +3,7 @@ import { useStyletron } from 'baseui';
 import classNames from 'classnames';
 import { Modal, ModalBody, SIZE, ModalHeader } from 'baseui/modal';
 
-import { getPlayerMatImg } from '../../../lib/scythe';
+import { getPlayerMatImg } from 'lib/scythe';
 
 interface Props {
   playerMatName: string;

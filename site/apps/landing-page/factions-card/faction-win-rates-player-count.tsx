@@ -16,7 +16,7 @@ import {
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faInfo } from '@fortawesome/free-solid-svg-icons';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
 
 const WIN_RATE_LINE_NAME = 'win rate';
 const EXPECTED_WIN_RATE_LINE_NAME = 'expected win rate';

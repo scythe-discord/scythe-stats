@@ -2,11 +2,11 @@ import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
 import { LabelSmall } from 'baseui/typography';
 
-import GQL from '../../../lib/graphql';
+import GQL from 'lib/graphql';
+
 import Card from '../card';
 import MatchDetails from '../match-details';
 import DiscordLink from '../discord-link';
-
 import RecentMatchesHeader from './recent-matches-header';
 import RecentMatchesTimeline from './recent-matches-timeline';
 
