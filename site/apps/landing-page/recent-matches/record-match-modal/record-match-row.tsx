@@ -1,13 +1,15 @@
-import { FC, useCallback, useRef } from 'react';
+import { FC, useCallback, useRef, Dispatch } from 'react';
 import { useDebounceCallback } from '@react-hook/debounce';
 import { useStyletron, styled } from 'baseui';
 import { Button, KIND, SIZE, SHAPE } from 'baseui/button';
 import { Delete } from 'baseui/icon';
-import { Select, Value, Option, OnChangeParams, TYPE } from 'baseui/select';
+import { Select, Value, Option, TYPE } from 'baseui/select';
 import { Input } from 'baseui/input';
 
 import GQL from 'lib/graphql';
 import { FactionIcon } from 'lib/components';
+
+import { PlayerEntryAction } from './player-entries';
 
 interface Props {
   id: number;
@@ -17,11 +19,7 @@ interface Props {
   faction: Value;
   playerMat: Value;
   coins: number | string;
-  onChangePlayer: (id: number, params: OnChangeParams) => void;
-  onChangeFaction: (id: number, params: OnChangeParams) => void;
-  onChangePlayerMat: (id: number, params: OnChangeParams) => void;
-  onChangeCoins: (id: number, input: string) => void;
-  onDelete: (id: number) => void;
+  onPlayerEntryChange: Dispatch<PlayerEntryAction>;
 }
 
 const FactionLabelContainer = styled('div', () => ({
@@ -54,11 +52,7 @@ const RecordMatchRow: FC<Props> = ({
   faction,
   playerMat,
   coins,
-  onChangePlayer,
-  onChangeFaction,
-  onChangePlayerMat,
-  onChangeCoins,
-  onDelete,
+  onPlayerEntryChange,
 }) => {
   const [css] = useStyletron();
 
@@ -68,24 +62,6 @@ const RecordMatchRow: FC<Props> = ({
   ] = GQL.usePlayersByNameLazyQuery();
 
   const playerNameRef = useRef('');
-
-  const onChangePlayerWrapper = useCallback(
-    (params: OnChangeParams) => onChangePlayer(id, params),
-    [id]
-  );
-  const onChangeFactionWrapper = useCallback(
-    (params: OnChangeParams) => onChangeFaction(id, params),
-    [id]
-  );
-  const onChangePlayerMatWrapper = useCallback(
-    (params: OnChangeParams) => onChangePlayerMat(id, params),
-    [id]
-  );
-  const onChangeCoinsWrapper = useCallback(
-    (e: React.FormEvent<HTMLInputElement>) =>
-      onChangeCoins(id, (e.target as HTMLInputElement).value),
-    [id]
-  );
 
   const onLoadPlayerOptions = useDebounceCallback(() => {
     const playerName = playerNameRef.current;
@@ -104,8 +80,6 @@ const RecordMatchRow: FC<Props> = ({
     },
     []
   );
-
-  const onClickDelete = useCallback(() => onDelete(id), [id]);
 
   const playerNameOptions = playersByName
     ? playersByName.playersByName.edges.map(
@@ -128,7 +102,9 @@ const RecordMatchRow: FC<Props> = ({
         options={playerNameOptions}
         value={player}
         placeholder="Player Name"
-        onChange={onChangePlayerWrapper}
+        onChange={(params) =>
+          onPlayerEntryChange({ type: 'update', id, field: 'player', params })
+        }
         onInputChange={onChangePlayerInput}
         isLoading={loading}
         creatable
@@ -156,7 +132,9 @@ const RecordMatchRow: FC<Props> = ({
         }))}
         value={faction}
         placeholder="Faction"
-        onChange={onChangeFactionWrapper}
+        onChange={(params) =>
+          onPlayerEntryChange({ type: 'update', id, field: 'faction', params })
+        }
         getOptionLabel={getFactionLabel}
         getValueLabel={getFactionLabel}
         required
@@ -184,7 +162,14 @@ const RecordMatchRow: FC<Props> = ({
         }))}
         value={playerMat}
         placeholder="Player Mat"
-        onChange={onChangePlayerMatWrapper}
+        onChange={(params) =>
+          onPlayerEntryChange({
+            type: 'update',
+            id,
+            field: 'playerMat',
+            params,
+          })
+        }
         required
         overrides={{
           Root: {
@@ -204,7 +189,14 @@ const RecordMatchRow: FC<Props> = ({
       />
       <Input
         value={coins}
-        onChange={onChangeCoinsWrapper}
+        onChange={(e) =>
+          onPlayerEntryChange({
+            type: 'update',
+            id,
+            field: 'coins',
+            value: (e.target as HTMLInputElement).value,
+          })
+        }
         placeholder="Coins"
         type="number"
         min={0}
@@ -228,7 +220,7 @@ const RecordMatchRow: FC<Props> = ({
         kind={KIND.tertiary}
         size={SIZE.compact}
         shape={SHAPE.square}
-        onClick={onClickDelete}
+        onClick={() => onPlayerEntryChange({ type: 'remove', id })}
       >
         <Delete size={24} />
       </Button>

@@ -1,4 +1,4 @@
-import { FC, useState, useCallback } from 'react';
+import { FC, useState, useCallback, useReducer, Reducer } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import { useStyletron } from 'baseui';
 import { Button, KIND, SIZE as BUTTON_SIZE } from 'baseui/button';
@@ -17,10 +17,10 @@ import {
 } from 'baseui/modal';
 import { Notification, KIND as NOTIFICATION_KIND } from 'baseui/notification';
 import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
-import { Value, OnChangeParams } from 'baseui/select';
 
 import GQL from 'lib/graphql';
 
+import { PlayerEntry, PlayerEntryAction } from './player-entries';
 import RecordMatchRow from './record-match-row';
 
 interface Props {
@@ -28,19 +28,58 @@ interface Props {
   playerMats: Pick<GQL.PlayerMat, 'id' | 'name'>[];
 }
 
-interface PlayerEntry {
-  id: number;
-  player: Value;
-  faction: Value;
-  playerMat: Value;
-  coins: string;
-}
-
 const defaultPlayerEntry = {
   player: [],
   faction: [],
   playerMat: [],
   coins: '',
+};
+
+const playerEntriesReducer = (
+  playerEntries: PlayerEntry[],
+  action: PlayerEntryAction
+) => {
+  switch (action.type) {
+    case 'update':
+      return playerEntries.map((val) => {
+        if (val.id !== action.id) {
+          return val;
+        }
+
+        return {
+          ...val,
+          [action.field]:
+            action.field === 'coins' ? action.value : action.params.value,
+        };
+      });
+    case 'add':
+      if (playerEntries.length >= 7) {
+        return playerEntries;
+      }
+
+      return [
+        ...playerEntries,
+        {
+          id: playerEntries.length
+            ? playerEntries[playerEntries.length - 1].id + 1
+            : 0,
+          ...defaultPlayerEntry,
+        },
+      ];
+    case 'remove':
+      return playerEntries.filter(({ id }) => id !== action.id);
+    case 'clear':
+      return [
+        {
+          id: 0,
+          ...defaultPlayerEntry,
+        },
+        {
+          id: 1,
+          ...defaultPlayerEntry,
+        },
+      ];
+  }
 };
 
 const RecordMatchModal: FC<ModalProps & Props> = ({
@@ -51,15 +90,15 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
   const [css, theme] = useStyletron();
   const client = useApolloClient();
   const [numRounds, setNumRounds] = useState<string>('');
-  // Exists to provide a stable, monotonically increasing ID for player entries
-  const [currId, setCurrId] = useState(1);
-  const [playerEntries, setPlayerEntries] = useState<PlayerEntry[]>([
+  const [playerEntries, dispatchPlayerEntries] = useReducer<
+    Reducer<PlayerEntry[], PlayerEntryAction>
+  >(playerEntriesReducer, [
     {
-      id: currId - 1,
+      id: 0,
       ...defaultPlayerEntry,
     },
     {
-      id: currId,
+      id: 1,
       ...defaultPlayerEntry,
     },
   ]);
@@ -159,17 +198,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           },
         });
         setNumRounds('');
-        setCurrId(1);
-        setPlayerEntries([
-          {
-            id: 0,
-            ...defaultPlayerEntry,
-          },
-          {
-            id: 1,
-            ...defaultPlayerEntry,
-          },
-        ]);
+        dispatchPlayerEntries({ type: 'clear' });
 
         toaster.positive(<span>Successfully recorded your match!</span>, {
           autoHideDuration: 3000,
@@ -186,103 +215,6 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
       }
     }
   }, [numRounds, shouldPostMatchLog, playerEntries]);
-
-  const onAddPlayer = useCallback(() => {
-    if (playerEntries.length >= 7) {
-      return;
-    }
-
-    setPlayerEntries((playerEntries) => [
-      ...playerEntries,
-      {
-        id: currId + 1,
-        ...defaultPlayerEntry,
-      },
-    ]);
-
-    setCurrId((currId) => currId + 1);
-  }, [currId, playerEntries]);
-
-  const onDeletePlayer = useCallback(
-    (id: number) => {
-      setPlayerEntries((playerEntries) =>
-        playerEntries.filter(({ id: entryId }) => entryId !== id)
-      );
-    },
-    [currId, playerEntries]
-  );
-
-  const onEntryPlayerChange = useCallback(
-    (id: number, params: OnChangeParams) => {
-      setPlayerEntries((playerEntries) =>
-        playerEntries.map((val) => {
-          if (val.id !== id) {
-            return val;
-          }
-
-          return {
-            ...val,
-            player: params.value,
-          };
-        })
-      );
-    },
-    [playerEntries]
-  );
-
-  const onEntryFactionChange = useCallback(
-    (id: number, params: OnChangeParams) => {
-      setPlayerEntries((playerEntries) =>
-        playerEntries.map((val) => {
-          if (val.id !== id) {
-            return val;
-          }
-
-          return {
-            ...val,
-            faction: params.value,
-          };
-        })
-      );
-    },
-    [playerEntries]
-  );
-
-  const onEntryPlayerMatChange = useCallback(
-    (id: number, params: OnChangeParams) => {
-      setPlayerEntries((playerEntries) =>
-        playerEntries.map((val) => {
-          if (val.id !== id) {
-            return val;
-          }
-
-          return {
-            ...val,
-            playerMat: params.value,
-          };
-        })
-      );
-    },
-    [playerEntries]
-  );
-
-  const onEntryCoinsChange = useCallback(
-    (id: number, input: string) => {
-      setPlayerEntries((playerEntries) =>
-        playerEntries.map((val) => {
-          if (val.id !== id) {
-            return val;
-          }
-
-          return {
-            ...val,
-            coins: input,
-          };
-        })
-      );
-    },
-    [playerEntries]
-  );
 
   return (
     <Modal
@@ -358,11 +290,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
                   faction={faction}
                   playerMat={playerMat}
                   coins={coins}
-                  onChangePlayer={onEntryPlayerChange}
-                  onChangeFaction={onEntryFactionChange}
-                  onChangePlayerMat={onEntryPlayerMatChange}
-                  onChangeCoins={onEntryCoinsChange}
-                  onDelete={onDeletePlayer}
+                  onPlayerEntryChange={dispatchPlayerEntries}
                 />
               </div>
             ))}
@@ -373,7 +301,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           kind={KIND.secondary}
           startEnhancer={() => <Plus size={14} />}
           disabled={playerEntries.length >= 7}
-          onClick={onAddPlayer}
+          onClick={() => dispatchPlayerEntries({ type: 'add' })}
         >
           Add a Player
         </Button>
