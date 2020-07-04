@@ -1,10 +1,7 @@
 import { FC, useState, useCallback, useReducer, Reducer } from 'react';
 import { useApolloClient } from '@apollo/react-hooks';
 import { useStyletron } from 'baseui';
-import { Button, KIND, SIZE as BUTTON_SIZE } from 'baseui/button';
-import { FormControl } from 'baseui/form-control';
-import { Plus } from 'baseui/icon';
-import { Input } from 'baseui/input';
+import { KIND } from 'baseui/button';
 import { toaster } from 'baseui/toast';
 import {
   Modal,
@@ -15,13 +12,11 @@ import {
   ModalProps,
   SIZE,
 } from 'baseui/modal';
-import { Notification, KIND as NOTIFICATION_KIND } from 'baseui/notification';
-import { Checkbox, LABEL_PLACEMENT } from 'baseui/checkbox';
 
 import GQL from 'lib/graphql';
 
 import { PlayerEntry, PlayerEntryAction } from './player-entries';
-import RecordMatchRow from './record-match-row';
+import RecordMatchForm from './record-match-form';
 
 interface Props {
   factions: Pick<GQL.Faction, 'id' | 'name'>[];
@@ -244,83 +239,17 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
           },
         })}
       >
-        {formError && (
-          <Notification
-            kind={NOTIFICATION_KIND.negative}
-            overrides={{
-              Body: { style: { width: 'auto', marginBottom: '20px' } },
-            }}
-          >
-            {formError}
-          </Notification>
-        )}
-        <FormControl label={() => 'Rounds Played'}>
-          <Input
-            placeholder="Enter rounds"
-            value={numRounds}
-            min={1}
-            type="number"
-            onChange={(e) => {
-              setNumRounds((e.target as HTMLInputElement).value);
-            }}
-            autoFocus
-            overrides={{
-              InputContainer: {
-                style: {
-                  width: '165px',
-                },
-              },
-            }}
-          />
-        </FormControl>
-        <FormControl label={() => 'Players'}>
-          <>
-            {playerEntries.map(({ id, player, faction, playerMat, coins }) => (
-              <div
-                key={id}
-                className={css({
-                  margin: '10px 0',
-                })}
-              >
-                <RecordMatchRow
-                  id={id}
-                  factions={factions}
-                  playerMats={playerMats}
-                  player={player}
-                  faction={faction}
-                  playerMat={playerMat}
-                  coins={coins}
-                  onPlayerEntryChange={dispatchPlayerEntries}
-                />
-              </div>
-            ))}
-          </>
-        </FormControl>
-        <Button
-          size={BUTTON_SIZE.compact}
-          kind={KIND.secondary}
-          startEnhancer={() => <Plus size={14} />}
-          disabled={playerEntries.length >= 7}
-          onClick={() => dispatchPlayerEntries({ type: 'add' })}
-        >
-          Add a Player
-        </Button>
-        <Checkbox
-          overrides={{
-            Root: {
-              style: {
-                margin: '25px 0 0',
-              },
-            },
-          }}
-          checked={shouldPostMatchLog}
-          onChange={(e) =>
-            setShouldPostMatchLog((e.target as HTMLInputElement).checked)
-          }
-          labelPlacement={LABEL_PLACEMENT.right}
-        >
-          Post this match in the Discord
-        </Checkbox>
+        <RecordMatchForm
+          factions={factions}
+          playerMats={playerMats}
+          formError={formError}
+          numRounds={numRounds}
+          playerEntries={playerEntries}
+          shouldPostMatchLog={shouldPostMatchLog}
+          onNumRoundsChange={setNumRounds}
+          onShouldPostMatchLogChange={setShouldPostMatchLog}
+          onPlayerEntryChange={dispatchPlayerEntries}
+        />
       </ModalBody>
       <ModalFooter
         className={css({
