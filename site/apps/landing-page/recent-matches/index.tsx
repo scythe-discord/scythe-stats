@@ -128,14 +128,21 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
           onMatchClick={onMatchClick}
           selected={selected}
         />
-        <MatchDetails
+        <div
           className={css({
-            gridTemplateRows: '45px',
-            margin: '40px 0 0',
+            overflow: 'auto',
           })}
-          selectedMatch={selectedMatch}
-          isLoading={!recentMatches}
-        />
+        >
+          <MatchDetails
+            className={css({
+              height: 'auto',
+              gridTemplateRows: '45px',
+              margin: '40px 0 0',
+            })}
+            selectedMatch={selectedMatch}
+            isLoading={!recentMatches}
+          />
+        </div>
       </div>
       <LabelSmall
         overrides={{

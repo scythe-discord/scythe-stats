@@ -56,11 +56,15 @@ const TopPlayers: FC<Props> = ({ topPlayersAllTime, topPlayersMonthly }) => {
           })}
         >
           <StyledLabel>of all time</StyledLabel>
-          <PlayerTable
-            players={topPlayersAllTime.playersByWins.edges.map(({ node }) => ({
-              ...node,
-            }))}
-          />
+          <div>
+            <PlayerTable
+              players={topPlayersAllTime.playersByWins.edges.map(
+                ({ node }) => ({
+                  ...node,
+                })
+              )}
+            />
+          </div>
         </div>
         <div
           className={css({
@@ -70,11 +74,15 @@ const TopPlayers: FC<Props> = ({ topPlayersAllTime, topPlayersMonthly }) => {
           })}
         >
           <StyledLabel>this past month</StyledLabel>
-          <PlayerTable
-            players={topPlayersMonthly.playersByWins.edges.map(({ node }) => ({
-              ...node,
-            }))}
-          />
+          <div>
+            <PlayerTable
+              players={topPlayersMonthly.playersByWins.edges.map(
+                ({ node }) => ({
+                  ...node,
+                })
+              )}
+            />
+          </div>
         </div>
       </div>
     </Card>

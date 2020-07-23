@@ -136,9 +136,11 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           >
             Player Mat Stats
           </HeadingLarge>
-          <FactionMatStats
-            factionMatCombos={selectedFaction.factionMatCombos}
-          />
+          <div>
+            <FactionMatStats
+              factionMatCombos={selectedFaction.factionMatCombos}
+            />
+          </div>
         </div>
         <div
           className={css({
