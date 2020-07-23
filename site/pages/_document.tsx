@@ -9,7 +9,6 @@ import { Provider as StyletronProvider } from 'styletron-react';
 import { Sheet, Server } from 'styletron-engine-atomic';
 
 import { GA_TRACKING_ID } from 'lib/env';
-import { PRIMARY_FONT_FAMILY } from 'lib/theme';
 
 import { styletron } from '../styletron';
 
@@ -45,48 +44,6 @@ class MyDocument extends Document<Props> {
               key={i}
             />
           ))}
-          <style
-            dangerouslySetInnerHTML={{
-              __html: `
-            html {
-              box-sizing: border-box;
-            }
-
-            body {
-              font-family: ${
-                // Make our lives easier such that we don't
-                // have to BaseWeb-ify everything (like other libraries)
-                PRIMARY_FONT_FAMILY
-              };
-              margin: 0;
-            }
-
-            ::-webkit-scrollbar {
-              width: 12px;
-              height: 12px;
-            }
-
-            ::-webkit-scrollbar-corner {
-              background-color: #1c1c1d;
-            }
-
-            ::-webkit-scrollbar-track {
-              background-color: #1c1c1d;
-            }
-
-            ::-webkit-scrollbar-thumb {
-              background-color: #757575;
-            }
-            
-            *,
-            *:before,
-            *:after {
-              box-sizing: inherit;
-              font-family: inherit;
-            }
-          `,
-            }}
-          />
           {GA_TRACKING_ID && (
             <>
               <script

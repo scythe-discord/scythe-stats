@@ -1,0 +1,41 @@
+html {
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Fira Sans', 'Helvetica', 'sans-serif', 'serif';
+  margin: 0;
+}
+
+::-webkit-scrollbar {
+  width: 12px;
+  height: 12px;
+}
+
+::-webkit-scrollbar-corner {
+  background-color: #1c1c1d;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #1c1c1d;
+}
+
+::-webkit-scrollbar-thumb {
+  background-color: #757575;
+}
+
+*,
+*:before,
+*:after {
+  box-sizing: inherit;
+  font-family: inherit;
+}
+
+#nprogress .bar {
+  height: 5px;
+}
+
+#nprogress .spinner-icon {
+  width: 32px;
+  height: 32px;
+}

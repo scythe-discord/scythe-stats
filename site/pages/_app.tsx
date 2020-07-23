@@ -11,6 +11,9 @@ import withApollo from 'next-with-apollo';
 import { BaseProvider } from 'baseui';
 import { ToasterContainer } from 'baseui/toast';
 import { Provider as StyletronProvider } from 'styletron-react';
+import NProgress from 'nprogress';
+import 'nprogress/nprogress.css';
+import 'lib/site.css';
 
 import { AuthProvider, SiteHeader } from 'lib/components';
 import Theme from 'lib/theme';
@@ -24,16 +27,23 @@ interface Props {
   initAuthCheck: boolean;
 }
 
+const handleRouteStart = () => {
+  NProgress.start();
+};
+
 const handleRouteChange = (url: string) => {
+  NProgress.done();
   gtag.pageview(url);
 };
 
 class Site extends App<Props> {
   componentDidMount() {
+    Router.events.on('routeChangeStart', handleRouteStart);
     Router.events.on('routeChangeComplete', handleRouteChange);
   }
 
   componentWillUnmount() {
+    Router.events.off('routeChangeStart', handleRouteStart);
     Router.events.off('routeChangeComplete', handleRouteChange);
   }
 
