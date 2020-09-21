@@ -15,3 +15,5 @@ generates:
         Tier: '../../mappers#TierModel'
         Match: '../../mappers#MatchModel'
         FactionMatCombo: '../../mappers#FactionMatComboBase'
+        FactionStatsWithPlayerCount: '../../mappers#FactionStatsWithPlayerCountBase'
+        FactionMatComboStatsWithPlayerCount: '../../mappers#FactionMatComboStatsWithPlayerCountBase'

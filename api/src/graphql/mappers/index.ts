@@ -8,4 +8,4 @@ export { default as PlayerModel } from '../../db/entities/player';
 export { default as TierModel } from '../../db/entities/tier';
 export { default as MatchModel } from '../../db/entities/match';
 
-export { FactionMatComboBase } from './faction-mat-combo';
+export * from './faction-mat-combo';

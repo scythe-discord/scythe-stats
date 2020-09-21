@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo, GraphQLScalarType, GraphQLScalarTypeConfig } from 'graphql';
-import { FactionModel, PlayerMatModel, PlayerModel, TierModel, MatchModel, FactionMatComboBase } from '../../mappers';
+import { FactionModel, PlayerMatModel, PlayerModel, TierModel, MatchModel, FactionMatComboBase, FactionStatsWithPlayerCountBase, FactionMatComboStatsWithPlayerCountBase } from '../../mappers';
 export type Maybe<T> = T | null;
 export type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
 export type RequireFields<T, K extends keyof T> = { [X in Exclude<keyof T, K>]?: T[X] } & { [P in K]-?: NonNullable<T[P]> };
@@ -139,6 +139,7 @@ export type FactionMatCombo = {
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin: Scalars['Int'];
+  statsByPlayerCount: Array<FactionMatComboStatsWithPlayerCount>;
 };
 
 
@@ -146,11 +147,27 @@ export type FactionMatComboTopPlayersArgs = {
   first: Scalars['Int'];
 };
 
+export type FactionMatComboStatsWithPlayerCount = {
+   __typename?: 'FactionMatComboStatsWithPlayerCount';
+  playerCount: Scalars['Int'];
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+  avgCoinsOnWin: Scalars['Int'];
+  avgRoundsOnWin: Scalars['Float'];
+  leastRoundsForWin: Scalars['Int'];
+};
+
 export type FactionStatsWithPlayerCount = {
    __typename?: 'FactionStatsWithPlayerCount';
   playerCount: Scalars['Int'];
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
+  topPlayers: Array<PlayerFactionStats>;
+};
+
+
+export type FactionStatsWithPlayerCountTopPlayersArgs = {
+  first: Scalars['Int'];
 };
 
 export type Player = Node & {
@@ -327,7 +344,8 @@ export type ResolversTypes = ResolversObject<{
   Faction: ResolverTypeWrapper<FactionModel>,
   FactionMatCombo: ResolverTypeWrapper<FactionMatComboBase>,
   Float: ResolverTypeWrapper<Scalars['Float']>,
-  FactionStatsWithPlayerCount: ResolverTypeWrapper<FactionStatsWithPlayerCount>,
+  FactionMatComboStatsWithPlayerCount: ResolverTypeWrapper<FactionMatComboStatsWithPlayerCountBase>,
+  FactionStatsWithPlayerCount: ResolverTypeWrapper<FactionStatsWithPlayerCountBase>,
   Player: ResolverTypeWrapper<PlayerModel>,
   PlayerConnection: ResolverTypeWrapper<Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversTypes['PlayerEdge']> }>,
   PlayerEdge: ResolverTypeWrapper<Omit<PlayerEdge, 'node'> & { node: ResolversTypes['Player'] }>,
@@ -357,7 +375,8 @@ export type ResolversParentTypes = ResolversObject<{
   Faction: FactionModel,
   FactionMatCombo: FactionMatComboBase,
   Float: Scalars['Float'],
-  FactionStatsWithPlayerCount: FactionStatsWithPlayerCount,
+  FactionMatComboStatsWithPlayerCount: FactionMatComboStatsWithPlayerCountBase,
+  FactionStatsWithPlayerCount: FactionStatsWithPlayerCountBase,
   Player: PlayerModel,
   PlayerConnection: Omit<PlayerConnection, 'edges'> & { edges: Array<ResolversParentTypes['PlayerEdge']> },
   PlayerEdge: Omit<PlayerEdge, 'node'> & { node: ResolversParentTypes['Player'] },
@@ -444,6 +463,17 @@ export type FactionMatComboResolvers<ContextType = any, ParentType extends Resol
   avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
   leastRoundsForWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  statsByPlayerCount?: Resolver<Array<ResolversTypes['FactionMatComboStatsWithPlayerCount']>, ParentType, ContextType>,
+  __isTypeOf?: isTypeOfResolverFn<ParentType>,
+}>;
+
+export type FactionMatComboStatsWithPlayerCountResolvers<ContextType = any, ParentType extends ResolversParentTypes['FactionMatComboStatsWithPlayerCount'] = ResolversParentTypes['FactionMatComboStatsWithPlayerCount']> = ResolversObject<{
+  playerCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
+  leastRoundsForWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -451,6 +481,7 @@ export type FactionStatsWithPlayerCountResolvers<ContextType = any, ParentType e
   playerCount?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalWins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  topPlayers?: Resolver<Array<ResolversTypes['PlayerFactionStats']>, ParentType, ContextType, RequireFields<FactionStatsWithPlayerCountTopPlayersArgs, 'first'>>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 
@@ -528,6 +559,7 @@ export type Resolvers<ContextType = any> = ResolversObject<{
   PlayerFactionStats?: PlayerFactionStatsResolvers<ContextType>,
   Faction?: FactionResolvers<ContextType>,
   FactionMatCombo?: FactionMatComboResolvers<ContextType>,
+  FactionMatComboStatsWithPlayerCount?: FactionMatComboStatsWithPlayerCountResolvers<ContextType>,
   FactionStatsWithPlayerCount?: FactionStatsWithPlayerCountResolvers<ContextType>,
   Player?: PlayerResolvers<ContextType>,
   PlayerConnection?: PlayerConnectionResolvers<ContextType>,

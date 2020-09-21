@@ -15,6 +15,7 @@ export const typeDef = gql`
     avgCoinsOnWin: Int!
     avgRoundsOnWin: Float!
     leastRoundsForWin: Int!
+    statsByPlayerCount: [FactionMatComboStatsWithPlayerCount!]!
   }
 `;
 

@@ -17,6 +17,7 @@ import {
   VANILLA_LOG_CHANNEL_ID,
   SITE_URL,
 } from '../../../common/config';
+import { deleteKeysByPattern, MATCH_SENSITIVE_CACHE_PREFIX } from '../../utils';
 
 export const typeDef = gql`
   extend type Mutation {
@@ -262,6 +263,8 @@ export const resolvers: Schema.Resolvers = {
         loggedMatchResults,
         recordingUserId
       );
+
+      deleteKeysByPattern(`${MATCH_SENSITIVE_CACHE_PREFIX}*`);
 
       if (shouldPostMatchLog) {
         // Used asynchronously to try to post the match log to the guild, so
