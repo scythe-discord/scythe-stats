@@ -190,7 +190,7 @@ export type FactionMatComboStatsWithPlayerCount = {
   totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
-  leastRoundsForWin: Scalars['Int'];
+  leastRoundsForWin?: Maybe<Scalars['Int']>;
 };
 
 export type FactionStatsWithPlayerCount = {
@@ -503,7 +503,7 @@ export type FactionMatComboStatsWithPlayerCountResolvers<ContextType = any, Pare
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgCoinsOnWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
   avgRoundsOnWin?: Resolver<ResolversTypes['Float'], ParentType, ContextType>,
-  leastRoundsForWin?: Resolver<ResolversTypes['Int'], ParentType, ContextType>,
+  leastRoundsForWin?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>,
   __isTypeOf?: isTypeOfResolverFn<ParentType>,
 }>;
 

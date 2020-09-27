@@ -52,7 +52,13 @@ const FactionMatStats: FC<Props> = ({
       0
     );
     const leastRoundsForWin = relevantStats.reduce(
-      (prevVal, currVal) => Math.min(prevVal, currVal.leastRoundsForWin),
+      (prevVal, currVal) =>
+        Math.min(
+          prevVal,
+          currVal.leastRoundsForWin == null
+            ? Number.MAX_SAFE_INTEGER
+            : currVal.leastRoundsForWin
+        ),
       Number.MAX_SAFE_INTEGER
     );
 
@@ -62,7 +68,8 @@ const FactionMatStats: FC<Props> = ({
       totalMatches,
       avgCoinsOnWin: totalWins > 0 ? Math.floor(totalAvgCoins / totalWins) : 0,
       avgRoundsOnWin: totalWins > 0 ? totalAvgRounds / totalWins : 0,
-      leastRoundsForWin,
+      leastRoundsForWin:
+        leastRoundsForWin === Number.MAX_SAFE_INTEGER ? 0 : leastRoundsForWin,
     };
   });
 

@@ -38,7 +38,7 @@ export const typeDef = gql`
     totalMatches: Int!
     avgCoinsOnWin: Int!
     avgRoundsOnWin: Float!
-    leastRoundsForWin: Int!
+    leastRoundsForWin: Int
   }
 `;
 
@@ -300,7 +300,7 @@ export const resolvers: Schema.Resolvers = {
         );
 
         if (cachedVal) {
-          return Number.parseInt(JSON.parse(cachedVal)) || 0;
+          return Number.parseInt(JSON.parse(cachedVal)) || null;
         }
       } catch {
         // Pass
@@ -353,7 +353,7 @@ export const resolvers: Schema.Resolvers = {
         totalWinsRes.minRounds
       );
 
-      return Number.parseInt(totalWinsRes.minRounds) || 0;
+      return Number.parseInt(totalWinsRes.minRounds) || null;
     },
   },
   FactionMatCombo: {
