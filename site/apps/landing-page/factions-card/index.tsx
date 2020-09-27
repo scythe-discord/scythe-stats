@@ -159,6 +159,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           </Block>
           <Block
             display={['flex', 'flex', 'none']}
+            alignItems="center"
             overrides={{
               Block: {
                 style: {
