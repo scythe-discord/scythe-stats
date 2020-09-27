@@ -34,7 +34,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
   const [css, theme] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
   const [selectedPlayerCounts, setSelectedPlayerCounts] = useState(
-    new Set([2, 3, 4, 5, 6, 7])
+    new Set([3, 4])
   );
   const {
     loading: topPlayersLoading,
