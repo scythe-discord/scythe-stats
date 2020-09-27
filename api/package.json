@@ -18,7 +18,7 @@
     "@types/url-join": "^4.0.0",
     "@types/util.promisify": "^1.0.4",
     "apollo-server-cache-redis": "^1.2.2",
-    "apollo-server-express": "^2.13.1",
+    "apollo-server-express": "^2.14.2",
     "connect-redis": "^4.0.4",
     "cors": "^2.8.5",
     "discord.js": "^12.2.0",
