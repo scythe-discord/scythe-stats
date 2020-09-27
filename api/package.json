@@ -28,7 +28,7 @@
     "graphql": "^15.0.0",
     "graphql-relay": "^0.6.0",
     "ioredis": "^4.17.3",
-    "lodash": "^4.17.15",
+    "lodash": "^4.17.19",
     "pg": "^8.2.0",
     "rate-limiter-flexible": "^2.1.4",
     "reflect-metadata": "^0.1.13",
