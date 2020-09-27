@@ -1,17 +1,7 @@
-query factionStats($numTopPlayers: Int!) {
+query factionStats {
   factions {
     id
     name
-    totalWins
-    totalMatches
-    topPlayers(first: $numTopPlayers) {
-      player {
-        id
-        displayName
-        steamId
-      }
-      totalWins
-    }
     statsByPlayerCount {
       playerCount
       totalWins
@@ -22,11 +12,14 @@ query factionStats($numTopPlayers: Int!) {
         id
         name
       }
-      totalWins
-      totalMatches
-      avgCoinsOnWin
-      avgRoundsOnWin
-      leastRoundsForWin
+      statsByPlayerCount {
+        playerCount
+        totalWins
+        totalMatches
+        avgCoinsOnWin
+        avgRoundsOnWin
+        leastRoundsForWin
+      }
     }
   }
 }

@@ -1,22 +1,47 @@
 import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
-import { H1, LabelMedium } from 'baseui/typography';
+import { StyledSpinnerNext, SIZE } from 'baseui/spinner';
+import { LabelMedium } from 'baseui/typography';
 import { ListItem, PropsT, ListItemLabel } from 'baseui/list';
 
 import GQL from 'lib/graphql';
-import { FactionIcon } from 'lib/components';
 
 const getBestPlayerMat = (
-  combos: (Pick<GQL.FactionMatCombo, 'totalWins' | 'totalMatches'> & {
-    playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
-  })[]
+  combos: Array<
+    { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> } & {
+      statsByPlayerCount: Array<
+        Pick<
+          GQL.FactionMatComboStatsWithPlayerCount,
+          | 'playerCount'
+          | 'totalWins'
+          | 'totalMatches'
+          | 'avgCoinsOnWin'
+          | 'avgRoundsOnWin'
+          | 'leastRoundsForWin'
+        >
+      >;
+    }
+  >,
+  selectedPlayerCounts: Set<number>
 ) => {
   let bestWinRate = -1;
   let bestPlayerMat = combos[0].playerMat;
 
-  combos.forEach(({ playerMat, totalMatches, totalWins }) => {
-    const winRate = (100 * totalWins) / totalMatches;
+  combos.forEach(({ playerMat, statsByPlayerCount }) => {
+    const relevantStats = statsByPlayerCount.filter(({ playerCount }) =>
+      selectedPlayerCounts.has(playerCount)
+    );
 
+    const totalWins = relevantStats.reduce(
+      (prevValue, currValue) => prevValue + currValue.totalWins,
+      0
+    );
+    const totalMatches = relevantStats.reduce(
+      (prevValue, currValue) => prevValue + currValue.totalMatches,
+      0
+    );
+
+    const winRate = (100 * totalWins) / totalMatches;
     if (winRate > bestWinRate) {
       bestWinRate = winRate;
       bestPlayerMat = playerMat;
@@ -63,22 +88,36 @@ const StyledListItem: FC<PropsT> = (props) => {
 };
 
 interface Props {
-  faction: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>;
+  faction: Pick<GQL.Faction, 'id' | 'name'> & {
+    statsByPlayerCount: Array<
+      Pick<
+        GQL.FactionStatsWithPlayerCount,
+        'playerCount' | 'totalWins' | 'totalMatches'
+      >
+    >;
+  };
   topPlayerStats:
     | (Pick<GQL.PlayerFactionStats, 'totalWins'> & {
         player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
       })
     | null;
+  topPlayerStatsLoading: boolean;
   factionMatCombos: Array<
-    Pick<
-      GQL.FactionMatCombo,
-      | 'totalWins'
-      | 'totalMatches'
-      | 'avgCoinsOnWin'
-      | 'avgRoundsOnWin'
-      | 'leastRoundsForWin'
-    > & { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> }
+    { playerMat: Pick<GQL.PlayerMat, 'id' | 'name'> } & {
+      statsByPlayerCount: Array<
+        Pick<
+          GQL.FactionMatComboStatsWithPlayerCount,
+          | 'playerCount'
+          | 'totalWins'
+          | 'totalMatches'
+          | 'avgCoinsOnWin'
+          | 'avgRoundsOnWin'
+          | 'leastRoundsForWin'
+        >
+      >;
+    }
   >;
+  selectedPlayerCounts: Set<number>;
   className?: string;
 }
 
@@ -86,58 +125,57 @@ const FactionSnippet: FC<Props> = ({
   faction,
   factionMatCombos,
   topPlayerStats,
+  topPlayerStatsLoading,
+  selectedPlayerCounts,
   className,
 }) => {
   const [css, theme] = useStyletron();
 
-  const bestPlayerMat = getBestPlayerMat(factionMatCombos);
+  const bestPlayerMat = getBestPlayerMat(
+    factionMatCombos,
+    selectedPlayerCounts
+  );
+
+  const relevantStats = faction.statsByPlayerCount.filter(({ playerCount }) =>
+    selectedPlayerCounts.has(playerCount)
+  );
+  const totalWins = relevantStats.reduce(
+    (prevVal, currVal) => prevVal + currVal.totalWins,
+    0
+  );
+  const totalMatches = relevantStats.reduce(
+    (prevVal, currVal) => prevVal + currVal.totalMatches,
+    0
+  );
+
+  let topPlayerLabel: JSX.Element | string = (
+    <StyledSpinnerNext size={SIZE.small} />
+  );
+
+  if (!topPlayerStatsLoading && topPlayerStats) {
+    topPlayerLabel = `${topPlayerStats.player.displayName} (${topPlayerStats.totalWins} Wins)`;
+  } else if (!topPlayerStatsLoading) {
+    topPlayerLabel = 'No one!';
+  }
 
   return (
     <div className={className}>
-      <div
-        className={css({
-          display: 'flex',
-          alignItems: 'center',
-        })}
-      >
-        <FactionIcon
-          faction={faction.name}
-          size={72}
-          className={css({
-            padding: '0 20px 0 0',
-          })}
-        />
-        <H1
-          overrides={{
-            Block: {
-              style: {
-                margin: 0,
-              },
-            },
-          }}
-        >
-          {faction.name}
-        </H1>
-      </div>
       <ul
         className={css({
           padding: 0,
-          margin: '30px 0 0',
           backgroundColor: theme.colors.backgroundSecondary,
         })}
       >
         <StyledListItem
           endEnhancer={() => (
-            <SnippetEndEnhancer>
-              {faction.totalMatches} Games
-            </SnippetEndEnhancer>
+            <SnippetEndEnhancer>{totalMatches} Games</SnippetEndEnhancer>
           )}
         >
           <ListItemLabel>Games Recorded</ListItemLabel>
         </StyledListItem>
         <StyledListItem
           endEnhancer={() => (
-            <SnippetEndEnhancer>{faction.totalWins} Wins</SnippetEndEnhancer>
+            <SnippetEndEnhancer>{totalWins} Wins</SnippetEndEnhancer>
           )}
         >
           <ListItemLabel>Total Wins</ListItemLabel>
@@ -151,11 +189,7 @@ const FactionSnippet: FC<Props> = ({
         </StyledListItem>
         <StyledListItem
           endEnhancer={() => (
-            <SnippetEndEnhancer>
-              {topPlayerStats
-                ? `${topPlayerStats.player.displayName} (${topPlayerStats.totalWins} Wins)`
-                : 'No one!'}
-            </SnippetEndEnhancer>
+            <SnippetEndEnhancer>{topPlayerLabel}</SnippetEndEnhancer>
           )}
         >
           <ListItemLabel>Top Player</ListItemLabel>

@@ -14,7 +14,7 @@ interface Props {
   // because React doesn't recognize these attributes
   visibleTicksCount?: any;
   verticalAnchor?: any;
-  factions: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>[];
+  factions: Pick<GQL.Faction, 'id' | 'name'>[];
   selectedFactionIdx: number;
   onClickFaction: (idx: number) => void;
 }

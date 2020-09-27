@@ -1,0 +1,13 @@
+query factionTopPlayers($numTopPlayers: Int!, $playerCounts: [Int!]!) {
+  factions {
+    id
+    topPlayers(first: $numTopPlayers, playerCounts: $playerCounts) {
+      player {
+        id
+        displayName
+        steamId
+      }
+      totalWins
+    }
+  }
+}

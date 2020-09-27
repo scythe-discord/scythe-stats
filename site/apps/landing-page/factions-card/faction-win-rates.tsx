@@ -16,14 +16,23 @@ import GQL from 'lib/graphql';
 import FactionChartIcon from './faction-chart-icon';
 
 interface Props {
-  factions: Pick<GQL.Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>[];
+  factions: (Pick<GQL.Faction, 'id' | 'name'> & {
+    statsByPlayerCount: Array<
+      Pick<
+        GQL.FactionStatsWithPlayerCount,
+        'playerCount' | 'totalWins' | 'totalMatches'
+      >
+    >;
+  })[];
   selectedFactionIdx: number;
+  selectedPlayerCounts: Set<number>;
   onClickFaction: (idx: number) => void;
 }
 
 const FactionWinRates: FC<Props> = ({
   factions,
   selectedFactionIdx,
+  selectedPlayerCounts,
   onClickFaction,
 }) => {
   const [_, theme] = useStyletron();
@@ -34,7 +43,18 @@ const FactionWinRates: FC<Props> = ({
     [onClickFaction]
   );
 
-  const data = factions.map(({ totalMatches, totalWins }, idx) => {
+  const data = factions.map(({ statsByPlayerCount }, idx) => {
+    const relevantStats = statsByPlayerCount.filter(({ playerCount }) =>
+      selectedPlayerCounts.has(playerCount)
+    );
+    const totalWins = relevantStats.reduce(
+      (prevVal, currVal) => prevVal + currVal.totalWins,
+      0
+    );
+    const totalMatches = relevantStats.reduce(
+      (prevVal, currVal) => prevVal + currVal.totalMatches,
+      0
+    );
     const winRate = (100 * totalWins) / totalMatches;
 
     return {

@@ -28,6 +28,7 @@ interface Props {
       'playerCount' | 'totalWins' | 'totalMatches'
     >
   >;
+  selectedPlayerCounts: Set<number>;
 }
 
 const FactionWinRatesByPlayerCount: FC<Props> = ({

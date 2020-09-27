@@ -1,14 +1,17 @@
 import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { HeadingLarge, LabelMedium } from 'baseui/typography';
+import { H1, HeadingLarge, LabelMedium } from 'baseui/typography';
 import dynamic from 'next/dynamic';
 import classNames from 'classnames';
 
 import GQL from 'lib/graphql';
+import { FactionIcon } from 'lib/components';
 
 import Card from '../card';
+import PlayerCountFilter from './player-count-filter';
 import FactionSnippet from './faction-snippet';
 import FactionMatStats from './faction-mat-stats';
+import { Block } from 'baseui/block';
 
 // Responsive chart containers don't play well with SSR
 const FactionWinRates = dynamic(() => import('./faction-win-rates'), {
@@ -30,18 +33,59 @@ interface Props {
 const FactionsCard: FC<Props> = ({ factionStats, className }) => {
   const [css, theme] = useStyletron();
   const [selectedFactionIdx, setSelectedFactionIdx] = useState(0);
+  const [selectedPlayerCounts, setSelectedPlayerCounts] = useState(
+    new Set([2, 3, 4, 5, 6, 7])
+  );
+  const {
+    loading: topPlayersLoading,
+    data: topPlayers,
+    refetch: refetchFactionStatsByPlayerCount,
+  } = GQL.useFactionTopPlayersQuery({
+    variables: {
+      numTopPlayers: 1,
+      playerCounts: Array.from(selectedPlayerCounts),
+    },
+  });
+
   const onClickFaction = useCallback(
     (idx: number) => setSelectedFactionIdx(idx),
     []
   );
 
+  const onClickPlayerCount = (playerCount: number) => {
+    const nextSelectedPlayerCounts = new Set(selectedPlayerCounts);
+    if (!selectedPlayerCounts.has(playerCount)) {
+      nextSelectedPlayerCounts.add(playerCount);
+    } else if (selectedPlayerCounts.size > 1) {
+      nextSelectedPlayerCounts.delete(playerCount);
+    }
+
+    setSelectedPlayerCounts(nextSelectedPlayerCounts);
+    refetchFactionStatsByPlayerCount({
+      numTopPlayers: 1,
+      playerCounts: Array.from(nextSelectedPlayerCounts),
+    });
+  };
+
   const selectedFaction = factionStats.factions[selectedFactionIdx];
+
+  let topPlayerStats = null;
+  if (topPlayers) {
+    const relevantFaction = topPlayers.factions.find(
+      ({ id }) => id === selectedFaction.id
+    );
+    topPlayerStats =
+      relevantFaction && relevantFaction.topPlayers.length
+        ? relevantFaction.topPlayers[0]
+        : null;
+  }
 
   return (
     <Card
       className={classNames(
         css({
           display: 'flex',
+          position: 'relative',
         }),
         className
       )}
@@ -54,6 +98,38 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           minWidth: 0,
         })}
       >
+        <Block
+          display={['none', 'none', 'flex']}
+          alignItems="center"
+          marginBottom="20px"
+        >
+          <FactionIcon
+            faction={selectedFaction.name}
+            size={72}
+            className={css({
+              padding: '0 20px 0 0',
+            })}
+          />
+          <H1
+            overrides={{
+              Block: {
+                style: {
+                  margin: 0,
+                  flexGrow: 1,
+                },
+              },
+            }}
+          >
+            {selectedFaction.name}
+          </H1>
+          <PlayerCountFilter
+            className={css({
+              alignSelf: 'flex-start',
+            })}
+            selectedPlayerCounts={selectedPlayerCounts}
+            onClickPlayerCount={onClickPlayerCount}
+          />
+        </Block>
         <div
           className={css({
             display: 'flex',
@@ -65,34 +141,77 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             },
           })}
         >
+          <Block
+            display={['flex', 'flex', 'none']}
+            overrides={{
+              Block: {
+                style: {
+                  order: 0,
+                  margin: '0 0 25px 0',
+                },
+              },
+            }}
+          >
+            <PlayerCountFilter
+              selectedPlayerCounts={selectedPlayerCounts}
+              onClickPlayerCount={onClickPlayerCount}
+            />
+          </Block>
+          <Block
+            display={['flex', 'flex', 'none']}
+            overrides={{
+              Block: {
+                style: {
+                  order: 2,
+                },
+              },
+            }}
+          >
+            <FactionIcon
+              faction={selectedFaction.name}
+              size={72}
+              className={css({
+                padding: '0 20px 0 0',
+              })}
+            />
+            <H1
+              overrides={{
+                Block: {
+                  style: {
+                    margin: 0,
+                  },
+                },
+              }}
+            >
+              {selectedFaction.name}
+            </H1>
+          </Block>
           <FactionSnippet
             className={css({
-              order: 1,
+              order: 3,
 
               [theme.mediaQuery.medium]: {
                 flex: '0 1 400px',
-                order: 0,
+                order: 1,
               },
             })}
             faction={selectedFaction}
             factionMatCombos={selectedFaction.factionMatCombos}
-            topPlayerStats={
-              selectedFaction.topPlayers.length
-                ? selectedFaction.topPlayers[0]
-                : null
-            }
+            topPlayerStats={topPlayerStats}
+            topPlayerStatsLoading={topPlayersLoading}
+            selectedPlayerCounts={selectedPlayerCounts}
           />
           <div
             className={css({
               display: 'flex',
               height: '300px',
               flexDirection: 'column',
-              order: 0,
+              order: 1,
               alignItems: 'center',
               margin: '0 0 50px 0',
 
               [theme.mediaQuery.medium]: {
-                order: 1,
+                order: 3,
                 flex: '1 1 325px',
                 minWidth: 0,
                 height: 'auto',
@@ -114,6 +233,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             <FactionWinRates
               factions={factionStats.factions}
               selectedFactionIdx={selectedFactionIdx}
+              selectedPlayerCounts={selectedPlayerCounts}
               onClickFaction={onClickFaction}
             />
           </div>
@@ -139,6 +259,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           <div>
             <FactionMatStats
               factionMatCombos={selectedFaction.factionMatCombos}
+              selectedPlayerCounts={selectedPlayerCounts}
             />
           </div>
         </div>
@@ -178,6 +299,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
           >
             <FactionWinRatesByPlayerCount
               factionStatsByPlayerCount={selectedFaction.statsByPlayerCount}
+              selectedPlayerCounts={selectedPlayerCounts}
             />
           </div>
         </div>

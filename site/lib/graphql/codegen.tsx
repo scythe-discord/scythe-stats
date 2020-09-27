@@ -123,8 +123,19 @@ export type Faction = {
 };
 
 
+export type FactionTotalWinsArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionTotalMatchesArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
 export type FactionTopPlayersArgs = {
   first: Scalars['Int'];
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
 };
 
 export type FactionMatCombo = {
@@ -138,11 +149,47 @@ export type FactionMatCombo = {
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin: Scalars['Int'];
+  statsByPlayerCount: Array<FactionMatComboStatsWithPlayerCount>;
 };
 
 
 export type FactionMatComboTopPlayersArgs = {
   first: Scalars['Int'];
+};
+
+
+export type FactionMatComboTotalWinsArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboTotalMatchesArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboAvgCoinsOnWinArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboAvgRoundsOnWinArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboLeastRoundsForWinArgs = {
+  playerCounts?: Maybe<Array<Scalars['Int']>>;
+};
+
+export type FactionMatComboStatsWithPlayerCount = {
+   __typename?: 'FactionMatComboStatsWithPlayerCount';
+  playerCount: Scalars['Int'];
+  totalWins: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+  avgCoinsOnWin: Scalars['Int'];
+  avgRoundsOnWin: Scalars['Float'];
+  leastRoundsForWin: Scalars['Int'];
 };
 
 export type FactionStatsWithPlayerCount = {
@@ -282,32 +329,47 @@ export type DiscordMeQuery = (
   )> }
 );
 
-export type FactionStatsQueryVariables = {
-  numTopPlayers: Scalars['Int'];
-};
+export type FactionStatsQueryVariables = {};
 
 
 export type FactionStatsQuery = (
   { __typename?: 'Query' }
   & { factions: Array<(
     { __typename?: 'Faction' }
-    & Pick<Faction, 'id' | 'name' | 'totalWins' | 'totalMatches'>
+    & Pick<Faction, 'id' | 'name'>
+    & { statsByPlayerCount: Array<(
+      { __typename?: 'FactionStatsWithPlayerCount' }
+      & Pick<FactionStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches'>
+    )>, factionMatCombos: Array<(
+      { __typename?: 'FactionMatCombo' }
+      & { playerMat: (
+        { __typename?: 'PlayerMat' }
+        & Pick<PlayerMat, 'id' | 'name'>
+      ), statsByPlayerCount: Array<(
+        { __typename?: 'FactionMatComboStatsWithPlayerCount' }
+        & Pick<FactionMatComboStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
+      )> }
+    )> }
+  )> }
+);
+
+export type FactionTopPlayersQueryVariables = {
+  numTopPlayers: Scalars['Int'];
+  playerCounts: Array<Scalars['Int']>;
+};
+
+
+export type FactionTopPlayersQuery = (
+  { __typename?: 'Query' }
+  & { factions: Array<(
+    { __typename?: 'Faction' }
+    & Pick<Faction, 'id'>
     & { topPlayers: Array<(
       { __typename?: 'PlayerFactionStats' }
       & Pick<PlayerFactionStats, 'totalWins'>
       & { player: (
         { __typename?: 'Player' }
         & Pick<Player, 'id' | 'displayName' | 'steamId'>
-      ) }
-    )>, statsByPlayerCount: Array<(
-      { __typename?: 'FactionStatsWithPlayerCount' }
-      & Pick<FactionStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches'>
-    )>, factionMatCombos: Array<(
-      { __typename?: 'FactionMatCombo' }
-      & Pick<FactionMatCombo, 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
-      & { playerMat: (
-        { __typename?: 'PlayerMat' }
-        & Pick<PlayerMat, 'id' | 'name'>
       ) }
     )> }
   )> }
@@ -531,20 +593,10 @@ export type DiscordMeQueryHookResult = ReturnType<typeof useDiscordMeQuery>;
 export type DiscordMeLazyQueryHookResult = ReturnType<typeof useDiscordMeLazyQuery>;
 export type DiscordMeQueryResult = ApolloReactCommon.QueryResult<DiscordMeQuery, DiscordMeQueryVariables>;
 export const FactionStatsDocument = gql`
-    query factionStats($numTopPlayers: Int!) {
+    query factionStats {
   factions {
     id
     name
-    totalWins
-    totalMatches
-    topPlayers(first: $numTopPlayers) {
-      player {
-        id
-        displayName
-        steamId
-      }
-      totalWins
-    }
     statsByPlayerCount {
       playerCount
       totalWins
@@ -555,11 +607,14 @@ export const FactionStatsDocument = gql`
         id
         name
       }
-      totalWins
-      totalMatches
-      avgCoinsOnWin
-      avgRoundsOnWin
-      leastRoundsForWin
+      statsByPlayerCount {
+        playerCount
+        totalWins
+        totalMatches
+        avgCoinsOnWin
+        avgRoundsOnWin
+        leastRoundsForWin
+      }
     }
   }
 }
@@ -577,7 +632,6 @@ export const FactionStatsDocument = gql`
  * @example
  * const { data, loading, error } = useFactionStatsQuery({
  *   variables: {
- *      numTopPlayers: // value for 'numTopPlayers'
  *   },
  * });
  */
@@ -590,6 +644,48 @@ export function useFactionStatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQuer
 export type FactionStatsQueryHookResult = ReturnType<typeof useFactionStatsQuery>;
 export type FactionStatsLazyQueryHookResult = ReturnType<typeof useFactionStatsLazyQuery>;
 export type FactionStatsQueryResult = ApolloReactCommon.QueryResult<FactionStatsQuery, FactionStatsQueryVariables>;
+export const FactionTopPlayersDocument = gql`
+    query factionTopPlayers($numTopPlayers: Int!, $playerCounts: [Int!]!) {
+  factions {
+    id
+    topPlayers(first: $numTopPlayers, playerCounts: $playerCounts) {
+      player {
+        id
+        displayName
+        steamId
+      }
+      totalWins
+    }
+  }
+}
+    `;
+
+/**
+ * __useFactionTopPlayersQuery__
+ *
+ * To run a query within a React component, call `useFactionTopPlayersQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFactionTopPlayersQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFactionTopPlayersQuery({
+ *   variables: {
+ *      numTopPlayers: // value for 'numTopPlayers'
+ *      playerCounts: // value for 'playerCounts'
+ *   },
+ * });
+ */
+export function useFactionTopPlayersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
+        return ApolloReactHooks.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+      }
+export function useFactionTopPlayersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
+          return ApolloReactHooks.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+        }
+export type FactionTopPlayersQueryHookResult = ReturnType<typeof useFactionTopPlayersQuery>;
+export type FactionTopPlayersLazyQueryHookResult = ReturnType<typeof useFactionTopPlayersLazyQuery>;
+export type FactionTopPlayersQueryResult = ApolloReactCommon.QueryResult<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>;
 export const MatchesDocument = gql`
     query matches($first: Int!, $after: String) {
   matches(first: $first, after: $after) {

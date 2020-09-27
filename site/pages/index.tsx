@@ -104,9 +104,6 @@ HomePage.getInitialProps = async (ctx) => {
     GQL.FactionStatsQueryVariables
   >({
     query: GQL.FactionStatsDocument,
-    variables: {
-      numTopPlayers: 1,
-    },
   });
   const { data: playerMats } = await apolloClient.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,

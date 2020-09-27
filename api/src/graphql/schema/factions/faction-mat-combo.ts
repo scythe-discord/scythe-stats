@@ -1,7 +1,7 @@
 import { gql } from 'apollo-server-express';
 import { getRepository } from 'typeorm';
 
-import { PlayerMatchResult, MatComboTier } from '../../../db/entities';
+import { PlayerMatchResult, Match, MatComboTier } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -10,11 +10,11 @@ export const typeDef = gql`
     playerMat: PlayerMat!
     topPlayers(first: Int!): [PlayerFactionStats!]!
     tier: Tier!
-    totalWins: Int!
-    totalMatches: Int!
-    avgCoinsOnWin: Int!
-    avgRoundsOnWin: Float!
-    leastRoundsForWin: Int!
+    totalWins(playerCounts: [Int!]): Int!
+    totalMatches(playerCounts: [Int!]): Int!
+    avgCoinsOnWin(playerCounts: [Int!]): Int!
+    avgRoundsOnWin(playerCounts: [Int!]): Float!
+    leastRoundsForWin(playerCounts: [Int!]): Int!
     statsByPlayerCount: [FactionMatComboStatsWithPlayerCount!]!
   }
 `;
@@ -72,49 +72,116 @@ export const resolvers: Schema.Resolvers = {
         totalWins,
       }));
     },
-    totalWins: async ({ faction, playerMat }) => {
+    totalWins: async ({ faction, playerMat }, { playerCounts }) => {
       const pmrRepo = getRepository(PlayerMatchResult);
-      const wins = await pmrRepo
+      let query = pmrRepo
         .createQueryBuilder('pmr')
+        .select('COUNT(pmr.id)', 'totalWins')
         .innerJoin(
           (qb) =>
             qb
-              .from(PlayerMatchResult, 'temp')
-              .select('MAX(temp.coins)', 'maxCoins')
-              .addSelect('temp."matchId"')
-              .groupBy('temp."matchId"'),
+              .from(PlayerMatchResult, 'pmr2')
+              .select('MAX(pmr2.coins)', 'maxCoins')
+              .addSelect('pmr2."matchId"')
+              .groupBy('pmr2."matchId"'),
           'maxes',
           'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
         )
-        .where(
-          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
-          {
-            factionId: faction.id,
-            playerMatId: playerMat.id,
-          }
-        )
-        .getCount();
-
-      return wins;
-    },
-    totalMatches: async ({ faction, playerMat }) => {
-      const playerMatchResultRepo = getRepository(PlayerMatchResult);
-      const matches = await playerMatchResultRepo
-        .createQueryBuilder('result')
-        .where('result."factionId" = :factionId', {
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr."factionId" = :factionId', {
           factionId: faction.id,
         })
-        .andWhere('result."playerMatId" = :playerMatId', {
+        .andWhere('pmr."playerMatId" = :playerMatId', {
           playerMatId: playerMat.id,
+        });
+
+      if (playerCounts) {
+        query = query.innerJoin(
+          (qb) => {
+            let subQuery = qb
+              .from(Match, 'match')
+              .select('COUNT("matchPlayers".id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'matchPlayers')
+              .groupBy('match.id');
+
+            if (playerCounts) {
+              const filteredPlayerCounts = Array.from(
+                new Set(playerCounts).values()
+              );
+              subQuery = subQuery.having(
+                'COUNT("matchPlayers".id) IN (:...playerCounts)',
+                {
+                  playerCounts: filteredPlayerCounts,
+                }
+              );
+            }
+
+            return subQuery;
+          },
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        );
+      }
+
+      const totalWinsRes = (await query.getRawOne()) as {
+        totalWins: string;
+      };
+
+      return Number.parseInt(totalWinsRes.totalWins) || 0;
+    },
+    totalMatches: async ({ faction, playerMat }, { playerCounts }) => {
+      const pmrRepo = getRepository(PlayerMatchResult);
+      let query = pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr.id)', 'totalMatches')
+        .where('pmr."factionId" = :factionId', {
+          factionId: faction.id,
         })
-        .getCount();
-      return matches;
+        .andWhere('pmr."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id,
+        });
+
+      if (playerCounts) {
+        query = query.innerJoin(
+          (qb) => {
+            let subQuery = qb
+              .from(Match, 'match')
+              .select('COUNT("matchPlayers".id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'matchPlayers')
+              .groupBy('match.id');
+
+            if (playerCounts) {
+              const filteredPlayerCounts = Array.from(
+                new Set(playerCounts).values()
+              );
+              subQuery = subQuery.having(
+                'COUNT("matchPlayers".id) IN (:...playerCounts)',
+                {
+                  playerCounts: filteredPlayerCounts,
+                }
+              );
+            }
+
+            return subQuery;
+          },
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        );
+      }
+
+      const totalMatchesRes = (await query.getRawOne()) as {
+        totalMatches: string;
+      };
+
+      return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
-    avgCoinsOnWin: async ({ faction, playerMat }) => {
+    avgCoinsOnWin: async ({ faction, playerMat }, { playerCounts }) => {
       const pmrRepo = getRepository(PlayerMatchResult);
-      const res = await pmrRepo
+      let query = pmrRepo
         .createQueryBuilder('pmr')
-        .select('AVG(pmr.coins)', 'avg')
+        .select('AVG(pmr.coins)', 'avgCoins')
         .innerJoin(
           (qb) =>
             qb
@@ -125,22 +192,54 @@ export const resolvers: Schema.Resolvers = {
           'maxes',
           'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
         )
-        .where(
-          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
-          {
-            factionId: faction.id,
-            playerMatId: playerMat.id,
-          }
-        )
-        .getRawOne();
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr."factionId" = :factionId', {
+          factionId: faction.id,
+        })
+        .andWhere('pmr."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id,
+        });
 
-      return Math.floor(parseFloat(res['avg'])) || 0;
+      if (playerCounts) {
+        query = query.innerJoin(
+          (qb) => {
+            let subQuery = qb
+              .from(Match, 'match')
+              .select('COUNT("matchPlayers".id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'matchPlayers')
+              .groupBy('match.id');
+
+            if (playerCounts) {
+              const filteredPlayerCounts = Array.from(
+                new Set(playerCounts).values()
+              );
+              subQuery = subQuery.having(
+                'COUNT("matchPlayers".id) IN (:...playerCounts)',
+                {
+                  playerCounts: filteredPlayerCounts,
+                }
+              );
+            }
+
+            return subQuery;
+          },
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        );
+      }
+
+      const avgCoinsRes = (await query.getRawOne()) as {
+        avgCoins: string;
+      };
+
+      return Math.floor(parseFloat(avgCoinsRes.avgCoins)) || 0;
     },
-    avgRoundsOnWin: async ({ faction, playerMat }) => {
+    avgRoundsOnWin: async ({ faction, playerMat }, { playerCounts }) => {
       const pmrRepo = getRepository(PlayerMatchResult);
-      const res = await pmrRepo
+      let query = pmrRepo
         .createQueryBuilder('pmr')
-        .select('AVG(match."numRounds")', 'avg')
+        .select('AVG(match."numRounds")', 'avgRounds')
         .innerJoin(
           (qb) =>
             qb
@@ -152,22 +251,54 @@ export const resolvers: Schema.Resolvers = {
           'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
         )
         .innerJoin('pmr.match', 'match')
-        .where(
-          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
-          {
-            factionId: faction.id,
-            playerMatId: playerMat.id,
-          }
-        )
-        .getRawOne();
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr."factionId" = :factionId', {
+          factionId: faction.id,
+        })
+        .andWhere('pmr."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id,
+        });
 
-      return parseFloat(res['avg']) || 0;
+      if (playerCounts) {
+        query = query.innerJoin(
+          (qb) => {
+            let subQuery = qb
+              .from(Match, 'match')
+              .select('COUNT("matchPlayers".id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'matchPlayers')
+              .groupBy('match.id');
+
+            if (playerCounts) {
+              const filteredPlayerCounts = Array.from(
+                new Set(playerCounts).values()
+              );
+              subQuery = subQuery.having(
+                'COUNT("matchPlayers".id) IN (:...playerCounts)',
+                {
+                  playerCounts: filteredPlayerCounts,
+                }
+              );
+            }
+
+            return subQuery;
+          },
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        );
+      }
+
+      const avgRoundsRes = (await query.getRawOne()) as {
+        avgRounds: string;
+      };
+
+      return parseFloat(avgRoundsRes.avgRounds) || 0;
     },
-    leastRoundsForWin: async ({ faction, playerMat }) => {
+    leastRoundsForWin: async ({ faction, playerMat }, { playerCounts }) => {
       const pmrRepo = getRepository(PlayerMatchResult);
-      const res = await pmrRepo
+      let query = pmrRepo
         .createQueryBuilder('pmr')
-        .select('MIN(match."numRounds")', 'min')
+        .select('MIN(match."numRounds")', 'minRounds')
         .innerJoin(
           (qb) =>
             qb
@@ -179,16 +310,48 @@ export const resolvers: Schema.Resolvers = {
           'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
         )
         .innerJoin('pmr.match', 'match')
-        .where(
-          'pmr."tieOrder" = 0 AND pmr."factionId" = :factionId AND pmr."playerMatId" = :playerMatId',
-          {
-            factionId: faction.id,
-            playerMatId: playerMat.id,
-          }
-        )
-        .getRawOne();
+        .where('pmr."tieOrder" = 0')
+        .andWhere('pmr."factionId" = :factionId', {
+          factionId: faction.id,
+        })
+        .andWhere('pmr."playerMatId" = :playerMatId', {
+          playerMatId: playerMat.id,
+        });
 
-      return res['min'] || 0;
+      if (playerCounts) {
+        query = query.innerJoin(
+          (qb) => {
+            let subQuery = qb
+              .from(Match, 'match')
+              .select('COUNT("matchPlayers".id)', 'playerCount')
+              .addSelect('match.id', 'matchId')
+              .innerJoin('match.playerMatchResults', 'matchPlayers')
+              .groupBy('match.id');
+
+            if (playerCounts) {
+              const filteredPlayerCounts = Array.from(
+                new Set(playerCounts).values()
+              );
+              subQuery = subQuery.having(
+                'COUNT("matchPlayers".id) IN (:...playerCounts)',
+                {
+                  playerCounts: filteredPlayerCounts,
+                }
+              );
+            }
+
+            return subQuery;
+          },
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        );
+      }
+
+      const minRoundsRes = (await query.getRawOne()) as {
+        minRounds: string;
+      };
+
+      return Number.parseInt(minRoundsRes.minRounds) || 0;
     },
   },
 };

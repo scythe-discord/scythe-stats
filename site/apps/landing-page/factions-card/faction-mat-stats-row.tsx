@@ -4,7 +4,7 @@ import { StyledBodyCell } from 'baseui/table-grid';
 
 const CenteredBodyCell = withStyle(StyledBodyCell, {
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 });
 
 interface Props {
@@ -24,9 +24,9 @@ const FactionMatStatsRow: FC<Props> = ({
   totalMatches,
   avgCoinsOnWin,
   avgRoundsOnWin,
-  leastRoundsForWin
+  leastRoundsForWin,
 }) => {
-  const winRate = (100 * totalWins) / totalMatches;
+  const winRate = totalMatches > 0 ? (100 * totalWins) / totalMatches : 0;
 
   return (
     <>

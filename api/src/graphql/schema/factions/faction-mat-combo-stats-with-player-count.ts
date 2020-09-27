@@ -153,7 +153,7 @@ export const resolvers: Schema.Resolvers = {
       };
 
       setCachedVal(
-        'totalMatches',
+        'totalWins',
         faction.id,
         playerMat.id,
         playerCount,
