@@ -16,7 +16,7 @@ const getCachedVal = (
   playerMatId: number,
   playerCount: number
 ) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}_${COMBO_PREFIX}_${fieldName}_${factionId}_${playerMatId}_${playerCount}`;
+  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${COMBO_PREFIX}:${fieldName}:${factionId}:${playerMatId}:${playerCount}`;
   return redisClient.get(cacheKey);
 };
 
@@ -27,7 +27,7 @@ const setCachedVal = (
   playerCount: number,
   val: any
 ) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}_${COMBO_PREFIX}_${fieldName}_${factionId}_${playerMatId}_${playerCount}`;
+  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${COMBO_PREFIX}:${fieldName}:${factionId}:${playerMatId}:${playerCount}`;
   redisClient.set(cacheKey, JSON.stringify(val));
 };
 
@@ -96,7 +96,7 @@ export const resolvers: Schema.Resolvers = {
         playerCount,
         totalMatchesRes.totalMatches
       );
-      return Number.parseInt(totalMatchesRes.totalMatches);
+      return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
     totalWins: async ({ faction, playerMat, playerCount }) => {
       try {
@@ -159,7 +159,7 @@ export const resolvers: Schema.Resolvers = {
         playerCount,
         totalWinsRes.totalWins
       );
-      return Number.parseInt(totalWinsRes.totalWins);
+      return Number.parseInt(totalWinsRes.totalWins) || 0;
     },
     avgCoinsOnWin: async ({ faction, playerMat, playerCount }) => {
       try {

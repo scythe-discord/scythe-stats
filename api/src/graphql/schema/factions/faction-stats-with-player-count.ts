@@ -15,7 +15,7 @@ const getCachedVal = (
   factionId: number,
   playerCount: number
 ) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}_${FACTION_STAT_PREFIX}_${fieldName}_${factionId}_${playerCount}`;
+  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${FACTION_STAT_PREFIX}:${fieldName}:${factionId}:${playerCount}`;
   return redisClient.get(cacheKey);
 };
 
@@ -25,7 +25,7 @@ const setCachedVal = (
   playerCount: number,
   val: any
 ) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}_${FACTION_STAT_PREFIX}_${fieldName}_${factionId}_${playerCount}`;
+  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${FACTION_STAT_PREFIX}:${fieldName}:${factionId}:${playerCount}`;
   redisClient.set(cacheKey, JSON.stringify(val));
 };
 
@@ -83,7 +83,7 @@ export const resolvers: Schema.Resolvers = {
         totalMatchesRes.totalMatches
       );
 
-      return Number.parseInt(totalMatchesRes.totalMatches);
+      return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
     totalWins: async ({ faction: { id }, playerCount }) => {
       try {
@@ -134,7 +134,7 @@ export const resolvers: Schema.Resolvers = {
 
       setCachedVal('totalWins', id, playerCount, totalWinsRes.totalWins);
 
-      return Number.parseInt(totalWinsRes.totalWins);
+      return Number.parseInt(totalWinsRes.totalWins) || 0;
     },
   },
   Faction: {
