@@ -187,7 +187,7 @@ export type FactionMatComboStatsWithPlayerCount = {
   playerCount: Scalars['Int'];
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
-  avgCoinsOnWin: Scalars['Int'];
+  avgCoinsOnWin: Scalars['Float'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin?: Maybe<Scalars['Int']>;
 };

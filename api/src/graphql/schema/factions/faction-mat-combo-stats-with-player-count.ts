@@ -36,7 +36,7 @@ export const typeDef = gql`
     playerCount: Int!
     totalWins: Int!
     totalMatches: Int!
-    avgCoinsOnWin: Int!
+    avgCoinsOnWin: Float!
     avgRoundsOnWin: Float!
     leastRoundsForWin: Int
   }
@@ -171,7 +171,7 @@ export const resolvers: Schema.Resolvers = {
         );
 
         if (cachedVal) {
-          return Number.parseInt(JSON.parse(cachedVal)) || 0;
+          return Number.parseFloat(JSON.parse(cachedVal)) || 0;
         }
       } catch {
         // Pass
@@ -223,7 +223,7 @@ export const resolvers: Schema.Resolvers = {
         totalWinsRes.avgCoins
       );
 
-      return Number.parseInt(totalWinsRes.avgCoins) || 0;
+      return Number.parseFloat(totalWinsRes.avgCoins) || 0;
     },
     avgRoundsOnWin: async ({ faction, playerMat, playerCount }) => {
       try {
@@ -235,7 +235,7 @@ export const resolvers: Schema.Resolvers = {
         );
 
         if (cachedVal) {
-          return Number.parseInt(JSON.parse(cachedVal)) || 0;
+          return Number.parseFloat(JSON.parse(cachedVal)) || 0;
         }
       } catch {
         // Pass
@@ -288,7 +288,7 @@ export const resolvers: Schema.Resolvers = {
         totalWinsRes.avgRounds
       );
 
-      return Number.parseInt(totalWinsRes.avgRounds) || 0;
+      return Number.parseFloat(totalWinsRes.avgRounds) || 0;
     },
     leastRoundsForWin: async ({ faction, playerMat, playerCount }) => {
       try {
