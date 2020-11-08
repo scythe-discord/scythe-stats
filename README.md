@@ -97,8 +97,8 @@ NEXT_PUBLIC_DISCORD_CLIENT_ID=<your application client ID here>
 
 # Relevant if you are interested in having a bot
 BOT_TOKEN=<your bot token here>
-GUILD_ID=<your server's guild ID here>
-VANILLA_LOG_CHANNEL_ID=<your server's #vanilla-win-stats channel ID here>
+GUILD_IDS=<your server(s)'s guild ID(s) here, delimited by ,>
+VANILLA_LOG_CHANNEL_ID=<your server(s)'s #vanilla-win-stats channel ID(s) here, delimited by ,>
 ```
 
 **You will need to replace the Discord related variables** using your own application's information, from the last step.

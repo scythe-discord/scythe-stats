@@ -8,15 +8,11 @@ import {
   Faction,
   PlayerMat,
   DiscordBlacklist,
+  PlayerMatchResult,
 } from '../../../db/entities';
 import { MatchRepository } from '../../../db/repositories';
 import { fetchDiscordMe, getOrdinal } from '../../../common/utils';
-import {
-  BOT_TOKEN,
-  GUILD_ID,
-  VANILLA_LOG_CHANNEL_ID,
-  SITE_URL,
-} from '../../../common/config';
+import { BOT_TOKEN, LOG_CHANNELS, SITE_URL } from '../../../common/config';
 import { deleteKeysByPattern, MATCH_SENSITIVE_CACHE_PREFIX } from '../../utils';
 
 export const typeDef = gql`
@@ -39,6 +35,78 @@ export const typeDef = gql`
   }
 `;
 
+const generateMatchLogMessage = (
+  client: Client,
+  playerMatchResults: PlayerMatchResult[],
+  numRounds: number
+) => {
+  const orderedMatchResults = playerMatchResults.sort((a, b) => {
+    if (a.coins < b.coins) {
+      return 1;
+    } else if (a.coins === b.coins && a.tieOrder > b.tieOrder) {
+      return 1;
+    } else {
+      return -1;
+    }
+  });
+
+  const winner = orderedMatchResults[0];
+
+  const winnerFactionEmoji = client.emojis.cache.find(
+    (emoji) => emoji.name === winner.faction.name
+  );
+
+  if (!winnerFactionEmoji) {
+    throw new Error(`Unable to find emoji for faction ${winner.faction.name}`);
+  }
+  const description = `${
+    winner.player.displayName
+  } won as ${winnerFactionEmoji.toString()} ${
+    winner.playerMat.name
+  } in ${numRounds} ${numRounds === 1 ? 'round' : 'rounds'} with $${
+    winner.coins
+  } ${winner.coins === 1 ? 'coin' : 'coins'}!`;
+
+  let matchEmbed = new MessageEmbed()
+    .setColor('#05A357')
+    .setTitle('Match Log')
+    .setDescription(description)
+    .setURL(SITE_URL)
+    .setFooter(`Via ${SITE_URL}`);
+
+  orderedMatchResults.forEach((result, i) => {
+    let fieldName = `${getOrdinal(i + 1)} place`;
+
+    if (i === 0) {
+      fieldName = ':first_place: ' + fieldName;
+    } else if (i === 1) {
+      fieldName = ':second_place: ' + fieldName;
+    } else if (i === 2) {
+      fieldName = ':third_place: ' + fieldName;
+    }
+
+    const factionEmoji = client.emojis.cache.find(
+      (emoji) => emoji.name === result.faction.name
+    );
+
+    if (!factionEmoji) {
+      throw new Error(
+        `Unable to find emoji for faction ${result.faction.name}`
+      );
+    }
+
+    const fieldValue = `**${
+      result.player.displayName
+    }** - ${factionEmoji.toString()} ${result.playerMat.name} - $${
+      result.coins
+    }`;
+
+    matchEmbed = matchEmbed.addField(fieldName, fieldValue);
+  });
+
+  return matchEmbed;
+};
+
 const postMatchLog = (matchId: number) => {
   const matchRepository = getRepository(Match);
   return matchRepository
@@ -54,18 +122,6 @@ const postMatchLog = (matchId: number) => {
       ],
     })
     .then(({ playerMatchResults, numRounds }) => {
-      const orderedMatchResults = playerMatchResults.sort((a, b) => {
-        if (a.coins < b.coins) {
-          return 1;
-        } else if (a.coins === b.coins && a.tieOrder > b.tieOrder) {
-          return 1;
-        } else {
-          return -1;
-        }
-      });
-
-      const winner = orderedMatchResults[0];
-
       const client = new Client();
 
       client.login(BOT_TOKEN).catch((e) => {
@@ -73,78 +129,30 @@ const postMatchLog = (matchId: number) => {
       });
 
       client.on('ready', () => {
-        const scytheGuild = client.guilds.cache.get(GUILD_ID);
+        LOG_CHANNELS.forEach(({ guildId, channelId }) => {
+          const scytheGuild = client.guilds.cache.get(guildId);
 
-        if (!scytheGuild) {
-          throw new Error(`Unable to find guild with ID ${GUILD_ID}`);
-        }
-
-        const logChannel = scytheGuild.channels.cache.get(
-          VANILLA_LOG_CHANNEL_ID
-        ) as TextChannel;
-
-        if (!logChannel || logChannel.type !== 'text') {
-          throw new Error(
-            `Unable to find text channel with ID ${VANILLA_LOG_CHANNEL_ID}`
-          );
-        }
-
-        const winnerFactionEmoji = client.emojis.cache.find(
-          (emoji) => emoji.name === winner.faction.name
-        );
-
-        if (!winnerFactionEmoji) {
-          throw new Error(
-            `Unable to find emoji for faction ${winner.faction.name}`
-          );
-        }
-        const description = `${
-          winner.player.displayName
-        } won as ${winnerFactionEmoji.toString()} ${
-          winner.playerMat.name
-        } in ${numRounds} ${numRounds === 1 ? 'round' : 'rounds'} with $${
-          winner.coins
-        } ${winner.coins === 1 ? 'coin' : 'coins'}!`;
-
-        let matchEmbed = new MessageEmbed()
-          .setColor('#05A357')
-          .setTitle('Match Log')
-          .setDescription(description)
-          .setURL(SITE_URL)
-          .setFooter(`Via ${SITE_URL}`);
-
-        orderedMatchResults.forEach((result, i) => {
-          let fieldName = `${getOrdinal(i + 1)} place`;
-
-          if (i === 0) {
-            fieldName = ':first_place: ' + fieldName;
-          } else if (i === 1) {
-            fieldName = ':second_place: ' + fieldName;
-          } else if (i === 2) {
-            fieldName = ':third_place: ' + fieldName;
+          if (!scytheGuild) {
+            throw new Error(`Unable to find guild with ID ${guildId}`);
           }
 
-          const factionEmoji = client.emojis.cache.find(
-            (emoji) => emoji.name === result.faction.name
-          );
+          const logChannel = scytheGuild.channels.cache.get(
+            channelId
+          ) as TextChannel;
 
-          if (!factionEmoji) {
-            throw new Error(
-              `Unable to find emoji for faction ${result.faction.name}`
-            );
+          if (!logChannel || logChannel.type !== 'text') {
+            throw new Error(`Unable to find text channel with ID ${channelId}`);
           }
 
-          const fieldValue = `**${
-            result.player.displayName
-          }** - ${factionEmoji.toString()} ${result.playerMat.name} - $${
-            result.coins
-          }`;
+          const matchEmbed = generateMatchLogMessage(
+            client,
+            playerMatchResults,
+            numRounds
+          );
 
-          matchEmbed = matchEmbed.addField(fieldName, fieldValue);
-        });
-
-        logChannel.send(matchEmbed).catch((e) => {
-          console.error('Failed to post match log to channel', e);
+          logChannel.send(matchEmbed).catch((e) => {
+            console.error('Failed to post match log to channel', e);
+          });
         });
       });
     })

@@ -1,6 +1,22 @@
+const getLogChannels = (): Array<{
+  guildId: string;
+  channelId: string;
+}> => {
+  if (!process.env.GUILD_IDS || !process.env.VANILLA_LOG_CHANNEL_IDS) {
+    return [];
+  }
+
+  const allGuildIds = process.env.GUILD_IDS.split(',');
+  const allChannelIds = process.env.VANILLA_LOG_CHANNEL_IDS.split(',');
+
+  return allGuildIds.map((guildId, i) => ({
+    guildId,
+    channelId: allChannelIds[i],
+  }));
+};
+
 export const BOT_TOKEN = process.env.BOT_TOKEN || '';
-export const GUILD_ID = process.env.GUILD_ID || '';
-export const VANILLA_LOG_CHANNEL_ID = process.env.VANILLA_LOG_CHANNEL_ID || '';
+export const LOG_CHANNELS = getLogChannels();
 
 export const DB_NAME = process.env.DB_NAME || '';
 export const DB_USERNAME = process.env.DB_USERNAME || '';
