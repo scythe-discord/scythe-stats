@@ -3,7 +3,7 @@ import {
   PrimaryGeneratedColumn,
   Column,
   OneToMany,
-  Index
+  Index,
 } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
@@ -22,7 +22,7 @@ export default class Player {
 
   @OneToMany(
     () => PlayerMatchResult,
-    playerMatchResult => playerMatchResult.player
+    (playerMatchResult) => playerMatchResult.player
   )
   playerMatchResults: PlayerMatchResult[];
 }

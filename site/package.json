@@ -55,5 +55,8 @@
     "@graphql-codegen/typescript-operations": "^1.13.5",
     "@graphql-codegen/typescript-react-apollo": "^1.13.5",
     "@next/bundle-analyzer": "^9.4.0"
+  },
+  "peerDependencies": {
+    "dotenv": "^8.2.0"
   }
 }

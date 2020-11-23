@@ -6,7 +6,7 @@ import {
   DATE_TXT_WIDTH,
   CIRCLE_SIZE,
   LINE_WIDTH,
-  LINE_HEIGHT
+  LINE_HEIGHT,
 } from './dimensions';
 import TimelineLine from './timeline-line';
 
@@ -17,7 +17,7 @@ const TimelineSpacer: FC = () => {
     <div
       className={css({
         display: 'flex',
-        alignItems: 'stretch'
+        alignItems: 'stretch',
       })}
     >
       <LabelMedium
@@ -27,9 +27,9 @@ const TimelineSpacer: FC = () => {
               flex: `0 0 auto`,
               width: `${DATE_TXT_WIDTH}px`,
               textAlign: 'right',
-              padding: '0 15px 0 0'
-            }
-          }
+              padding: '0 15px 0 0',
+            },
+          },
         }}
       />
       <div
@@ -37,7 +37,7 @@ const TimelineSpacer: FC = () => {
           display: 'flex',
           flex: `0 0 ${CIRCLE_SIZE}px`,
           justifyContent: 'center',
-          padding: '2px 0'
+          padding: '2px 0',
         })}
       >
         <TimelineLine width={LINE_WIDTH} height={LINE_HEIGHT} />

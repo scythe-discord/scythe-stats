@@ -1,3 +1,6 @@
+/*global require, __dirname */
+/* eslint-disable @typescript-eslint/no-var-requires */
+/* eslint-disable node/no-extraneous-require */
 const path = require('path');
 require('dotenv').config({ path: path.resolve(process.cwd(), '..', '.env') });
 

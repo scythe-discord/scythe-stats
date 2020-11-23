@@ -7,7 +7,7 @@ const OFFICIAL_FACTIONS = [
   'Nordic',
   'Rusviet',
   'Albion',
-  'Togawa'
+  'Togawa',
 ];
 
 export class Faction1579851479207 implements MigrationInterface {
@@ -19,7 +19,7 @@ export class Faction1579851479207 implements MigrationInterface {
       undefined
     );
 
-    const factionValues = OFFICIAL_FACTIONS.map(name => `('${name}')`).join(
+    const factionValues = OFFICIAL_FACTIONS.map((name) => `('${name}')`).join(
       ','
     );
 

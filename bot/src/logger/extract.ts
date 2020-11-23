@@ -4,7 +4,7 @@ const SCORES_START_IDX = 3;
 // A crude, hardcoded way to temporarily address significant players
 // with multiple recorded display names
 const PLAYER_REMAPPINGS: { [key: string]: string } = {
-  'Mr. Derp': 'Mr. Der'
+  'Mr. Derp': 'Mr. Der',
 };
 
 interface PlayerScore {
@@ -57,7 +57,7 @@ const getPlayerScore = (playerScoreLog: string): PlayerScore | null => {
     steamId,
     faction,
     playerMat,
-    coins: Number(coins)
+    coins: Number(coins),
   };
 };
 
@@ -95,6 +95,6 @@ export const extractGameLog = (
 
   return {
     numRounds,
-    playerScores
+    playerScores,
   };
 };

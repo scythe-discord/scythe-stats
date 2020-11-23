@@ -1,0 +1,6 @@
+node_modules
+
+api/src/graphql/schema/codegen/generated.ts
+site/lib/graphql/codegen.tsx
+
+site/.next

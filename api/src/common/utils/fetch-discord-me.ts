@@ -1,8 +1,16 @@
 import got from 'got';
 
+import { Context } from '../../graphql/context';
+
 const DISCORD_ME_URL = 'https://discord.com/api/users/@me';
 
-export const fetchDiscordMe = async (context: any) => {
+export const fetchDiscordMe = async (
+  context: Context
+): Promise<{
+  id: string;
+  username: string;
+  discriminator: string;
+} | null> => {
   if (!context || !context.session || !context.session.discordTokenInfo) {
     return null;
   }

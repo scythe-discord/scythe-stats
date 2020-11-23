@@ -23,7 +23,6 @@ router.get('/login', async (req, res) => {
   const authCode = req.query.code;
 
   try {
-    /* eslint-disable @typescript-eslint/camelcase */
     const { body } = await got.post(DISCORD_TOKEN_URL, {
       form: {
         client_id: DISCORD_CLIENT_ID,
@@ -45,7 +44,6 @@ router.get('/login', async (req, res) => {
     if (req.session) {
       req.session.discordTokenInfo = parsedBody;
     }
-    /* eslint-enable @typescript-eslint/camelcase */
   } catch (e) {
     console.error(e);
   }

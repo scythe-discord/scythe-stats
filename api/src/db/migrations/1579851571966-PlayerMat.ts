@@ -7,7 +7,7 @@ const OFFICIAL_PLAYER_MATS = [
   'Mechanical',
   'Agricultural',
   'Militant',
-  'Innovative'
+  'Innovative',
 ];
 
 export class PlayerMat1579851571966 implements MigrationInterface {
@@ -20,7 +20,7 @@ export class PlayerMat1579851571966 implements MigrationInterface {
     );
 
     const playerMatValues = OFFICIAL_PLAYER_MATS.map(
-      name => `('${name}')`
+      (name) => `('${name}')`
     ).join(',');
 
     await queryRunner.query(

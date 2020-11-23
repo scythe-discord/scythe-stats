@@ -20,13 +20,6 @@ const CenteredHeadCell = withStyle(StyledHeadCell, {
   alignItems: 'center',
 });
 
-interface MatchDetailsRow {
-  playerName: string;
-  faction: string;
-  playerMat: string;
-  coins: number;
-}
-
 interface Props {
   selectedMatch?: {
     playerMatchResults: Array<

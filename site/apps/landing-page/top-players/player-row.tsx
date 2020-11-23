@@ -4,7 +4,7 @@ import { StyledBodyCell } from 'baseui/table-grid';
 
 const CenteredBodyCell = withStyle(StyledBodyCell, {
   display: 'flex',
-  alignItems: 'center'
+  alignItems: 'center',
 });
 
 interface Props {
@@ -18,7 +18,7 @@ const PlayerRow: FC<Props> = ({
   striped,
   displayName,
   totalWins,
-  totalMatches
+  totalMatches,
 }) => {
   const winRate = ((100 * totalWins) / totalMatches).toFixed(2);
 

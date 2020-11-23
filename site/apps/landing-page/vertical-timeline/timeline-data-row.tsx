@@ -21,7 +21,7 @@ const TimelineDataRow: FC<Props> = ({
   content,
   rawContentDescriptor,
   date,
-  onClick
+  onClick,
 }) => {
   const [css] = useStyletron();
 
@@ -29,7 +29,7 @@ const TimelineDataRow: FC<Props> = ({
     <div
       className={css({
         display: 'flex',
-        alignItems: 'center'
+        alignItems: 'center',
       })}
     >
       <LabelMedium
@@ -39,9 +39,9 @@ const TimelineDataRow: FC<Props> = ({
               flex: `0 0 auto`,
               width: `${DATE_TXT_WIDTH}px`,
               textAlign: 'right',
-              padding: '0 15px 0 0'
-            }
-          }
+              padding: '0 15px 0 0',
+            },
+          },
         }}
       >
         {format(date)}
@@ -51,7 +51,7 @@ const TimelineDataRow: FC<Props> = ({
           display: 'flex',
           flex: `0 0 ${CIRCLE_SIZE}px`,
           justifyContent: 'center',
-          padding: '0'
+          padding: '0',
         })}
       >
         <TimelineCircle
@@ -64,7 +64,7 @@ const TimelineDataRow: FC<Props> = ({
       </div>
       <div
         className={css({
-          padding: '0 0 0 15px'
+          padding: '0 0 0 15px',
         })}
       >
         {content}
