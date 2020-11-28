@@ -45,7 +45,7 @@ const TierList: FC<Props> = ({
 }) => {
   const [css, theme] = useStyletron();
 
-  const orderedTiers = tiers.tiers.sort((a, b) => {
+  const orderedTiers = [...tiers.tiers].sort((a, b) => {
     if (a.rank > b.rank) {
       return 1;
     } else {

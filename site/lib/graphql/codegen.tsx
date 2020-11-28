@@ -1,7 +1,9 @@
-import gql from 'graphql-tag';
-import * as ApolloReactCommon from '@apollo/react-common';
-import * as ApolloReactHooks from '@apollo/react-hooks';
+import { gql } from '@apollo/client';
+import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
+export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
+export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -14,7 +16,7 @@ export type Scalars = {
 };
 
 export type Query = {
-   __typename?: 'Query';
+  __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
   discordMe?: Maybe<DiscordUser>;
   playerMat: PlayerMat;
@@ -65,7 +67,7 @@ export type QueryMatchesArgs = {
 };
 
 export type Mutation = {
-   __typename?: 'Mutation';
+  __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
   logMatch?: Maybe<Match>;
 };
@@ -84,7 +86,7 @@ export type Node = {
 };
 
 export type PageInfo = {
-   __typename?: 'PageInfo';
+  __typename?: 'PageInfo';
   hasNextPage?: Maybe<Scalars['Boolean']>;
   hasPreviousPage?: Maybe<Scalars['Boolean']>;
   startCursor?: Maybe<Scalars['String']>;
@@ -92,27 +94,27 @@ export type PageInfo = {
 };
 
 export type DiscordUser = {
-   __typename?: 'DiscordUser';
+  __typename?: 'DiscordUser';
   id: Scalars['String'];
   username: Scalars['String'];
   discriminator: Scalars['String'];
 };
 
 export type PlayerMat = {
-   __typename?: 'PlayerMat';
+  __typename?: 'PlayerMat';
   id: Scalars['Int'];
   name: Scalars['String'];
   abbrev: Scalars['String'];
 };
 
 export type PlayerFactionStats = {
-   __typename?: 'PlayerFactionStats';
+  __typename?: 'PlayerFactionStats';
   player: Player;
   totalWins: Scalars['Int'];
 };
 
 export type Faction = {
-   __typename?: 'Faction';
+  __typename?: 'Faction';
   id: Scalars['Int'];
   name: Scalars['String'];
   totalWins: Scalars['Int'];
@@ -139,7 +141,7 @@ export type FactionTopPlayersArgs = {
 };
 
 export type FactionMatCombo = {
-   __typename?: 'FactionMatCombo';
+  __typename?: 'FactionMatCombo';
   faction: Faction;
   playerMat: PlayerMat;
   topPlayers: Array<PlayerFactionStats>;
@@ -183,7 +185,7 @@ export type FactionMatComboLeastRoundsForWinArgs = {
 };
 
 export type FactionMatComboStatsWithPlayerCount = {
-   __typename?: 'FactionMatComboStatsWithPlayerCount';
+  __typename?: 'FactionMatComboStatsWithPlayerCount';
   playerCount: Scalars['Int'];
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
@@ -193,14 +195,14 @@ export type FactionMatComboStatsWithPlayerCount = {
 };
 
 export type FactionStatsWithPlayerCount = {
-   __typename?: 'FactionStatsWithPlayerCount';
+  __typename?: 'FactionStatsWithPlayerCount';
   playerCount: Scalars['Int'];
   totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
 };
 
 export type Player = Node & {
-   __typename?: 'Player';
+  __typename?: 'Player';
   id: Scalars['ID'];
   displayName: Scalars['String'];
   steamId?: Maybe<Scalars['String']>;
@@ -221,19 +223,19 @@ export type PlayerTotalMatchesArgs = {
 };
 
 export type PlayerConnection = {
-   __typename?: 'PlayerConnection';
+  __typename?: 'PlayerConnection';
   edges: Array<PlayerEdge>;
   pageInfo: PageInfo;
 };
 
 export type PlayerEdge = {
-   __typename?: 'PlayerEdge';
+  __typename?: 'PlayerEdge';
   cursor: Scalars['String'];
   node: Player;
 };
 
 export type Match = Node & {
-   __typename?: 'Match';
+  __typename?: 'Match';
   id: Scalars['ID'];
   datePlayed: Scalars['String'];
   numRounds: Scalars['Int'];
@@ -242,19 +244,19 @@ export type Match = Node & {
 };
 
 export type MatchConnection = {
-   __typename?: 'MatchConnection';
+  __typename?: 'MatchConnection';
   edges: Array<MatchEdge>;
   pageInfo: PageInfo;
 };
 
 export type MatchEdge = {
-   __typename?: 'MatchEdge';
+  __typename?: 'MatchEdge';
   cursor: Scalars['String'];
   node: Match;
 };
 
 export type PlayerMatchResult = {
-   __typename?: 'PlayerMatchResult';
+  __typename?: 'PlayerMatchResult';
   id: Scalars['Int'];
   player: Player;
   faction: Faction;
@@ -272,7 +274,7 @@ export type PlayerMatchResultInput = {
 };
 
 export type Tier = {
-   __typename?: 'Tier';
+  __typename?: 'Tier';
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
@@ -285,12 +287,12 @@ export enum CacheControlScope {
 }
 
 
-export type LogMatchMutationVariables = {
+export type LogMatchMutationVariables = Exact<{
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput>;
   shouldPostMatchLog: Scalars['Boolean'];
-};
+}>;
 
 
 export type LogMatchMutation = (
@@ -318,7 +320,7 @@ export type LogMatchMutation = (
   )> }
 );
 
-export type DiscordMeQueryVariables = {};
+export type DiscordMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type DiscordMeQuery = (
@@ -329,7 +331,7 @@ export type DiscordMeQuery = (
   )> }
 );
 
-export type FactionStatsQueryVariables = {};
+export type FactionStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type FactionStatsQuery = (
@@ -353,10 +355,10 @@ export type FactionStatsQuery = (
   )> }
 );
 
-export type FactionTopPlayersQueryVariables = {
+export type FactionTopPlayersQueryVariables = Exact<{
   numTopPlayers: Scalars['Int'];
   playerCounts: Array<Scalars['Int']>;
-};
+}>;
 
 
 export type FactionTopPlayersQuery = (
@@ -375,10 +377,10 @@ export type FactionTopPlayersQuery = (
   )> }
 );
 
-export type MatchesQueryVariables = {
+export type MatchesQueryVariables = Exact<{
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
-};
+}>;
 
 
 export type MatchesQuery = (
@@ -415,7 +417,7 @@ export type MatchesQuery = (
   ) }
 );
 
-export type PlayerMatsQueryVariables = {};
+export type PlayerMatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
 export type PlayerMatsQuery = (
@@ -426,11 +428,11 @@ export type PlayerMatsQuery = (
   )> }
 );
 
-export type PlayersByNameQueryVariables = {
+export type PlayersByNameQueryVariables = Exact<{
   startsWith: Scalars['String'];
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
-};
+}>;
 
 
 export type PlayersByNameQuery = (
@@ -447,9 +449,9 @@ export type PlayersByNameQuery = (
   ) }
 );
 
-export type TiersQueryVariables = {
+export type TiersQueryVariables = Exact<{
   numTopPlayers: Scalars['Int'];
-};
+}>;
 
 
 export type TiersQuery = (
@@ -478,11 +480,11 @@ export type TiersQuery = (
   )> }
 );
 
-export type TopPlayersQueryVariables = {
+export type TopPlayersQueryVariables = Exact<{
   first: Scalars['Int'];
   after?: Maybe<Scalars['String']>;
   fromDate?: Maybe<Scalars['String']>;
-};
+}>;
 
 
 export type TopPlayersQuery = (
@@ -502,7 +504,12 @@ export type TopPlayersQuery = (
 
 export const LogMatchDocument = gql`
     mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $shouldPostMatchLog: Boolean!) {
-  logMatch(numRounds: $numRounds, datePlayed: $datePlayed, playerMatchResults: $playerMatchResults, shouldPostMatchLog: $shouldPostMatchLog) {
+  logMatch(
+    numRounds: $numRounds
+    datePlayed: $datePlayed
+    playerMatchResults: $playerMatchResults
+    shouldPostMatchLog: $shouldPostMatchLog
+  ) {
     id
     datePlayed
     numRounds
@@ -530,7 +537,7 @@ export const LogMatchDocument = gql`
   }
 }
     `;
-export type LogMatchMutationFn = ApolloReactCommon.MutationFunction<LogMatchMutation, LogMatchMutationVariables>;
+export type LogMatchMutationFn = Apollo.MutationFunction<LogMatchMutation, LogMatchMutationVariables>;
 
 /**
  * __useLogMatchMutation__
@@ -552,12 +559,12 @@ export type LogMatchMutationFn = ApolloReactCommon.MutationFunction<LogMatchMuta
  *   },
  * });
  */
-export function useLogMatchMutation(baseOptions?: ApolloReactHooks.MutationHookOptions<LogMatchMutation, LogMatchMutationVariables>) {
-        return ApolloReactHooks.useMutation<LogMatchMutation, LogMatchMutationVariables>(LogMatchDocument, baseOptions);
+export function useLogMatchMutation(baseOptions?: Apollo.MutationHookOptions<LogMatchMutation, LogMatchMutationVariables>) {
+        return Apollo.useMutation<LogMatchMutation, LogMatchMutationVariables>(LogMatchDocument, baseOptions);
       }
 export type LogMatchMutationHookResult = ReturnType<typeof useLogMatchMutation>;
-export type LogMatchMutationResult = ApolloReactCommon.MutationResult<LogMatchMutation>;
-export type LogMatchMutationOptions = ApolloReactCommon.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
+export type LogMatchMutationResult = Apollo.MutationResult<LogMatchMutation>;
+export type LogMatchMutationOptions = Apollo.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
 export const DiscordMeDocument = gql`
     query discordMe {
   discordMe {
@@ -583,15 +590,15 @@ export const DiscordMeDocument = gql`
  *   },
  * });
  */
-export function useDiscordMeQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
-        return ApolloReactHooks.useQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+export function useDiscordMeQuery(baseOptions?: Apollo.QueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
+        return Apollo.useQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
       }
-export function useDiscordMeLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+export function useDiscordMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
+          return Apollo.useLazyQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
         }
 export type DiscordMeQueryHookResult = ReturnType<typeof useDiscordMeQuery>;
 export type DiscordMeLazyQueryHookResult = ReturnType<typeof useDiscordMeLazyQuery>;
-export type DiscordMeQueryResult = ApolloReactCommon.QueryResult<DiscordMeQuery, DiscordMeQueryVariables>;
+export type DiscordMeQueryResult = Apollo.QueryResult<DiscordMeQuery, DiscordMeQueryVariables>;
 export const FactionStatsDocument = gql`
     query factionStats {
   factions {
@@ -635,15 +642,15 @@ export const FactionStatsDocument = gql`
  *   },
  * });
  */
-export function useFactionStatsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
-        return ApolloReactHooks.useQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
+export function useFactionStatsQuery(baseOptions?: Apollo.QueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
+        return Apollo.useQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
       }
-export function useFactionStatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
+export function useFactionStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
+          return Apollo.useLazyQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
         }
 export type FactionStatsQueryHookResult = ReturnType<typeof useFactionStatsQuery>;
 export type FactionStatsLazyQueryHookResult = ReturnType<typeof useFactionStatsLazyQuery>;
-export type FactionStatsQueryResult = ApolloReactCommon.QueryResult<FactionStatsQuery, FactionStatsQueryVariables>;
+export type FactionStatsQueryResult = Apollo.QueryResult<FactionStatsQuery, FactionStatsQueryVariables>;
 export const FactionTopPlayersDocument = gql`
     query factionTopPlayers($numTopPlayers: Int!, $playerCounts: [Int!]!) {
   factions {
@@ -677,15 +684,15 @@ export const FactionTopPlayersDocument = gql`
  *   },
  * });
  */
-export function useFactionTopPlayersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-        return ApolloReactHooks.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+export function useFactionTopPlayersQuery(baseOptions: Apollo.QueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
+        return Apollo.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
       }
-export function useFactionTopPlayersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+export function useFactionTopPlayersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
+          return Apollo.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
         }
 export type FactionTopPlayersQueryHookResult = ReturnType<typeof useFactionTopPlayersQuery>;
 export type FactionTopPlayersLazyQueryHookResult = ReturnType<typeof useFactionTopPlayersLazyQuery>;
-export type FactionTopPlayersQueryResult = ApolloReactCommon.QueryResult<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>;
+export type FactionTopPlayersQueryResult = Apollo.QueryResult<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>;
 export const MatchesDocument = gql`
     query matches($first: Int!, $after: String) {
   matches(first: $first, after: $after) {
@@ -742,15 +749,15 @@ export const MatchesDocument = gql`
  *   },
  * });
  */
-export function useMatchesQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
-        return ApolloReactHooks.useQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+export function useMatchesQuery(baseOptions: Apollo.QueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
+        return Apollo.useQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
       }
-export function useMatchesLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+export function useMatchesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
+          return Apollo.useLazyQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
         }
 export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
 export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
-export type MatchesQueryResult = ApolloReactCommon.QueryResult<MatchesQuery, MatchesQueryVariables>;
+export type MatchesQueryResult = Apollo.QueryResult<MatchesQuery, MatchesQueryVariables>;
 export const PlayerMatsDocument = gql`
     query playerMats {
   playerMats {
@@ -775,15 +782,15 @@ export const PlayerMatsDocument = gql`
  *   },
  * });
  */
-export function usePlayerMatsQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
-        return ApolloReactHooks.useQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+export function usePlayerMatsQuery(baseOptions?: Apollo.QueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
+        return Apollo.useQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
       }
-export function usePlayerMatsLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+export function usePlayerMatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
+          return Apollo.useLazyQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
         }
 export type PlayerMatsQueryHookResult = ReturnType<typeof usePlayerMatsQuery>;
 export type PlayerMatsLazyQueryHookResult = ReturnType<typeof usePlayerMatsLazyQuery>;
-export type PlayerMatsQueryResult = ApolloReactCommon.QueryResult<PlayerMatsQuery, PlayerMatsQueryVariables>;
+export type PlayerMatsQueryResult = Apollo.QueryResult<PlayerMatsQuery, PlayerMatsQueryVariables>;
 export const PlayersByNameDocument = gql`
     query playersByName($startsWith: String!, $first: Int!, $after: String) {
   playersByName(startsWith: $startsWith, first: $first, after: $after) {
@@ -816,15 +823,15 @@ export const PlayersByNameDocument = gql`
  *   },
  * });
  */
-export function usePlayersByNameQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
-        return ApolloReactHooks.useQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+export function usePlayersByNameQuery(baseOptions: Apollo.QueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
+        return Apollo.useQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
       }
-export function usePlayersByNameLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+export function usePlayersByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
+          return Apollo.useLazyQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
         }
 export type PlayersByNameQueryHookResult = ReturnType<typeof usePlayersByNameQuery>;
 export type PlayersByNameLazyQueryHookResult = ReturnType<typeof usePlayersByNameLazyQuery>;
-export type PlayersByNameQueryResult = ApolloReactCommon.QueryResult<PlayersByNameQuery, PlayersByNameQueryVariables>;
+export type PlayersByNameQueryResult = Apollo.QueryResult<PlayersByNameQuery, PlayersByNameQueryVariables>;
 export const TiersDocument = gql`
     query tiers($numTopPlayers: Int!) {
   tiers {
@@ -875,15 +882,15 @@ export const TiersDocument = gql`
  *   },
  * });
  */
-export function useTiersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TiersQuery, TiersQueryVariables>) {
-        return ApolloReactHooks.useQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+export function useTiersQuery(baseOptions: Apollo.QueryHookOptions<TiersQuery, TiersQueryVariables>) {
+        return Apollo.useQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
       }
-export function useTiersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TiersQuery, TiersQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+export function useTiersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TiersQuery, TiersQueryVariables>) {
+          return Apollo.useLazyQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
         }
 export type TiersQueryHookResult = ReturnType<typeof useTiersQuery>;
 export type TiersLazyQueryHookResult = ReturnType<typeof useTiersLazyQuery>;
-export type TiersQueryResult = ApolloReactCommon.QueryResult<TiersQuery, TiersQueryVariables>;
+export type TiersQueryResult = Apollo.QueryResult<TiersQuery, TiersQueryVariables>;
 export const TopPlayersDocument = gql`
     query topPlayers($first: Int!, $after: String, $fromDate: String) {
   playersByWins(first: $first, after: $after, fromDate: $fromDate) {
@@ -918,12 +925,12 @@ export const TopPlayersDocument = gql`
  *   },
  * });
  */
-export function useTopPlayersQuery(baseOptions?: ApolloReactHooks.QueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
-        return ApolloReactHooks.useQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+export function useTopPlayersQuery(baseOptions: Apollo.QueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
+        return Apollo.useQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
       }
-export function useTopPlayersLazyQuery(baseOptions?: ApolloReactHooks.LazyQueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
-          return ApolloReactHooks.useLazyQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+export function useTopPlayersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
+          return Apollo.useLazyQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
         }
 export type TopPlayersQueryHookResult = ReturnType<typeof useTopPlayersQuery>;
 export type TopPlayersLazyQueryHookResult = ReturnType<typeof useTopPlayersLazyQuery>;
-export type TopPlayersQueryResult = ApolloReactCommon.QueryResult<TopPlayersQuery, TopPlayersQueryVariables>;
+export type TopPlayersQueryResult = Apollo.QueryResult<TopPlayersQuery, TopPlayersQueryVariables>;

@@ -1,5 +1,5 @@
 import { FC, useState, useCallback, useReducer, Reducer } from 'react';
-import { useApolloClient } from '@apollo/react-hooks';
+import { useApolloClient } from '@apollo/client';
 import { useStyletron } from 'baseui';
 import { KIND } from 'baseui/button';
 import { toaster } from 'baseui/toast';
