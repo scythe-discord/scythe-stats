@@ -1,16 +1,23 @@
-import { Request, Response, Express } from 'express';
+import { Request, Response } from 'express';
+import { Session } from 'express-session';
 
 import { GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
 
 export interface Context {
   isAdmin: boolean;
   clientIp?: string | string[];
-  session?: Express.Session;
+  session?: Session;
   req: Request;
   res: Response;
 }
 
-export const resolveContext = (req: Request, res: Response): Context => {
+export const resolveContext = ({
+  req,
+  res,
+}: {
+  req: Request;
+  res: Response;
+}): Context => {
   // Is this a great way to handle this...?
   // Nope! But it'll do for now
   let isAdmin = false;
