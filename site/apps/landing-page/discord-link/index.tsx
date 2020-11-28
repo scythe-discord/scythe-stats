@@ -1,7 +1,7 @@
 import { StyledLink } from 'baseui/link';
 import { useStyletron } from 'styletron-react';
 
-export default (props: any) => {
+export const DiscordLink = (props: any) => {
   const [css] = useStyletron();
   return (
     <StyledLink

@@ -11,7 +11,7 @@ import { LabelLarge } from 'baseui/typography';
 import StandardNavItems from './standard-nav-items';
 import CondensedNavItems from './condensed-nav-items';
 
-export default () => {
+export const  SiteHeader = () => {
   const [css, theme] = useStyletron();
 
   return (

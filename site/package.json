@@ -29,8 +29,8 @@
     "classnames": "^2.2.6",
     "graphql": "^15.4.0",
     "moment": "^2.25.3",
-    "next": "^9.4.0",
-    "next-with-apollo": "^5.0.1",
+    "next": "^10.0.3",
+    "next-with-apollo": "^5.1.0",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
     "react-content-loader": "^5.0.4",
@@ -47,7 +47,7 @@
     "@graphql-codegen/typescript": "^1.18.1",
     "@graphql-codegen/typescript-operations": "^1.17.12",
     "@graphql-codegen/typescript-react-apollo": "^2.2.1",
-    "@next/bundle-analyzer": "^9.4.0"
+    "@next/bundle-analyzer": "^10.0.3"
   },
   "peerDependencies": {
     "dotenv": "^8.2.0"
