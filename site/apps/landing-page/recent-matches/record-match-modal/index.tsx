@@ -255,6 +255,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         className={css({
           display: 'flex',
           alignItems: 'center',
+          borderTop: `1px solid ${theme.colors.primary600}`,
         })}
       >
         <small

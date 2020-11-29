@@ -47,7 +47,7 @@ const PlayerCountFilter: FC<Props> = ({
         mode="checkbox"
         selected={selectedPlayerCountsArray}
         size={SIZE.mini}
-        kind={KIND.secondary}
+        kind={KIND.tertiary}
         onClick={(_, i) => {
           onClickPlayerCount(i + 2);
         }}

@@ -221,6 +221,13 @@ const RecordMatchRow: FC<Props> = ({
         size={SIZE.compact}
         shape={SHAPE.square}
         onClick={() => onPlayerEntryChange({ type: 'remove', id })}
+        overrides={{
+          Root: {
+            style: {
+              flex: '0 0 auto',
+            }
+          }
+        }}
       >
         <Delete size={24} />
       </Button>

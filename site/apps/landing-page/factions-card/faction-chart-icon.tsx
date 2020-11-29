@@ -10,10 +10,11 @@ interface Props {
   payload?: {
     value: number;
   };
-  // ... where the last two optional props are actually just here to be removed
+  // ... where the last optional props are actually just here to be removed
   // because React doesn't recognize these attributes
   visibleTicksCount?: any;
   verticalAnchor?: any;
+  tickFormatter?: any;
   factions: Pick<GQL.Faction, 'id' | 'name'>[];
   selectedFactionIdx: number;
   onClickFaction: (idx: number) => void;
@@ -28,6 +29,8 @@ const FactionChartIcon: FC<Props> = ({
   visibleTicksCount,
   // eslint-disable-next-line
   verticalAnchor,
+  // eslint-disable-next-line
+  tickFormatter,
   ...props
 }) => {
   const onClick = useCallback(() => {

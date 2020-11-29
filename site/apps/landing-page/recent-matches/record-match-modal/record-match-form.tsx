@@ -60,7 +60,7 @@ const RecordMatchForm: FC<Props> = ({
           }}
           autoFocus
           overrides={{
-            InputContainer: {
+            Root: {
               style: {
                 width: '165px',
               },
