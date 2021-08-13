@@ -29,7 +29,7 @@
     "classnames": "^2.2.6",
     "graphql": "^15.4.0",
     "moment": "^2.29.1",
-    "next": "^10.0.3",
+    "next": "^11.1.0",
     "next-with-apollo": "^5.1.0",
     "nprogress": "^0.2.0",
     "react": "^16.13.1",
