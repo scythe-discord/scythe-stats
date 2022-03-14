@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation joinBidGame($bidGameId: Int!) {
+  joinBidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}

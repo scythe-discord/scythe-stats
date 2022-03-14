@@ -1,7 +1,8 @@
 query discordMe {
-  discordMe {
+  me {
     id
     username
     discriminator
+    discordId
   }
 }

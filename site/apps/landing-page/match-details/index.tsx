@@ -4,9 +4,8 @@ import { useStyletron, withStyle } from 'baseui';
 import { StyledTable, StyledHeadCell } from 'baseui/table-grid';
 import classNames from 'classnames';
 
-import GQL from 'lib/graphql';
-
 import MatchRow from './match-row';
+import { MatchesQuery } from 'lib/graphql/codegen';
 
 const TIMELINE_WIDTH = 550;
 
@@ -15,27 +14,27 @@ const TIMELINE_WIDTH = 550;
 // Height reflects a max 7 player game
 const MIN_MATCH_DETAILS_HEIGHT = 315;
 
-const CenteredHeadCell = withStyle(StyledHeadCell, {
+const CenteredHeadCell = withStyle<typeof StyledHeadCell>(StyledHeadCell, {
   display: 'flex',
   alignItems: 'center',
 });
 
 interface Props {
-  selectedMatch?: {
-    playerMatchResults: Array<
-      Pick<GQL.PlayerMatchResult, 'id' | 'coins' | 'tieOrder'> & {
-        player: Pick<GQL.Player, 'id' | 'displayName' | 'steamId'>;
-        faction: Pick<GQL.Faction, 'id' | 'name'>;
-        playerMat: Pick<GQL.PlayerMat, 'id' | 'name'>;
-      }
-    >;
-    winner: Pick<GQL.PlayerMatchResult, 'id'>;
-  };
+  selectedMatch?: Pick<
+    MatchesQuery['matches']['edges'][number]['node'],
+    'playerMatchResults'
+  >;
   className?: string;
   isLoading?: boolean;
+  bidGamePage: boolean;
 }
 
-const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
+const MatchDetails: FC<Props> = ({
+  className,
+  selectedMatch,
+  isLoading,
+  bidGamePage,
+}) => {
   const [css, theme] = useStyletron();
   if (isLoading || !selectedMatch) {
     return (
@@ -70,36 +69,36 @@ const MatchDetails: FC<Props> = ({ className, selectedMatch, isLoading }) => {
       faction: { name: factionName },
       playerMat: { name: playerMatName },
       coins,
-      tieOrder,
+      rank,
+      bidGamePlayer,
     }) => {
+      const bidCoins = bidGamePlayer?.bid ? bidGamePlayer.bid.coins : undefined;
+
       return {
         id,
         playerName: displayName,
         faction: factionName,
         playerMat: playerMatName,
         coins,
-        tieOrder,
+        rank,
+        bidCoins,
       };
     }
   );
 
-  matchDetailRows.sort((a, b) => {
-    if (a.coins < b.coins || (a.coins === b.coins && a.tieOrder > b.tieOrder)) {
-      return 1;
-    }
-
-    return -1;
-  });
+  matchDetailRows.sort((a, b) => a.rank - b.rank);
 
   return (
     <StyledTable
       className={classNames(
-        css({
-          minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
-        }),
+        bidGamePage
+          ? css({ gridAutoRows: '50px' })
+          : css({
+              minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
+            }),
         className
       )}
-      $gridTemplateColumns="auto 150px 150px 75px"
+      $gridTemplateColumns="auto 150px 150px 115px"
     >
       <CenteredHeadCell>Player</CenteredHeadCell>
       <CenteredHeadCell>Faction</CenteredHeadCell>

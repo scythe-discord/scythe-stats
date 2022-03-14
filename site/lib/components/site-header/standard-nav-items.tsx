@@ -1,4 +1,4 @@
-import { ReactNode, FC } from 'react';
+import { ReactNode, FC, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
@@ -7,9 +7,17 @@ import Link from 'next/link';
 import classNames from 'classnames';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faGithub, faDiscord } from '@fortawesome/free-brands-svg-icons';
+import {
+  Button,
+  KIND as BUTTON_KIND,
+  SIZE as BUTTON_SIZE,
+} from 'baseui/button';
 
 import DiscordAuthItem from './discord-auth-item';
 import BuyMeACoffee from './buy-me-a-coffee';
+import { useCreateBidGameMutation } from 'lib/graphql/codegen';
+import { useRouter } from 'next/router';
+import { AuthContext, DISCORD_OAUTH_URL } from '../auth';
 
 const SpacedNavigationItem = ({
   className,
@@ -65,6 +73,9 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
 
 const StandardNavItems: FC = () => {
   const [css] = useStyletron();
+  const [mutate, { loading }] = useCreateBidGameMutation();
+  const router = useRouter();
+  const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
 
   return (
     <>
@@ -79,12 +90,37 @@ const StandardNavItems: FC = () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <Link href="/bid" passHref={true}>
-          <StyledLink>Bidding</StyledLink>
-        </Link>
+        <Button
+          kind={BUTTON_KIND.secondary}
+          size={BUTTON_SIZE.compact}
+          $as="a"
+          href={DISCORD_OAUTH_URL}
+          overrides={{
+            BaseButton: {
+              style: {
+                fontSize: '16px',
+              },
+            },
+          }}
+          onClick={async (e) => {
+            if (!discordMe) {
+              return;
+            }
+
+            e.preventDefault();
+            const { data } = await mutate();
+
+            if (data?.createBidGame.id) {
+              router.push(`/bid/${data.createBidGame.id}`);
+            }
+          }}
+          isLoading={loading || isAuthLoading}
+        >
+          Create Bid Game
+        </Button>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <DiscordAuthItem />
+        <DiscordAuthItem isNavItem />
       </SpacedNavigationItem>
       <StyledNavigationItem
         className={css({

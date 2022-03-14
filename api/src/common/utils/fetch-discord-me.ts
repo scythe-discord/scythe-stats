@@ -1,15 +1,17 @@
 import got from 'got';
 
 import { Context } from '../../graphql/context';
+import { upsertUser } from './upsert-user';
 
 const DISCORD_ME_URL = 'https://discord.com/api/users/@me';
 
 export const fetchDiscordMe = async (
   context: Context
 ): Promise<{
-  id: string;
+  id: number;
   username: string;
   discriminator: string;
+  discordId: string;
 } | null> => {
   if (!context || !context.session || !context.session.discordTokenInfo) {
     return null;
@@ -21,7 +23,11 @@ export const fetchDiscordMe = async (
         Authorization: `${context.session.discordTokenInfo.token_type} ${context.session.discordTokenInfo.access_token}`,
       },
     });
-    const { id, username, discriminator } = JSON.parse(body) as {
+    const {
+      id: discordId,
+      username,
+      discriminator,
+    } = JSON.parse(body) as {
       id: string;
       username: string;
       avatar: string;
@@ -33,10 +39,14 @@ export const fetchDiscordMe = async (
       premium_type: number;
     };
 
+    const userId = await upsertUser({ discordId, username, discriminator });
+    context.session.userId = userId;
+
     return {
-      id,
+      id: userId,
       username,
       discriminator,
+      discordId,
     };
   } catch (e) {
     // Token is no longer valid - invalidate stored session info

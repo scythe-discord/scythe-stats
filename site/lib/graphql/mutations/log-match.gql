@@ -3,18 +3,27 @@ mutation logMatch(
   $datePlayed: String!
   $playerMatchResults: [PlayerMatchResultInput!]!
   $shouldPostMatchLog: Boolean!
+  $bidGameId: Int
 ) {
   logMatch(
     numRounds: $numRounds
     datePlayed: $datePlayed
     playerMatchResults: $playerMatchResults
     shouldPostMatchLog: $shouldPostMatchLog
+    bidGameId: $bidGameId
   ) {
     id
     datePlayed
     numRounds
     playerMatchResults {
       id
+      bidGamePlayer {
+        id
+        bid {
+          id
+          coins
+        }
+      }
       player {
         id
         displayName
@@ -29,7 +38,7 @@ mutation logMatch(
         name
       }
       coins
-      tieOrder
+      rank
     }
     winner {
       id

@@ -11,10 +11,13 @@ import GQL from 'lib/graphql';
 
 import { PlayerEntry, PlayerEntryAction } from './player-entries';
 import RecordMatchRow from './record-match-row';
+import { BidGameFragment } from 'lib/graphql/codegen';
+import { LabelSmall } from 'baseui/typography';
 
 interface Props {
   factions: Pick<GQL.Faction, 'id' | 'name'>[];
   playerMats: Pick<GQL.PlayerMat, 'id' | 'name'>[];
+  bidGame?: BidGameFragment;
   playerEntries: PlayerEntry[];
   formError?: string | null;
   numRounds: string;
@@ -22,6 +25,8 @@ interface Props {
   onNumRoundsChange: Dispatch<SetStateAction<string>>;
   onShouldPostMatchLogChange: Dispatch<SetStateAction<boolean>>;
   onPlayerEntryChange: Dispatch<PlayerEntryAction>;
+  idToPossibleRankMap: Record<number, number[]>;
+  isBidGame?: boolean;
 }
 
 const RecordMatchForm: FC<Props> = ({
@@ -34,6 +39,8 @@ const RecordMatchForm: FC<Props> = ({
   onNumRoundsChange,
   onShouldPostMatchLogChange,
   onPlayerEntryChange,
+  idToPossibleRankMap,
+  isBidGame,
 }) => {
   const [css] = useStyletron();
 
@@ -68,38 +75,63 @@ const RecordMatchForm: FC<Props> = ({
           }}
         />
       </FormControl>
-      <FormControl label={() => 'Players'}>
-        <>
-          {playerEntries.map(({ id, player, faction, playerMat, coins }) => (
-            <div
-              key={id}
-              className={css({
-                margin: '10px 0',
-              })}
-            >
-              <RecordMatchRow
-                id={id}
-                factions={factions}
-                playerMats={playerMats}
-                player={player}
-                faction={faction}
-                playerMat={playerMat}
-                coins={coins}
-                onPlayerEntryChange={onPlayerEntryChange}
-              />
-            </div>
-          ))}
-        </>
+      <FormControl>
+        <div
+          className={css({
+            display: 'grid',
+            gridTemplateColumns: '60px 2fr 1fr 1fr 1fr auto',
+            gap: '10px',
+          })}
+        >
+          <LabelSmall>Rank</LabelSmall>
+          <LabelSmall>Player</LabelSmall>
+          <LabelSmall>Faction</LabelSmall>
+          <LabelSmall>Player Mat</LabelSmall>
+          <LabelSmall>Coins</LabelSmall>
+          {isBidGame ? <LabelSmall>Final Score</LabelSmall> : <div />}
+          {playerEntries.map(
+            ({
+              id,
+              player,
+              faction,
+              playerMat,
+              coins,
+              rank,
+              bidCoins,
+              bidGamePlayerId,
+            }) => {
+              return (
+                <RecordMatchRow
+                  key={id}
+                  id={id}
+                  factions={factions}
+                  playerMats={playerMats}
+                  player={player}
+                  faction={faction}
+                  playerMat={playerMat}
+                  coins={coins}
+                  onPlayerEntryChange={onPlayerEntryChange}
+                  rank={rank}
+                  possibleRanks={idToPossibleRankMap[id]}
+                  bidCoins={bidCoins}
+                  bidGamePlayerId={bidGamePlayerId}
+                />
+              );
+            }
+          )}
+        </div>
       </FormControl>
-      <Button
-        size={BUTTON_SIZE.compact}
-        kind={KIND.secondary}
-        startEnhancer={() => <Plus size={14} />}
-        disabled={playerEntries.length >= 7}
-        onClick={() => onPlayerEntryChange({ type: 'add' })}
-      >
-        Add a Player
-      </Button>
+      {!isBidGame && (
+        <Button
+          size={BUTTON_SIZE.compact}
+          kind={KIND.secondary}
+          startEnhancer={() => <Plus size={14} />}
+          disabled={playerEntries.length >= 7}
+          onClick={() => onPlayerEntryChange({ type: 'add' })}
+        >
+          Add a Player
+        </Button>
+      )}
       <Checkbox
         overrides={{
           Root: {

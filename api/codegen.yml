@@ -20,3 +20,7 @@ generates:
         FactionMatComboStatsWithPlayerCount: '../../mappers#FactionMatComboStatsWithPlayerCountBase'
         BidPreset: '../../mappers#BidPresetModel'
         BidPresetSetting: '../../mappers#BidPresetSettingModel'
+        BidGame: '../../mappers#BidGameModel'
+        Bid: '../../mappers#BidModel'
+        BidGameCombo: '../../mappers#BidGameComboModel'
+        BidGamePlayer: '../../mappers#BidGamePlayerModel'

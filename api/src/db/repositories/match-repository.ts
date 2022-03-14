@@ -1,39 +1,28 @@
 import { EntityRepository, Repository, EntityManager } from 'typeorm';
 
 import { delay } from '../../common/utils';
-import { Match, PlayerMatchResult, Faction, PlayerMat } from '../entities';
+import {
+  BidGameStatus,
+  PlayerMatchResultInput,
+} from '../../graphql/schema/codegen/generated';
+import {
+  Match,
+  PlayerMatchResult,
+  Faction,
+  PlayerMat,
+  BidGame,
+} from '../entities';
+import BidGamePlayer from '../entities/bid-game-player';
 
 import PlayerRepository from './player-repository';
 
 const MAX_RETRIES = 5;
 const MAX_RETRY_DELAY = 1500;
 
-interface LoggedMatchResult {
-  displayName: string;
-  steamId?: string | null;
-  faction: string;
-  playerMat: string;
-  coins: number;
-}
-
-const getResultsOrderedByPlace = (loggedMatchResults: LoggedMatchResult[]) => {
-  const origIndices: { [key: string]: number } = {};
-  loggedMatchResults.forEach(
-    (result, i) => (origIndices[result.displayName] = i)
-  );
-
-  return [...loggedMatchResults].sort((a, b) => {
-    if (a.coins < b.coins) {
-      return 1;
-    } else if (
-      a.coins === b.coins &&
-      origIndices[a.displayName] > origIndices[b.displayName]
-    ) {
-      return 1;
-    } else {
-      return -1;
-    }
-  });
+const getResultsOrderedByPlace = (
+  loggedMatchResults: PlayerMatchResultInput[]
+) => {
+  return [...loggedMatchResults].sort((a, b) => a.rank - b.rank);
 };
 
 @EntityRepository(Match)
@@ -41,21 +30,36 @@ export default class MatchRepository extends Repository<Match> {
   logMatch = async (
     numRounds: number,
     datePlayed: string,
-    loggedMatchResults: LoggedMatchResult[],
-    recordingUserId: string
-  ): Promise<Match> => {
+    loggedMatchResults: PlayerMatchResultInput[],
+    recordingUserId: string,
+    bidGameId: number | undefined | null
+  ): Promise<{ match: Match; bidGame: BidGame | null }> => {
     let match: Match | undefined;
     let numAttempts = 0;
+    let bidGame = null;
     while (numAttempts < MAX_RETRIES) {
       try {
         await this.manager.transaction(
           'SERIALIZABLE',
           async (transactionalEntityManager) => {
+            bidGame =
+              bidGameId == null
+                ? null
+                : await transactionalEntityManager.findOneOrFail(
+                    BidGame,
+                    bidGameId
+                  );
+
+            if (bidGame) {
+              bidGame.status = BidGameStatus.GameRecorded;
+            }
+
             match = await transactionalEntityManager.save(
               await transactionalEntityManager.create(Match, {
                 numRounds,
                 datePlayed,
                 recordingUserId,
+                bidGame,
               })
             );
 
@@ -64,6 +68,11 @@ export default class MatchRepository extends Repository<Match> {
               match,
               loggedMatchResults
             );
+
+            if (bidGame) {
+              bidGame.match = match;
+              await transactionalEntityManager.save(bidGame);
+            }
           }
         );
 
@@ -89,19 +98,17 @@ export default class MatchRepository extends Repository<Match> {
     // storing only the string
     match.datePlayed = new Date(match.datePlayed);
 
-    return match;
+    return { match, bidGame };
   };
 
   formPlayerMatchResults = async (
     entityManager: EntityManager,
     match: Match,
-    loggedMatchResults: LoggedMatchResult[]
+    loggedMatchResults: PlayerMatchResultInput[]
   ): Promise<PlayerMatchResult[]> => {
     const playerMatchResults: PlayerMatchResult[] = [];
     const resultsByPlace = getResultsOrderedByPlace(loggedMatchResults);
 
-    let prevResult = null;
-    let prevTieOrder = 0;
     for (let i = 0; i < resultsByPlace.length; i++) {
       const {
         displayName,
@@ -109,6 +116,8 @@ export default class MatchRepository extends Repository<Match> {
         faction: factionName,
         playerMat: playerMatName,
         coins,
+        rank,
+        bidGamePlayerId,
       } = resultsByPlace[i];
 
       const faction = await entityManager.findOneOrFail(Faction, {
@@ -123,8 +132,13 @@ export default class MatchRepository extends Repository<Match> {
           displayName.trim(),
           steamId ? steamId.trim() : steamId
         );
-      const tieOrder =
-        prevResult && prevResult.coins === coins ? prevTieOrder + 1 : 0;
+      const bidGamePlayer: BidGamePlayer | null =
+        bidGamePlayerId != null
+          ? await entityManager
+              .getRepository(BidGamePlayer)
+              .findOneOrFail(bidGamePlayerId)
+          : null;
+
       const playerMatchResult = await entityManager.save(
         await this.manager.create(PlayerMatchResult, {
           match,
@@ -132,14 +146,12 @@ export default class MatchRepository extends Repository<Match> {
           playerMat,
           player,
           coins,
-          tieOrder,
+          rank,
+          bidGamePlayer,
         })
       );
 
       playerMatchResults.push(playerMatchResult);
-
-      prevTieOrder = tieOrder;
-      prevResult = resultsByPlace[i];
     }
     return playerMatchResults;
   };

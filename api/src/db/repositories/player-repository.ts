@@ -6,15 +6,20 @@ import { Player, PlayerMatchResult } from '../entities';
 export default class PlayerRepository extends Repository<Player> {
   findOrCreatePlayer = async (
     displayName: string,
-    steamId: string | null = null
+    steamId: string | null = null,
+    userId: number | null = null
   ): Promise<Player> => {
-    const playerFilter = steamId
-      ? {
-          steamId,
-        }
-      : {
-          displayName,
-        };
+    let playerFilter: {
+      displayName?: string;
+      steamId?: string;
+      userId?: number;
+    } = { displayName };
+
+    if (userId != null) {
+      playerFilter = { userId };
+    } else if (steamId) {
+      playerFilter = { steamId };
+    }
 
     const existingPlayer = await this.manager.findOne(Player, {
       where: playerFilter,
@@ -34,6 +39,7 @@ export default class PlayerRepository extends Repository<Player> {
       await this.manager.create(Player, {
         displayName,
         steamId,
+        userId,
       })
     );
 

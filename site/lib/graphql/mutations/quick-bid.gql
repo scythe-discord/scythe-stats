@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation quickBid($bidGameId: Int!, $quickBids: [QuickBidInput!]!) {
+  quickBid(bidGameId: $bidGameId, quickBids: $quickBids) {
+    ...BidGame
+  }
+}

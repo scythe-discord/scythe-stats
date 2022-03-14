@@ -4,18 +4,20 @@ import {
   Column,
   ManyToOne,
   Unique,
+  OneToOne,
 } from 'typeorm';
 
 import Faction from './faction';
 import PlayerMat from './player-mat';
 import Player from './player';
 import Match from './match';
+import BidGamePlayer from './bid-game-player';
 
 @Entity()
 @Unique(['match', 'faction'])
 @Unique(['match', 'playerMat'])
 @Unique(['match', 'player'])
-@Unique(['match', 'coins', 'tieOrder'])
+@Unique(['match', 'rank'])
 export default class PlayerMatchResult {
   @PrimaryGeneratedColumn()
   id: number;
@@ -23,8 +25,19 @@ export default class PlayerMatchResult {
   @Column()
   coins: number;
 
+  // deprecated, use rank instead
   @Column({ default: 0 })
   tieOrder: number;
+
+  @Column()
+  rank: number;
+
+  @OneToOne(
+    () => BidGamePlayer,
+    (bidGamePlayer) => bidGamePlayer.playerMatchResult,
+    { nullable: true, eager: true, onDelete: 'CASCADE' }
+  )
+  bidGamePlayer: BidGamePlayer | null;
 
   @ManyToOne(() => Player, (player) => player.playerMatchResults, {
     onDelete: 'CASCADE',

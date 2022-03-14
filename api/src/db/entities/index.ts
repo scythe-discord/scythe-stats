@@ -8,3 +8,6 @@ export { default as MatComboTier } from './mat-combo-tier';
 export { default as DiscordBlacklist } from './discord-blacklist';
 export { default as BidPreset } from './bid-preset';
 export { default as BidPresetSetting } from './bid-preset-setting';
+export { default as BidGame } from './bid-game';
+export { default as Bid } from './bid';
+export { default as User } from './user';

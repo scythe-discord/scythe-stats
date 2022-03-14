@@ -1,0 +1,25 @@
+fragment PlayerMatchResult on PlayerMatchResult {
+  id
+  bidGamePlayer {
+    id
+    bid {
+      id
+      coins
+    }
+  }
+  player {
+    id
+    displayName
+    steamId
+  }
+  faction {
+    id
+    name
+  }
+  playerMat {
+    id
+    name
+  }
+  coins
+  rank
+}

@@ -28,6 +28,7 @@ export const typeDef = gql`
     statsByPlayerCount: [FactionStatsWithPlayerCount!]!
     factionMatCombos: [FactionMatCombo!]!
     topPlayers(first: Int!, playerCounts: [Int!]): [PlayerFactionStats!]!
+    position: Int!
   }
 `;
 

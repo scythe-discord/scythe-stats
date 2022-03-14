@@ -6,7 +6,7 @@ import { HeadingLarge } from 'baseui/typography';
 import GQL from 'lib/graphql';
 import { AuthContext, DISCORD_OAUTH_URL } from 'lib/components';
 
-import CreateRoomModal from './create-room-modal';
+import CreateRoomModal from '../edit-settings-modal';
 
 interface Props {
   factions: GQL.FactionsQuery;

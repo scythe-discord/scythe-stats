@@ -1,0 +1,66 @@
+# import PlayerMatchResult from "./player-match-result.gql"
+
+fragment BidGame on BidGame {
+  id
+  status
+  createdAt
+  modifiedAt
+  players {
+    id
+    user {
+      id
+      username
+    }
+    bid {
+      id
+    }
+    quickBidReady
+  }
+  host {
+    id
+    user {
+      id
+      username
+    }
+  }
+  bidTimeLimitSeconds
+  quickBid
+  bidPreset {
+    id
+    name
+  }
+  enabledCombos {
+    factionId
+    playerMatId
+  }
+  activePlayer {
+    id
+    user {
+      id
+      username
+    }
+  }
+  combos {
+    id
+    faction {
+      id
+      name
+      position
+    }
+    playerMat {
+      id
+      name
+      order
+    }
+    bid {
+      id
+      coins
+    }
+  }
+  match {
+    id
+    playerMatchResults {
+      ...PlayerMatchResult
+    }
+  }
+}

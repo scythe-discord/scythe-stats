@@ -1,4 +1,4 @@
-import { ReactNode, FC, useState, useCallback } from 'react';
+import { ReactNode, FC, useState, useCallback, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { Menu } from 'baseui/icon';
@@ -9,6 +9,9 @@ import Link from 'next/link';
 
 import DiscordAuthItemSimple from './discord-auth-item-simple';
 import BuyMeACoffee from './buy-me-a-coffee';
+import { AuthContext, DISCORD_OAUTH_URL } from '../auth';
+import { useCreateBidGameMutation } from 'lib/graphql/codegen';
+import { useRouter } from 'next/router';
 
 const StyledLink = withStyle(BaseLink as any, {
   textDecoration: 'none',
@@ -40,6 +43,9 @@ const CondensedNavItems: FC = () => {
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const onMenuClick = useCallback(() => setIsDrawerOpen(true), []);
   const onDrawerClose = useCallback(() => setIsDrawerOpen(false), []);
+  const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
+  const [mutate, { loading }] = useCreateBidGameMutation();
+  const router = useRouter();
 
   return (
     <>
@@ -72,9 +78,27 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <Link href="/bid" passHref={true}>
-                <StyledLink>Bidding</StyledLink>
-              </Link>
+              <a
+                href={DISCORD_OAUTH_URL}
+                onClick={async (e) => {
+                  if (!discordMe) {
+                    return;
+                  }
+
+                  e.preventDefault();
+
+                  if (loading || isAuthLoading) {
+                    return;
+                  }
+                  const { data } = await mutate();
+
+                  if (data?.createBidGame.id) {
+                    router.push(`/bid/${data.createBidGame.id}`);
+                  }
+                }}
+              >
+                <StyledLink>Create Bid Game</StyledLink>
+              </a>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
               <StyledLink

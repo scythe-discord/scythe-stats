@@ -14,6 +14,7 @@ export const typeDef = gql`
     id: Int!
     name: String!
     abbrev: String!
+    order: Int!
   }
 `;
 
