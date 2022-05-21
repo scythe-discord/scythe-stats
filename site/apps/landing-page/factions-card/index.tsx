@@ -1,6 +1,6 @@
 import { FC, useState, useCallback } from 'react';
 import { useStyletron } from 'baseui';
-import { H1, HeadingLarge, LabelMedium } from 'baseui/typography';
+import { HeadingLarge, HeadingXXLarge, LabelMedium } from 'baseui/typography';
 import dynamic from 'next/dynamic';
 import classNames from 'classnames';
 
@@ -110,7 +110,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
               padding: '0 20px 0 0',
             })}
           />
-          <H1
+          <HeadingXXLarge
             overrides={{
               Block: {
                 style: {
@@ -121,7 +121,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
             }}
           >
             {selectedFaction.name}
-          </H1>
+          </HeadingXXLarge>
           <PlayerCountFilter
             className={css({
               alignSelf: 'flex-start',
@@ -175,7 +175,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
                 padding: '0 20px 0 0',
               })}
             />
-            <H1
+            <HeadingXXLarge
               overrides={{
                 Block: {
                   style: {
@@ -185,7 +185,7 @@ const FactionsCard: FC<Props> = ({ factionStats, className }) => {
               }}
             >
               {selectedFaction.name}
-            </H1>
+            </HeadingXXLarge>
           </Block>
           <FactionSnippet
             className={css({

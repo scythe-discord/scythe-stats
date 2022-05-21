@@ -10,7 +10,6 @@ module.exports = {
     'plugin:@typescript-eslint/recommended',
     'plugin:node/recommended-module',
     'prettier',
-    'prettier/@typescript-eslint',
   ],
   rules: {
     'node/no-missing-import': [
