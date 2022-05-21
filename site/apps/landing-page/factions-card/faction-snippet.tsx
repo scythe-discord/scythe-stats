@@ -1,6 +1,6 @@
 import { FC, ReactNode } from 'react';
 import { useStyletron } from 'baseui';
-import { StyledSpinnerNext, SIZE } from 'baseui/spinner';
+import { Spinner, SIZE } from 'baseui/spinner';
 import { LabelMedium } from 'baseui/typography';
 import { ListItem, PropsT, ListItemLabel } from 'baseui/list';
 
@@ -148,9 +148,7 @@ const FactionSnippet: FC<Props> = ({
     0
   );
 
-  let topPlayerLabel: JSX.Element | string = (
-    <StyledSpinnerNext size={SIZE.small} />
-  );
+  let topPlayerLabel: JSX.Element | string = <Spinner size={SIZE.small} />;
 
   if (!topPlayerStatsLoading && topPlayerStats) {
     topPlayerLabel = `${topPlayerStats.player.displayName} (${topPlayerStats.totalWins} Wins)`;

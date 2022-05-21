@@ -18,13 +18,18 @@ interface Props {
 
 class MyDocument extends Document<Props> {
   static async getInitialProps(ctx: DocumentContext) {
-    const page = ctx.renderPage((App) => (props) => (
-      <StyletronProvider value={styletron}>
-        <App {...props} />
-      </StyletronProvider>
-    ));
+    ctx.renderPage({
+      enhanceApp: (App) => (props) =>
+        (
+          <StyletronProvider value={styletron}>
+            <App {...props} />
+          </StyletronProvider>
+        ),
+    });
+    const initialProps = await Document.getInitialProps(ctx);
+
     const stylesheets = (styletron as Server).getStylesheets() || [];
-    return { ...page, stylesheets };
+    return { ...initialProps, stylesheets };
   }
 
   render() {

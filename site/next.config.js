@@ -12,6 +12,8 @@ module.exports = withBundleAnalyzer({
     config.plugins.push(
       new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /(en|es|fr)$/)
     );
+    config.externals = config.externals || {}
+    config.externals['styletron-server'] = 'styletron-server'
     return config;
   },
 });

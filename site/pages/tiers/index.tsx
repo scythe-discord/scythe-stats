@@ -2,6 +2,7 @@ import { useCallback, useState } from 'react';
 import { NextComponentType } from 'next';
 import { ApolloPageContext } from 'next-with-apollo';
 import { useStyletron } from 'baseui';
+import client from 'lib/apollo-client';
 
 import { TierList, MatComboCompare } from 'apps/tiers';
 import GQL from 'lib/graphql';
@@ -81,10 +82,8 @@ const TiersPage: NextComponentType<ApolloPageContext, Props, Props> = ({
   );
 };
 
-TiersPage.getInitialProps = async (ctx) => {
-  const apolloClient = ctx.apolloClient;
-
-  const { data: tiers } = await apolloClient.query<
+export const getServerSideProps = async () => {
+  const { data: tiers } = await client.query<
     GQL.TiersQuery,
     GQL.TiersQueryVariables
   >({
@@ -93,7 +92,7 @@ TiersPage.getInitialProps = async (ctx) => {
       numTopPlayers: 1,
     },
   });
-  const { data: playerMats } = await apolloClient.query<GQL.PlayerMatsQuery>({
+  const { data: playerMats } = await client.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,
   });
 
@@ -105,11 +104,14 @@ TiersPage.getInitialProps = async (ctx) => {
     ];
 
   return {
-    tiers,
-    playerMats,
-    initialMatCombo: {
-      factionId: randomMatCombo.faction.id,
-      playerMatId: randomMatCombo.playerMat.id,
+    props: {
+      tiers,
+      playerMats,
+      initialMatCombo: {
+        factionId: randomMatCombo.faction.id,
+        playerMatId: randomMatCombo.playerMat.id,
+      },
+      initialApolloState: client.cache.extract(),
     },
   };
 };

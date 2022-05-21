@@ -1,6 +1,6 @@
 import { FC, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
-import { StyledSpinnerNext, SIZE as SPINNER_SIZE } from 'baseui/spinner';
+import { Spinner, SIZE as SPINNER_SIZE } from 'baseui/spinner';
 import { StyledLink as BaseLink } from 'baseui/link';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSignOutAlt } from '@fortawesome/free-solid-svg-icons';
@@ -17,7 +17,7 @@ const DiscordAuthItemSimple: FC = () => {
   const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
 
   if (isAuthLoading) {
-    return <StyledSpinnerNext $size={SPINNER_SIZE.small} />;
+    return <Spinner $size={SPINNER_SIZE.small} />;
   }
 
   if (!discordMe) {

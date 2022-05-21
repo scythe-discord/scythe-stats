@@ -1,24 +1,22 @@
 import App from 'next/app';
 import Head from 'next/head';
 import Router from 'next/router';
-import { ApolloClient, ApolloProvider, ApolloLink, HttpLink, InMemoryCache } from '@apollo/client';
-import withApollo from 'next-with-apollo';
+import { ApolloProvider } from '@apollo/client';
 import { BaseProvider } from 'baseui';
 import { ToasterContainer } from 'baseui/toast';
 import { Provider as StyletronProvider } from 'styletron-react';
+import client from 'lib/apollo-client';
 import NProgress from 'nprogress';
 import 'nprogress/nprogress.css';
 import 'lib/site.css';
 
 import { AuthProvider, SiteHeader } from 'lib/components';
 import Theme from 'lib/theme';
-import { GRAPHQL_API_URL } from 'lib/env';
 import * as gtag from 'lib/gtag';
 
-import { styletron, debug } from '../styletron';
+import { styletron } from '../styletron';
 
 interface Props {
-  apollo: ApolloClient<any>;
   initAuthCheck: boolean;
 }
 
@@ -43,7 +41,12 @@ class Site extends App<Props> {
   }
 
   render() {
-    const { Component, pageProps, apollo, initAuthCheck } = this.props;
+    const { Component, pageProps, initAuthCheck } = this.props;
+
+    if (typeof window !== 'undefined' && pageProps.initialApolloState) {
+      client.cache.restore(pageProps.initialApolloState);
+    }
+
     return (
       <>
         <Head>
@@ -59,9 +62,9 @@ class Site extends App<Props> {
             content="View faction and player mat stats, recent matches, and more. Join our Discord for games and discussion. From the acclaimed board game Scythe."
           />
         </Head>
-        <StyletronProvider value={styletron} debug={debug} debugAfterHydration>
+        <StyletronProvider value={styletron}>
           <BaseProvider theme={Theme}>
-            <ApolloProvider client={apollo}>
+            <ApolloProvider client={client}>
               <AuthProvider initAuthCheck={initAuthCheck}>
                 <ToasterContainer>
                   <SiteHeader />
@@ -86,17 +89,4 @@ Site.getInitialProps = async (appContext) => {
   return { ...appProps, initAuthCheck };
 };
 
-export default withApollo(({ initialState }) => {
-  return new ApolloClient({
-    link: ApolloLink.from([
-      new HttpLink({
-        uri: GRAPHQL_API_URL,
-        credentials:
-          process.env.NEXT_PUBLIC_NODE_ENV === 'production'
-            ? 'same-origin'
-            : 'include',
-      }),
-    ]),
-    cache: new InMemoryCache().restore(initialState || {}),
-  });
-})(Site);
+export default Site;
