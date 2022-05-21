@@ -99,10 +99,8 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
   ]);
   const [shouldPostMatchLog, setShouldPostMatchLog] = useState(true);
   const [formError, setFormError] = useState<string | null>(null);
-  const [
-    logMatchMutation,
-    { loading: logMatchLoading },
-  ] = GQL.useLogMatchMutation();
+  const [logMatchMutation, { loading: logMatchLoading }] =
+    GQL.useLogMatchMutation();
 
   const onCancel = useCallback(() => {
     if (modalProps.onClose) {
@@ -198,6 +196,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
         toaster.positive(<span>Successfully recorded your match!</span>, {
           autoHideDuration: 3000,
         });
+
         onCancel();
       } else {
         setFormError('An unknown error occurred attempting to log your match');
@@ -225,7 +224,6 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
       animate
       autoFocus
       size={SIZE.auto}
-      unstable_ModalBackdropScroll={true}
       {...modalProps}
     >
       <ModalHeader>Record Match</ModalHeader>

@@ -66,7 +66,21 @@ class Site extends App<Props> {
           <BaseProvider theme={Theme}>
             <ApolloProvider client={client}>
               <AuthProvider initAuthCheck={initAuthCheck}>
-                <ToasterContainer>
+                <ToasterContainer
+                  overrides={{
+                    ToastBody: {
+                      style: () => ({
+                        borderRadius: 0,
+                        width: 'auto',
+                      }),
+                    },
+                    ToastInnerContainer: {
+                      style: () => ({
+                        paddingRight: '16px',
+                      }),
+                    },
+                  }}
+                >
                   <SiteHeader />
                   <Component {...pageProps} />
                 </ToasterContainer>
