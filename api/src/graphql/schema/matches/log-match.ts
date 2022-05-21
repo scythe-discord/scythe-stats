@@ -1,5 +1,5 @@
 import { gql } from 'apollo-server-express';
-import { Client, TextChannel, MessageEmbed } from 'discord.js';
+import { Client, TextChannel, MessageEmbed, Intents } from 'discord.js';
 import { getRepository, getCustomRepository } from 'typeorm';
 
 import Schema from '../codegen';
@@ -72,7 +72,7 @@ const generateMatchLogMessage = (
     .setTitle('Match Log')
     .setDescription(description)
     .setURL(SITE_URL)
-    .setFooter(`Via ${SITE_URL}`);
+    .setFooter({ text: `Via ${SITE_URL}` });
 
   orderedMatchResults.forEach((result, i) => {
     let fieldName = `${getOrdinal(i + 1)} place`;
@@ -122,7 +122,13 @@ const postMatchLog = (matchId: number) => {
       ],
     })
     .then(({ playerMatchResults, numRounds }) => {
-      const client = new Client();
+      const client = new Client({
+        intents: [
+          Intents.FLAGS.GUILDS,
+          Intents.FLAGS.GUILD_MESSAGES,
+          Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+        ],
+      });
 
       client.login(BOT_TOKEN).catch((e) => {
         console.error('Failed to login while posting match log', e);
@@ -140,7 +146,7 @@ const postMatchLog = (matchId: number) => {
             channelId
           ) as TextChannel;
 
-          if (!logChannel || logChannel.type !== 'text') {
+          if (!logChannel) {
             throw new Error(`Unable to find text channel with ID ${channelId}`);
           }
 
@@ -150,7 +156,7 @@ const postMatchLog = (matchId: number) => {
             numRounds
           );
 
-          logChannel.send(matchEmbed).catch((e) => {
+          logChannel.send({ embeds: [matchEmbed] }).catch((e) => {
             console.error('Failed to post match log to channel', e);
           });
         });

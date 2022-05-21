@@ -1,4 +1,1 @@
-export {
-  RateLimitDirective,
-  typeDef as rateLimitDirectiveTypeDef,
-} from './rate-limit';
+export { rateLimitDirective } from './rate-limit';

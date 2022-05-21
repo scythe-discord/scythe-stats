@@ -20,7 +20,8 @@ import {
 } from './players';
 import { typeDef as tierTypeDef, resolvers as tierResolvers } from './tiers';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
-import { RateLimitDirective, rateLimitDirectiveTypeDef } from './directives';
+import { rateLimitDirective } from './directives';
+import { makeExecutableSchema } from '@graphql-tools/schema';
 
 export const Query = gql`
   type Query {
@@ -34,29 +35,30 @@ export const Mutation = gql`
   }
 `;
 
-export default {
-  typeDefs: [
-    Query,
-    Mutation,
-    relayTypeDef,
-    rateLimitDirectiveTypeDef,
-    ...authTypeDef,
-    ...playerMatsTypeDef,
-    ...factionsTypeDef,
-    ...playerTypeDef,
-    ...matchTypeDef,
-    ...tierTypeDef,
-  ],
-  resolvers: merge(
-    authResolvers,
-    relayResolvers,
-    playerMatsResolvers,
-    factionsResolvers,
-    playerResolvers,
-    matchResolvers,
-    tierResolvers
-  ),
-  schemaDirectives: {
-    rateLimit: RateLimitDirective,
-  },
-};
+const { rateLimitDirectiveTypeDef, rateLimitDirectiveTransformer } =
+  rateLimitDirective('rateLimit');
+export default rateLimitDirectiveTransformer(
+  makeExecutableSchema({
+    typeDefs: [
+      Query,
+      Mutation,
+      relayTypeDef,
+      rateLimitDirectiveTypeDef,
+      ...authTypeDef,
+      ...playerMatsTypeDef,
+      ...factionsTypeDef,
+      ...playerTypeDef,
+      ...matchTypeDef,
+      ...tierTypeDef,
+    ],
+    resolvers: merge(
+      authResolvers,
+      relayResolvers,
+      playerMatsResolvers,
+      factionsResolvers,
+      playerResolvers,
+      matchResolvers,
+      tierResolvers
+    ),
+  })
+);
