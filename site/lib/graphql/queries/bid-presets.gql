@@ -1,0 +1,18 @@
+query bidPresets {
+  bidPresets {
+    id
+    name
+    bidPresetSettings {
+      id
+      enabled
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+    }
+  }
+}

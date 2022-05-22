@@ -1,9 +1,11 @@
 import { gql } from '@apollo/client';
 import * as Apollo from '@apollo/client';
 export type Maybe<T> = T | null;
+export type InputMaybe<T> = Maybe<T>;
 export type Exact<T extends { [key: string]: unknown }> = { [K in keyof T]: T[K] };
 export type MakeOptional<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]?: Maybe<T[SubKey]> };
 export type MakeMaybe<T, K extends keyof T> = Omit<T, K> & { [SubKey in K]: Maybe<T[SubKey]> };
+const defaultOptions = {} as const;
 /** All built-in and custom scalars, mapped to their actual values */
 export type Scalars = {
   ID: string;
@@ -11,147 +13,84 @@ export type Scalars = {
   Boolean: boolean;
   Int: number;
   Float: number;
-  /** The `Upload` scalar type represents a file upload. */
-  Upload: any;
 };
 
-export type Query = {
-  __typename?: 'Query';
-  _empty?: Maybe<Scalars['String']>;
-  discordMe?: Maybe<DiscordUser>;
-  playerMat: PlayerMat;
-  playerMats: Array<PlayerMat>;
+export type BidPreset = {
+  __typename?: 'BidPreset';
+  bidPresetSettings: Array<BidPresetSetting>;
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
+export type BidPresetSetting = {
+  __typename?: 'BidPresetSetting';
+  enabled: Scalars['Boolean'];
   faction: Faction;
-  factions: Array<Faction>;
-  player?: Maybe<Player>;
-  playersByWins: PlayerConnection;
-  playersByName: PlayerConnection;
-  matches: MatchConnection;
-  tiers: Array<Tier>;
-};
-
-
-export type QueryPlayerMatArgs = {
   id: Scalars['Int'];
-};
-
-
-export type QueryFactionArgs = {
-  id: Scalars['Int'];
-};
-
-
-export type QueryPlayerArgs = {
-  id: Scalars['ID'];
-};
-
-
-export type QueryPlayersByWinsArgs = {
-  first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
-  factionId?: Maybe<Scalars['Int']>;
-  fromDate?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryPlayersByNameArgs = {
-  startsWith: Scalars['String'];
-  first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
-};
-
-
-export type QueryMatchesArgs = {
-  first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
-};
-
-export type Mutation = {
-  __typename?: 'Mutation';
-  _empty?: Maybe<Scalars['String']>;
-  logMatch?: Maybe<Match>;
-};
-
-
-export type MutationLogMatchArgs = {
-  numRounds: Scalars['Int'];
-  datePlayed: Scalars['String'];
-  playerMatchResults: Array<PlayerMatchResultInput>;
-  shouldPostMatchLog: Scalars['Boolean'];
-  recordingUserId?: Maybe<Scalars['String']>;
-};
-
-export type Node = {
-  id: Scalars['ID'];
-};
-
-export type PageInfo = {
-  __typename?: 'PageInfo';
-  hasNextPage?: Maybe<Scalars['Boolean']>;
-  hasPreviousPage?: Maybe<Scalars['Boolean']>;
-  startCursor?: Maybe<Scalars['String']>;
-  endCursor?: Maybe<Scalars['String']>;
+  playerMat: PlayerMat;
 };
 
 export type DiscordUser = {
   __typename?: 'DiscordUser';
+  discriminator: Scalars['String'];
   id: Scalars['String'];
   username: Scalars['String'];
-  discriminator: Scalars['String'];
-};
-
-export type PlayerMat = {
-  __typename?: 'PlayerMat';
-  id: Scalars['Int'];
-  name: Scalars['String'];
-  abbrev: Scalars['String'];
-};
-
-export type PlayerFactionStats = {
-  __typename?: 'PlayerFactionStats';
-  player: Player;
-  totalWins: Scalars['Int'];
 };
 
 export type Faction = {
   __typename?: 'Faction';
+  factionMatCombos: Array<FactionMatCombo>;
   id: Scalars['Int'];
   name: Scalars['String'];
-  totalWins: Scalars['Int'];
-  totalMatches: Scalars['Int'];
   statsByPlayerCount: Array<FactionStatsWithPlayerCount>;
-  factionMatCombos: Array<FactionMatCombo>;
   topPlayers: Array<PlayerFactionStats>;
-};
-
-
-export type FactionTotalWinsArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
-};
-
-
-export type FactionTotalMatchesArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
+  totalMatches: Scalars['Int'];
+  totalWins: Scalars['Int'];
 };
 
 
 export type FactionTopPlayersArgs = {
   first: Scalars['Int'];
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionTotalMatchesArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionTotalWinsArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type FactionMatCombo = {
   __typename?: 'FactionMatCombo';
-  faction: Faction;
-  playerMat: PlayerMat;
-  topPlayers: Array<PlayerFactionStats>;
-  tier: Tier;
-  totalWins: Scalars['Int'];
-  totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Int'];
   avgRoundsOnWin: Scalars['Float'];
+  faction: Faction;
   leastRoundsForWin: Scalars['Int'];
+  playerMat: PlayerMat;
   statsByPlayerCount: Array<FactionMatComboStatsWithPlayerCount>;
+  tier: Tier;
+  topPlayers: Array<PlayerFactionStats>;
+  totalMatches: Scalars['Int'];
+  totalWins: Scalars['Int'];
+};
+
+
+export type FactionMatComboAvgCoinsOnWinArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboAvgRoundsOnWinArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
+};
+
+
+export type FactionMatComboLeastRoundsForWinArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 
@@ -160,84 +99,36 @@ export type FactionMatComboTopPlayersArgs = {
 };
 
 
-export type FactionMatComboTotalWinsArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
-};
-
-
 export type FactionMatComboTotalMatchesArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 
-export type FactionMatComboAvgCoinsOnWinArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
-};
-
-
-export type FactionMatComboAvgRoundsOnWinArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
-};
-
-
-export type FactionMatComboLeastRoundsForWinArgs = {
-  playerCounts?: Maybe<Array<Scalars['Int']>>;
+export type FactionMatComboTotalWinsArgs = {
+  playerCounts?: InputMaybe<Array<Scalars['Int']>>;
 };
 
 export type FactionMatComboStatsWithPlayerCount = {
   __typename?: 'FactionMatComboStatsWithPlayerCount';
-  playerCount: Scalars['Int'];
-  totalWins: Scalars['Int'];
-  totalMatches: Scalars['Int'];
   avgCoinsOnWin: Scalars['Float'];
   avgRoundsOnWin: Scalars['Float'];
   leastRoundsForWin?: Maybe<Scalars['Int']>;
+  playerCount: Scalars['Int'];
+  totalMatches: Scalars['Int'];
+  totalWins: Scalars['Int'];
 };
 
 export type FactionStatsWithPlayerCount = {
   __typename?: 'FactionStatsWithPlayerCount';
   playerCount: Scalars['Int'];
-  totalWins: Scalars['Int'];
   totalMatches: Scalars['Int'];
-};
-
-export type Player = Node & {
-  __typename?: 'Player';
-  id: Scalars['ID'];
-  displayName: Scalars['String'];
-  steamId?: Maybe<Scalars['String']>;
   totalWins: Scalars['Int'];
-  totalMatches: Scalars['Int'];
-};
-
-
-export type PlayerTotalWinsArgs = {
-  factionId?: Maybe<Scalars['Int']>;
-  fromDate?: Maybe<Scalars['String']>;
-};
-
-
-export type PlayerTotalMatchesArgs = {
-  factionId?: Maybe<Scalars['Int']>;
-  fromDate?: Maybe<Scalars['String']>;
-};
-
-export type PlayerConnection = {
-  __typename?: 'PlayerConnection';
-  edges: Array<PlayerEdge>;
-  pageInfo: PageInfo;
-};
-
-export type PlayerEdge = {
-  __typename?: 'PlayerEdge';
-  cursor: Scalars['String'];
-  node: Player;
 };
 
 export type Match = Node & {
   __typename?: 'Match';
-  id: Scalars['ID'];
   datePlayed: Scalars['String'];
+  id: Scalars['ID'];
   numRounds: Scalars['Int'];
   playerMatchResults: Array<PlayerMatchResult>;
   winner: PlayerMatchResult;
@@ -255,251 +146,232 @@ export type MatchEdge = {
   node: Match;
 };
 
+export type Mutation = {
+  __typename?: 'Mutation';
+  _empty?: Maybe<Scalars['String']>;
+  logMatch?: Maybe<Match>;
+};
+
+
+export type MutationLogMatchArgs = {
+  datePlayed: Scalars['String'];
+  numRounds: Scalars['Int'];
+  playerMatchResults: Array<PlayerMatchResultInput>;
+  recordingUserId?: InputMaybe<Scalars['String']>;
+  shouldPostMatchLog: Scalars['Boolean'];
+};
+
+export type Node = {
+  id: Scalars['ID'];
+};
+
+export type PageInfo = {
+  __typename?: 'PageInfo';
+  endCursor?: Maybe<Scalars['String']>;
+  hasNextPage?: Maybe<Scalars['Boolean']>;
+  hasPreviousPage?: Maybe<Scalars['Boolean']>;
+  startCursor?: Maybe<Scalars['String']>;
+};
+
+export type Player = Node & {
+  __typename?: 'Player';
+  displayName: Scalars['String'];
+  id: Scalars['ID'];
+  steamId?: Maybe<Scalars['String']>;
+  totalMatches: Scalars['Int'];
+  totalWins: Scalars['Int'];
+};
+
+
+export type PlayerTotalMatchesArgs = {
+  factionId?: InputMaybe<Scalars['Int']>;
+  fromDate?: InputMaybe<Scalars['String']>;
+};
+
+
+export type PlayerTotalWinsArgs = {
+  factionId?: InputMaybe<Scalars['Int']>;
+  fromDate?: InputMaybe<Scalars['String']>;
+};
+
+export type PlayerConnection = {
+  __typename?: 'PlayerConnection';
+  edges: Array<PlayerEdge>;
+  pageInfo: PageInfo;
+};
+
+export type PlayerEdge = {
+  __typename?: 'PlayerEdge';
+  cursor: Scalars['String'];
+  node: Player;
+};
+
+export type PlayerFactionStats = {
+  __typename?: 'PlayerFactionStats';
+  player: Player;
+  totalWins: Scalars['Int'];
+};
+
+export type PlayerMat = {
+  __typename?: 'PlayerMat';
+  abbrev: Scalars['String'];
+  id: Scalars['Int'];
+  name: Scalars['String'];
+};
+
 export type PlayerMatchResult = {
   __typename?: 'PlayerMatchResult';
+  coins: Scalars['Int'];
+  faction: Faction;
   id: Scalars['Int'];
   player: Player;
-  faction: Faction;
   playerMat: PlayerMat;
-  coins: Scalars['Int'];
   tieOrder: Scalars['Int'];
 };
 
 export type PlayerMatchResultInput = {
+  coins: Scalars['Int'];
   displayName: Scalars['String'];
-  steamId?: Maybe<Scalars['String']>;
   faction: Scalars['String'];
   playerMat: Scalars['String'];
-  coins: Scalars['Int'];
+  steamId?: InputMaybe<Scalars['String']>;
+};
+
+export type Query = {
+  __typename?: 'Query';
+  _empty?: Maybe<Scalars['String']>;
+  bidPresets: Array<BidPreset>;
+  discordMe?: Maybe<DiscordUser>;
+  faction: Faction;
+  factions: Array<Faction>;
+  matches: MatchConnection;
+  player?: Maybe<Player>;
+  playerMat: PlayerMat;
+  playerMats: Array<PlayerMat>;
+  playersByName: PlayerConnection;
+  playersByWins: PlayerConnection;
+  tiers: Array<Tier>;
+};
+
+
+export type QueryFactionArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryMatchesArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
+};
+
+
+export type QueryPlayerArgs = {
+  id: Scalars['ID'];
+};
+
+
+export type QueryPlayerMatArgs = {
+  id: Scalars['Int'];
+};
+
+
+export type QueryPlayersByNameArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  first: Scalars['Int'];
+  startsWith: Scalars['String'];
+};
+
+
+export type QueryPlayersByWinsArgs = {
+  after?: InputMaybe<Scalars['String']>;
+  factionId?: InputMaybe<Scalars['Int']>;
+  first: Scalars['Int'];
+  fromDate?: InputMaybe<Scalars['String']>;
 };
 
 export type Tier = {
   __typename?: 'Tier';
+  factionMatCombos: Array<FactionMatCombo>;
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
-  factionMatCombos: Array<FactionMatCombo>;
 };
-
-export enum CacheControlScope {
-  Public = 'PUBLIC',
-  Private = 'PRIVATE'
-}
-
 
 export type LogMatchMutationVariables = Exact<{
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
-  playerMatchResults: Array<PlayerMatchResultInput>;
+  playerMatchResults: Array<PlayerMatchResultInput> | PlayerMatchResultInput;
   shouldPostMatchLog: Scalars['Boolean'];
 }>;
 
 
-export type LogMatchMutation = (
-  { __typename?: 'Mutation' }
-  & { logMatch?: Maybe<(
-    { __typename?: 'Match' }
-    & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
-    & { playerMatchResults: Array<(
-      { __typename?: 'PlayerMatchResult' }
-      & Pick<PlayerMatchResult, 'id' | 'coins' | 'tieOrder'>
-      & { player: (
-        { __typename?: 'Player' }
-        & Pick<Player, 'id' | 'displayName' | 'steamId'>
-      ), faction: (
-        { __typename?: 'Faction' }
-        & Pick<Faction, 'id' | 'name'>
-      ), playerMat: (
-        { __typename?: 'PlayerMat' }
-        & Pick<PlayerMat, 'id' | 'name'>
-      ) }
-    )>, winner: (
-      { __typename?: 'PlayerMatchResult' }
-      & Pick<PlayerMatchResult, 'id'>
-    ) }
-  )> }
-);
+export type LogMatchMutation = { __typename?: 'Mutation', logMatch?: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, tieOrder: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } | null };
+
+export type BidPresetsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type BidPresetsQuery = { __typename?: 'Query', bidPresets: Array<{ __typename?: 'BidPreset', id: number, name: string, bidPresetSettings: Array<{ __typename?: 'BidPresetSetting', id: number, enabled: boolean, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> }> };
 
 export type DiscordMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DiscordMeQuery = (
-  { __typename?: 'Query' }
-  & { discordMe?: Maybe<(
-    { __typename?: 'DiscordUser' }
-    & Pick<DiscordUser, 'id' | 'username' | 'discriminator'>
-  )> }
-);
+export type DiscordMeQuery = { __typename?: 'Query', discordMe?: { __typename?: 'DiscordUser', id: string, username: string, discriminator: string } | null };
 
 export type FactionStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type FactionStatsQuery = (
-  { __typename?: 'Query' }
-  & { factions: Array<(
-    { __typename?: 'Faction' }
-    & Pick<Faction, 'id' | 'name'>
-    & { statsByPlayerCount: Array<(
-      { __typename?: 'FactionStatsWithPlayerCount' }
-      & Pick<FactionStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches'>
-    )>, factionMatCombos: Array<(
-      { __typename?: 'FactionMatCombo' }
-      & { playerMat: (
-        { __typename?: 'PlayerMat' }
-        & Pick<PlayerMat, 'id' | 'name'>
-      ), statsByPlayerCount: Array<(
-        { __typename?: 'FactionMatComboStatsWithPlayerCount' }
-        & Pick<FactionMatComboStatsWithPlayerCount, 'playerCount' | 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
-      )> }
-    )> }
-  )> }
-);
+export type FactionStatsQuery = { __typename?: 'Query', factions: Array<{ __typename?: 'Faction', id: number, name: string, statsByPlayerCount: Array<{ __typename?: 'FactionStatsWithPlayerCount', playerCount: number, totalWins: number, totalMatches: number }>, factionMatCombos: Array<{ __typename?: 'FactionMatCombo', playerMat: { __typename?: 'PlayerMat', id: number, name: string }, statsByPlayerCount: Array<{ __typename?: 'FactionMatComboStatsWithPlayerCount', playerCount: number, totalWins: number, totalMatches: number, avgCoinsOnWin: number, avgRoundsOnWin: number, leastRoundsForWin?: number | null }> }> }> };
 
 export type FactionTopPlayersQueryVariables = Exact<{
   numTopPlayers: Scalars['Int'];
-  playerCounts: Array<Scalars['Int']>;
+  playerCounts: Array<Scalars['Int']> | Scalars['Int'];
 }>;
 
 
-export type FactionTopPlayersQuery = (
-  { __typename?: 'Query' }
-  & { factions: Array<(
-    { __typename?: 'Faction' }
-    & Pick<Faction, 'id'>
-    & { topPlayers: Array<(
-      { __typename?: 'PlayerFactionStats' }
-      & Pick<PlayerFactionStats, 'totalWins'>
-      & { player: (
-        { __typename?: 'Player' }
-        & Pick<Player, 'id' | 'displayName' | 'steamId'>
-      ) }
-    )> }
-  )> }
-);
+export type FactionTopPlayersQuery = { __typename?: 'Query', factions: Array<{ __typename?: 'Faction', id: number, topPlayers: Array<{ __typename?: 'PlayerFactionStats', totalWins: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null } }> }> };
+
+export type FactionsQueryVariables = Exact<{ [key: string]: never; }>;
+
+
+export type FactionsQuery = { __typename?: 'Query', factions: Array<{ __typename?: 'Faction', id: number, name: string }> };
 
 export type MatchesQueryVariables = Exact<{
   first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type MatchesQuery = (
-  { __typename?: 'Query' }
-  & { matches: (
-    { __typename?: 'MatchConnection' }
-    & { edges: Array<(
-      { __typename?: 'MatchEdge' }
-      & { node: (
-        { __typename?: 'Match' }
-        & Pick<Match, 'id' | 'datePlayed' | 'numRounds'>
-        & { playerMatchResults: Array<(
-          { __typename?: 'PlayerMatchResult' }
-          & Pick<PlayerMatchResult, 'id' | 'coins' | 'tieOrder'>
-          & { player: (
-            { __typename?: 'Player' }
-            & Pick<Player, 'id' | 'displayName' | 'steamId'>
-          ), faction: (
-            { __typename?: 'Faction' }
-            & Pick<Faction, 'id' | 'name'>
-          ), playerMat: (
-            { __typename?: 'PlayerMat' }
-            & Pick<PlayerMat, 'id' | 'name'>
-          ) }
-        )>, winner: (
-          { __typename?: 'PlayerMatchResult' }
-          & Pick<PlayerMatchResult, 'id'>
-        ) }
-      ) }
-    )>, pageInfo: (
-      { __typename?: 'PageInfo' }
-      & Pick<PageInfo, 'hasNextPage' | 'endCursor'>
-    ) }
-  ) }
-);
+export type MatchesQuery = { __typename?: 'Query', matches: { __typename?: 'MatchConnection', edges: Array<{ __typename?: 'MatchEdge', node: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, tieOrder: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, endCursor?: string | null } } };
 
 export type PlayerMatsQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type PlayerMatsQuery = (
-  { __typename?: 'Query' }
-  & { playerMats: Array<(
-    { __typename?: 'PlayerMat' }
-    & Pick<PlayerMat, 'id' | 'name'>
-  )> }
-);
+export type PlayerMatsQuery = { __typename?: 'Query', playerMats: Array<{ __typename?: 'PlayerMat', id: number, name: string, abbrev: string }> };
 
 export type PlayersByNameQueryVariables = Exact<{
   startsWith: Scalars['String'];
   first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type PlayersByNameQuery = (
-  { __typename?: 'Query' }
-  & { playersByName: (
-    { __typename?: 'PlayerConnection' }
-    & { edges: Array<(
-      { __typename?: 'PlayerEdge' }
-      & { node: (
-        { __typename?: 'Player' }
-        & Pick<Player, 'id' | 'displayName' | 'steamId'>
-      ) }
-    )> }
-  ) }
-);
+export type PlayersByNameQuery = { __typename?: 'Query', playersByName: { __typename?: 'PlayerConnection', edges: Array<{ __typename?: 'PlayerEdge', node: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null } }> } };
 
 export type TiersQueryVariables = Exact<{
   numTopPlayers: Scalars['Int'];
 }>;
 
 
-export type TiersQuery = (
-  { __typename?: 'Query' }
-  & { tiers: Array<(
-    { __typename?: 'Tier' }
-    & Pick<Tier, 'id' | 'name' | 'rank'>
-    & { factionMatCombos: Array<(
-      { __typename?: 'FactionMatCombo' }
-      & Pick<FactionMatCombo, 'totalWins' | 'totalMatches' | 'avgCoinsOnWin' | 'avgRoundsOnWin' | 'leastRoundsForWin'>
-      & { faction: (
-        { __typename?: 'Faction' }
-        & Pick<Faction, 'id' | 'name'>
-      ), playerMat: (
-        { __typename?: 'PlayerMat' }
-        & Pick<PlayerMat, 'id' | 'name' | 'abbrev'>
-      ), topPlayers: Array<(
-        { __typename?: 'PlayerFactionStats' }
-        & Pick<PlayerFactionStats, 'totalWins'>
-        & { player: (
-          { __typename?: 'Player' }
-          & Pick<Player, 'id' | 'displayName' | 'steamId'>
-        ) }
-      )> }
-    )> }
-  )> }
-);
+export type TiersQuery = { __typename?: 'Query', tiers: Array<{ __typename?: 'Tier', id: number, name: string, rank: number, factionMatCombos: Array<{ __typename?: 'FactionMatCombo', totalWins: number, totalMatches: number, avgCoinsOnWin: number, avgRoundsOnWin: number, leastRoundsForWin: number, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, abbrev: string }, topPlayers: Array<{ __typename?: 'PlayerFactionStats', totalWins: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null } }> }> }> };
 
 export type TopPlayersQueryVariables = Exact<{
   first: Scalars['Int'];
-  after?: Maybe<Scalars['String']>;
-  fromDate?: Maybe<Scalars['String']>;
+  after?: InputMaybe<Scalars['String']>;
+  fromDate?: InputMaybe<Scalars['String']>;
 }>;
 
 
-export type TopPlayersQuery = (
-  { __typename?: 'Query' }
-  & { playersByWins: (
-    { __typename?: 'PlayerConnection' }
-    & { edges: Array<(
-      { __typename?: 'PlayerEdge' }
-      & { node: (
-        { __typename?: 'Player' }
-        & Pick<Player, 'id' | 'displayName' | 'steamId' | 'totalWins' | 'totalMatches'>
-      ) }
-    )> }
-  ) }
-);
+export type TopPlayersQuery = { __typename?: 'Query', playersByWins: { __typename?: 'PlayerConnection', edges: Array<{ __typename?: 'PlayerEdge', node: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null, totalWins: number, totalMatches: number } }> } };
 
 
 export const LogMatchDocument = gql`
@@ -560,11 +432,59 @@ export type LogMatchMutationFn = Apollo.MutationFunction<LogMatchMutation, LogMa
  * });
  */
 export function useLogMatchMutation(baseOptions?: Apollo.MutationHookOptions<LogMatchMutation, LogMatchMutationVariables>) {
-        return Apollo.useMutation<LogMatchMutation, LogMatchMutationVariables>(LogMatchDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<LogMatchMutation, LogMatchMutationVariables>(LogMatchDocument, options);
       }
 export type LogMatchMutationHookResult = ReturnType<typeof useLogMatchMutation>;
 export type LogMatchMutationResult = Apollo.MutationResult<LogMatchMutation>;
 export type LogMatchMutationOptions = Apollo.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
+export const BidPresetsDocument = gql`
+    query bidPresets {
+  bidPresets {
+    id
+    name
+    bidPresetSettings {
+      id
+      enabled
+      faction {
+        id
+        name
+      }
+      playerMat {
+        id
+        name
+      }
+    }
+  }
+}
+    `;
+
+/**
+ * __useBidPresetsQuery__
+ *
+ * To run a query within a React component, call `useBidPresetsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBidPresetsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBidPresetsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useBidPresetsQuery(baseOptions?: Apollo.QueryHookOptions<BidPresetsQuery, BidPresetsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BidPresetsQuery, BidPresetsQueryVariables>(BidPresetsDocument, options);
+      }
+export function useBidPresetsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BidPresetsQuery, BidPresetsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BidPresetsQuery, BidPresetsQueryVariables>(BidPresetsDocument, options);
+        }
+export type BidPresetsQueryHookResult = ReturnType<typeof useBidPresetsQuery>;
+export type BidPresetsLazyQueryHookResult = ReturnType<typeof useBidPresetsLazyQuery>;
+export type BidPresetsQueryResult = Apollo.QueryResult<BidPresetsQuery, BidPresetsQueryVariables>;
 export const DiscordMeDocument = gql`
     query discordMe {
   discordMe {
@@ -591,10 +511,12 @@ export const DiscordMeDocument = gql`
  * });
  */
 export function useDiscordMeQuery(baseOptions?: Apollo.QueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
-        return Apollo.useQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, options);
       }
 export function useDiscordMeLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<DiscordMeQuery, DiscordMeQueryVariables>) {
-          return Apollo.useLazyQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<DiscordMeQuery, DiscordMeQueryVariables>(DiscordMeDocument, options);
         }
 export type DiscordMeQueryHookResult = ReturnType<typeof useDiscordMeQuery>;
 export type DiscordMeLazyQueryHookResult = ReturnType<typeof useDiscordMeLazyQuery>;
@@ -643,10 +565,12 @@ export const FactionStatsDocument = gql`
  * });
  */
 export function useFactionStatsQuery(baseOptions?: Apollo.QueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
-        return Apollo.useQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, options);
       }
 export function useFactionStatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FactionStatsQuery, FactionStatsQueryVariables>) {
-          return Apollo.useLazyQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FactionStatsQuery, FactionStatsQueryVariables>(FactionStatsDocument, options);
         }
 export type FactionStatsQueryHookResult = ReturnType<typeof useFactionStatsQuery>;
 export type FactionStatsLazyQueryHookResult = ReturnType<typeof useFactionStatsLazyQuery>;
@@ -685,14 +609,51 @@ export const FactionTopPlayersDocument = gql`
  * });
  */
 export function useFactionTopPlayersQuery(baseOptions: Apollo.QueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-        return Apollo.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, options);
       }
 export function useFactionTopPlayersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>) {
-          return Apollo.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>(FactionTopPlayersDocument, options);
         }
 export type FactionTopPlayersQueryHookResult = ReturnType<typeof useFactionTopPlayersQuery>;
 export type FactionTopPlayersLazyQueryHookResult = ReturnType<typeof useFactionTopPlayersLazyQuery>;
 export type FactionTopPlayersQueryResult = Apollo.QueryResult<FactionTopPlayersQuery, FactionTopPlayersQueryVariables>;
+export const FactionsDocument = gql`
+    query factions {
+  factions {
+    id
+    name
+  }
+}
+    `;
+
+/**
+ * __useFactionsQuery__
+ *
+ * To run a query within a React component, call `useFactionsQuery` and pass it any options that fit your needs.
+ * When your component renders, `useFactionsQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useFactionsQuery({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useFactionsQuery(baseOptions?: Apollo.QueryHookOptions<FactionsQuery, FactionsQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<FactionsQuery, FactionsQueryVariables>(FactionsDocument, options);
+      }
+export function useFactionsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<FactionsQuery, FactionsQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<FactionsQuery, FactionsQueryVariables>(FactionsDocument, options);
+        }
+export type FactionsQueryHookResult = ReturnType<typeof useFactionsQuery>;
+export type FactionsLazyQueryHookResult = ReturnType<typeof useFactionsLazyQuery>;
+export type FactionsQueryResult = Apollo.QueryResult<FactionsQuery, FactionsQueryVariables>;
 export const MatchesDocument = gql`
     query matches($first: Int!, $after: String) {
   matches(first: $first, after: $after) {
@@ -750,10 +711,12 @@ export const MatchesDocument = gql`
  * });
  */
 export function useMatchesQuery(baseOptions: Apollo.QueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
-        return Apollo.useQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, options);
       }
 export function useMatchesLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<MatchesQuery, MatchesQueryVariables>) {
-          return Apollo.useLazyQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<MatchesQuery, MatchesQueryVariables>(MatchesDocument, options);
         }
 export type MatchesQueryHookResult = ReturnType<typeof useMatchesQuery>;
 export type MatchesLazyQueryHookResult = ReturnType<typeof useMatchesLazyQuery>;
@@ -763,6 +726,7 @@ export const PlayerMatsDocument = gql`
   playerMats {
     id
     name
+    abbrev
   }
 }
     `;
@@ -783,10 +747,12 @@ export const PlayerMatsDocument = gql`
  * });
  */
 export function usePlayerMatsQuery(baseOptions?: Apollo.QueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
-        return Apollo.useQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, options);
       }
 export function usePlayerMatsLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PlayerMatsQuery, PlayerMatsQueryVariables>) {
-          return Apollo.useLazyQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PlayerMatsQuery, PlayerMatsQueryVariables>(PlayerMatsDocument, options);
         }
 export type PlayerMatsQueryHookResult = ReturnType<typeof usePlayerMatsQuery>;
 export type PlayerMatsLazyQueryHookResult = ReturnType<typeof usePlayerMatsLazyQuery>;
@@ -824,10 +790,12 @@ export const PlayersByNameDocument = gql`
  * });
  */
 export function usePlayersByNameQuery(baseOptions: Apollo.QueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
-        return Apollo.useQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, options);
       }
 export function usePlayersByNameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<PlayersByNameQuery, PlayersByNameQueryVariables>) {
-          return Apollo.useLazyQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<PlayersByNameQuery, PlayersByNameQueryVariables>(PlayersByNameDocument, options);
         }
 export type PlayersByNameQueryHookResult = ReturnType<typeof usePlayersByNameQuery>;
 export type PlayersByNameLazyQueryHookResult = ReturnType<typeof usePlayersByNameLazyQuery>;
@@ -883,10 +851,12 @@ export const TiersDocument = gql`
  * });
  */
 export function useTiersQuery(baseOptions: Apollo.QueryHookOptions<TiersQuery, TiersQueryVariables>) {
-        return Apollo.useQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TiersQuery, TiersQueryVariables>(TiersDocument, options);
       }
 export function useTiersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TiersQuery, TiersQueryVariables>) {
-          return Apollo.useLazyQuery<TiersQuery, TiersQueryVariables>(TiersDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TiersQuery, TiersQueryVariables>(TiersDocument, options);
         }
 export type TiersQueryHookResult = ReturnType<typeof useTiersQuery>;
 export type TiersLazyQueryHookResult = ReturnType<typeof useTiersLazyQuery>;
@@ -926,10 +896,12 @@ export const TopPlayersDocument = gql`
  * });
  */
 export function useTopPlayersQuery(baseOptions: Apollo.QueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
-        return Apollo.useQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, options);
       }
 export function useTopPlayersLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<TopPlayersQuery, TopPlayersQueryVariables>) {
-          return Apollo.useLazyQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, baseOptions);
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<TopPlayersQuery, TopPlayersQueryVariables>(TopPlayersDocument, options);
         }
 export type TopPlayersQueryHookResult = ReturnType<typeof useTopPlayersQuery>;
 export type TopPlayersLazyQueryHookResult = ReturnType<typeof useTopPlayersLazyQuery>;

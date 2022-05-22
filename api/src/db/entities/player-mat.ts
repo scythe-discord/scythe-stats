@@ -2,6 +2,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
 import MatComboTier from './mat-combo-tier';
+import BidPresetSetting from './bid-preset-setting';
 
 @Entity()
 export default class PlayerMat {
@@ -22,4 +23,10 @@ export default class PlayerMat {
 
   @OneToMany(() => MatComboTier, (matComboTier) => matComboTier.playerMat)
   matComboTiers: MatComboTier[];
+
+  @OneToMany(
+    () => BidPresetSetting,
+    (bidPresetSetting) => bidPresetSetting.playerMat
+  )
+  bidPresetSettings: BidPresetSetting[];
 }

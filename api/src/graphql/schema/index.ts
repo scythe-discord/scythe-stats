@@ -20,6 +20,7 @@ import {
 } from './players';
 import { typeDef as tierTypeDef, resolvers as tierResolvers } from './tiers';
 import { typeDef as relayTypeDef, resolvers as relayResolvers } from './relay';
+import { typeDef as bidsTypeDef, resolvers as bidsResolvers } from './bids';
 import { rateLimitDirective } from './directives';
 import { makeExecutableSchema } from '@graphql-tools/schema';
 
@@ -50,6 +51,7 @@ export default rateLimitDirectiveTransformer(
       ...playerTypeDef,
       ...matchTypeDef,
       ...tierTypeDef,
+      ...bidsTypeDef,
     ],
     resolvers: merge(
       authResolvers,
@@ -58,7 +60,8 @@ export default rateLimitDirectiveTransformer(
       factionsResolvers,
       playerResolvers,
       matchResolvers,
-      tierResolvers
+      tierResolvers,
+      bidsResolvers
     ),
   })
 );

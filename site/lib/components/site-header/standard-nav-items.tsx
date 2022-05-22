@@ -79,6 +79,11 @@ const StandardNavItems: FC = () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
+        <Link href="/bid" passHref={true}>
+          <StyledLink>Bidding</StyledLink>
+        </Link>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem>
         <DiscordAuthItem />
       </SpacedNavigationItem>
       <StyledNavigationItem

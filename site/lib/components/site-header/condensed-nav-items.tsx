@@ -72,6 +72,11 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
+              <Link href="/bid" passHref={true}>
+                <StyledLink>Bidding</StyledLink>
+              </Link>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
               <StyledLink
                 href="https://discord.gg/dcRcxy2"
                 target="_blank"

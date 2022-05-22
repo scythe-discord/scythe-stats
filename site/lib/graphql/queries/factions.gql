@@ -1,0 +1,6 @@
+query factions {
+  factions {
+    id
+    name
+  }
+}

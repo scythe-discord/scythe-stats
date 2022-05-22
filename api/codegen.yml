@@ -18,3 +18,5 @@ generates:
         FactionMatCombo: '../../mappers#FactionMatComboBase'
         FactionStatsWithPlayerCount: '../../mappers#FactionStatsWithPlayerCountBase'
         FactionMatComboStatsWithPlayerCount: '../../mappers#FactionMatComboStatsWithPlayerCountBase'
+        BidPreset: '../../mappers#BidPresetModel'
+        BidPresetSetting: '../../mappers#BidPresetSettingModel'

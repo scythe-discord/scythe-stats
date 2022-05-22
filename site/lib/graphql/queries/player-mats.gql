@@ -2,5 +2,6 @@ query playerMats {
   playerMats {
     id
     name
+    abbrev
   }
 }

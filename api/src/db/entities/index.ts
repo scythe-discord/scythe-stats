@@ -6,3 +6,5 @@ export { default as PlayerMatchResult } from './player-match-result';
 export { default as Tier } from './tier';
 export { default as MatComboTier } from './mat-combo-tier';
 export { default as DiscordBlacklist } from './discord-blacklist';
+export { default as BidPreset } from './bid-preset';
+export { default as BidPresetSetting } from './bid-preset-setting';
