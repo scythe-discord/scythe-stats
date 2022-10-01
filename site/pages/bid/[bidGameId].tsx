@@ -9,6 +9,7 @@ import {
   useJoinBidGameMutation,
   useStartBidGameMutation,
   useUpdateQuickBidSettingMutation,
+  useUpdateRankedBidGameSettingMutation,
 } from 'lib/graphql/codegen';
 import { useRouter } from 'next/router';
 import { gql } from '@apollo/client';
@@ -59,7 +60,8 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
     variables: { bidGameId: bidGameIdAsNumber },
   });
 
-  const [mutate] = useUpdateQuickBidSettingMutation();
+  const [updateQuickBidSetting] = useUpdateQuickBidSettingMutation();
+  const [updateRankedSetting] = useUpdateRankedBidGameSettingMutation();
 
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   const [recordMatchModalOpen, setRecordMatchModalOpen] = useState(false);
@@ -212,27 +214,51 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                         </LabelMedium>
                         {isHost &&
                         data.bidGame.status === BidGameStatus.Created ? (
-                          <div className={css({ marginTop: '20px' })}>
-                            <Checkbox
-                              checked={data.bidGame.quickBid}
-                              onChange={async (e) => {
-                                mutate({
-                                  variables: {
-                                    bidGameId: bidGameIdAsNumber,
-                                    quickBid: e.target.checked,
-                                  },
-                                });
-                              }}
-                              checkmarkType={STYLE_TYPE.toggle_round}
-                              labelPlacement={LABEL_PLACEMENT.right}
-                            >
-                              Quick Bid
-                            </Checkbox>
-                          </div>
+                          <>
+                            <div className={css({ marginTop: '20px' })}>
+                              <Checkbox
+                                checked={data.bidGame.quickBid}
+                                onChange={async (e) => {
+                                  updateQuickBidSetting({
+                                    variables: {
+                                      bidGameId: bidGameIdAsNumber,
+                                      quickBid: e.target.checked,
+                                    },
+                                  });
+                                }}
+                                checkmarkType={STYLE_TYPE.toggle_round}
+                                labelPlacement={LABEL_PLACEMENT.right}
+                              >
+                                Quick Bid
+                              </Checkbox>
+                            </div>
+                            <div className={css({ marginTop: '20px' })}>
+                              <Checkbox
+                                checked={data.bidGame.ranked}
+                                onChange={async (e) => {
+                                  updateRankedSetting({
+                                    variables: {
+                                      bidGameId: bidGameIdAsNumber,
+                                      ranked: e.target.checked,
+                                    },
+                                  });
+                                }}
+                                checkmarkType={STYLE_TYPE.toggle_round}
+                                labelPlacement={LABEL_PLACEMENT.right}
+                              >
+                                Ranked
+                              </Checkbox>
+                            </div>
+                          </>
                         ) : (
-                          data.bidGame.quickBid && (
-                            <LabelMedium>Quick Bid</LabelMedium>
-                          )
+                          <>
+                            {data.bidGame.quickBid && (
+                              <LabelMedium>Quick Bid</LabelMedium>
+                            )}
+                            {data.bidGame.ranked && (
+                              <LabelMedium>Ranked</LabelMedium>
+                            )}
+                          </>
                         )}
                       </>
                     )}

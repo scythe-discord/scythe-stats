@@ -1,4 +1,5 @@
 import { EntityRepository, Repository, EntityManager } from 'typeorm';
+import { rate } from 'openskill';
 
 import { delay } from '../../common/utils';
 import {
@@ -108,6 +109,17 @@ export default class MatchRepository extends Repository<Match> {
   ): Promise<PlayerMatchResult[]> => {
     const playerMatchResults: PlayerMatchResult[] = [];
     const resultsByPlace = getResultsOrderedByPlace(loggedMatchResults);
+
+    if (match.bidGame?.ranked) {
+      const newRatings = rate(
+        match.bidGame.players.map((p) => {
+          console.log(p.user.trueskill);
+          return [p.user.trueskill];
+        })
+      );
+
+      newRatings.forEach(([newRating]) => console.log(newRating));
+    }
 
     for (let i = 0; i < resultsByPlace.length; i++) {
       const {

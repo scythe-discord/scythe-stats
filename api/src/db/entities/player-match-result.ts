@@ -29,7 +29,7 @@ export default class PlayerMatchResult {
   @Column({ default: 0 })
   tieOrder: number;
 
-  @Column()
+  @Column({ type: 'int' })
   rank: number;
 
   @OneToOne(
@@ -58,4 +58,16 @@ export default class PlayerMatchResult {
     onDelete: 'CASCADE',
   })
   match: Match;
+
+  @Column({ type: 'jsonb', nullable: true })
+  playerTrueskill: {
+    before: {
+      sigma: number;
+      mu: number;
+    };
+    after: {
+      sigma: number;
+      mu: number;
+    };
+  } | null;
 }

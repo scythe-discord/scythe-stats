@@ -72,4 +72,7 @@ export default class BidGame {
 
   @Column({ type: 'boolean', default: false })
   quickBid: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  ranked: boolean;
 }

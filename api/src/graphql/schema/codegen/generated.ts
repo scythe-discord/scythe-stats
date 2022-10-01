@@ -41,6 +41,7 @@ export type BidGame = {
   modifiedAt: Scalars['String'];
   players: Array<BidGamePlayer>;
   quickBid: Scalars['Boolean'];
+  ranked: Scalars['Boolean'];
   status: BidGameStatus;
 };
 
@@ -232,6 +233,7 @@ export type Mutation = {
   startBidGame: BidGame;
   updateBidGameSettings: BidGame;
   updateQuickBidSetting: BidGame;
+  updateRankedBidGameSetting: BidGame;
 };
 
 
@@ -277,6 +279,12 @@ export type MutationUpdateBidGameSettingsArgs = {
 export type MutationUpdateQuickBidSettingArgs = {
   bidGameId: Scalars['Int'];
   quickBid: Scalars['Boolean'];
+};
+
+
+export type MutationUpdateRankedBidGameSettingArgs = {
+  bidGameId: Scalars['Int'];
+  ranked: Scalars['Boolean'];
 };
 
 export type Node = {
@@ -633,6 +641,7 @@ export type BidGameResolvers<ContextType = Context, ParentType extends Resolvers
   modifiedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   players?: Resolver<Array<ResolversTypes['BidGamePlayer']>, ParentType, ContextType>;
   quickBid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  ranked?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
   status?: Resolver<ResolversTypes['BidGameStatus'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
@@ -758,6 +767,7 @@ export type MutationResolvers<ContextType = Context, ParentType extends Resolver
   startBidGame?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationStartBidGameArgs, 'bidGameId'>>;
   updateBidGameSettings?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationUpdateBidGameSettingsArgs, 'bidGameId' | 'settings'>>;
   updateQuickBidSetting?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationUpdateQuickBidSettingArgs, 'bidGameId' | 'quickBid'>>;
+  updateRankedBidGameSetting?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationUpdateRankedBidGameSettingArgs, 'bidGameId' | 'ranked'>>;
 }>;
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{

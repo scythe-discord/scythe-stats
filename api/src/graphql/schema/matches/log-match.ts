@@ -306,7 +306,9 @@ export const resolvers: Schema.Resolvers = {
         postMatchLog(match.id);
       }
 
-      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      if (bidGame) {
+        pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      }
 
       return match;
     },

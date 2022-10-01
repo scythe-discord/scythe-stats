@@ -203,10 +203,11 @@ export default class BidGameRepository extends Repository<BidGame> {
     return bidGame;
   };
 
-  updateQuickBidSetting = async (
+  updateSetting = async (
     bidGameId: number,
     userId: number,
-    quickBid: boolean
+    key: 'quickBid' | 'ranked',
+    value: boolean
   ): Promise<BidGame> => {
     let bidGame: BidGame | undefined;
 
@@ -227,7 +228,7 @@ export default class BidGameRepository extends Repository<BidGame> {
           throw new Error('You must be the host to do that');
         }
 
-        bidGame.quickBid = quickBid;
+        bidGame[key] = value;
         bidGame.modifiedAt = date;
 
         bidGame = await transactionalEntityManager.save(bidGame);

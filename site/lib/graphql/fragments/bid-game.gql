@@ -25,6 +25,7 @@ fragment BidGame on BidGame {
   }
   bidTimeLimitSeconds
   quickBid
+  ranked
   bidPreset {
     id
     name

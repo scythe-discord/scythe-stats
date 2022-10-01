@@ -21,6 +21,7 @@ export const typeDef = gql`
     joinBidGame(bidGameId: Int!): BidGame! # rate limit?
     updateBidGameSettings(bidGameId: Int!, settings: BidGameSettings!): BidGame!
     updateQuickBidSetting(bidGameId: Int!, quickBid: Boolean!): BidGame!
+    updateRankedBidGameSetting(bidGameId: Int!, ranked: Boolean!): BidGame!
     startBidGame(bidGameId: Int!): BidGame!
     bid(bidGameId: Int!, comboId: Int!, coins: Int!): BidGame!
     quickBid(bidGameId: Int!, quickBids: [QuickBidInput!]!): BidGame!
@@ -116,6 +117,7 @@ export const typeDef = gql`
     activePlayer: BidGamePlayer
     bidHistory: [BidHistoryEntry!]!
     quickBid: Boolean!
+    ranked: Boolean!
     match: Match
   }
 `;
@@ -176,10 +178,29 @@ export const resolvers: Schema.Resolvers = {
       }
 
       const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.updateQuickBidSetting(
+      const bidGame = await bidGameRepo.updateSetting(
         bidGameId,
         userId,
+        'quickBid',
         quickBid
+      );
+
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    updateRankedBidGameSetting: async (_, { bidGameId, ranked }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to update a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.updateSetting(
+        bidGameId,
+        userId,
+        'ranked',
+        ranked
       );
 
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
@@ -243,7 +264,12 @@ export const resolvers: Schema.Resolvers = {
     createdAt: (bidGame) => bidGame.createdAt.toISOString(),
     modifiedAt: (bidGame) => bidGame.modifiedAt.toISOString(),
     players: (bidGame) =>
-      bidGame.players.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+      bidGame.players.sort((a, b) => {
+        if (a.order == null || b.order == null || a.order === b.order) {
+          return a.dateJoined.getTime() - b.dateJoined.getTime();
+        }
+        return a.order - b.order;
+      }),
     activePlayer: (bidGame) => {
       if (bidGame.quickBid) {
         return null;
