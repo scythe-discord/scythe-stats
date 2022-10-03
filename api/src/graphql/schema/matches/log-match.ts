@@ -58,13 +58,17 @@ const generateMatchLogMessage = (
   if (!winnerFactionEmoji) {
     throw new Error(`Unable to find emoji for faction ${winner.faction.name}`);
   }
+
+  const winnerFinalScore =
+    winner.coins - (winner.bidGamePlayer?.bid?.coins ?? 0);
+
   const description = `${
     winner.player.displayName
   } won as ${winnerFactionEmoji.toString()} ${
     winner.playerMat.name
-  } in ${numRounds} ${numRounds === 1 ? 'round' : 'rounds'} with $${
-    winner.coins
-  } ${winner.coins === 1 ? 'coin' : 'coins'}!`;
+  } in ${numRounds} ${
+    numRounds === 1 ? 'round' : 'rounds'
+  } with $${winnerFinalScore} ${winnerFinalScore === 1 ? 'coin' : 'coins'}!`;
 
   let matchEmbed = new MessageEmbed()
     .setColor('#05A357')
@@ -96,8 +100,14 @@ const generateMatchLogMessage = (
 
     const fieldValue = `**${
       result.player.displayName
-    }** - ${factionEmoji.toString()} ${result.playerMat.name} - $${
+    }** - ${factionEmoji.toString()} ${result.playerMat.name}: $${
       result.coins
+    }${
+      result.bidGamePlayer?.bid
+        ? ` - $${result.bidGamePlayer.bid.coins} = $${
+            result.coins - result.bidGamePlayer.bid.coins
+          }`
+        : ''
     }`;
 
     matchEmbed = matchEmbed.addField(fieldName, fieldValue);
