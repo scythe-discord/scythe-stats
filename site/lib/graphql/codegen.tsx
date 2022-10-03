@@ -15,6 +15,74 @@ export type Scalars = {
   Float: number;
 };
 
+export type Bid = {
+  __typename?: 'Bid';
+  bidGameCombo: BidGameCombo;
+  bidGamePlayer: BidGamePlayer;
+  coins: Scalars['Int'];
+  date: Scalars['String'];
+  id: Scalars['Int'];
+};
+
+export type BidGame = {
+  __typename?: 'BidGame';
+  activePlayer?: Maybe<BidGamePlayer>;
+  bidHistory: Array<BidHistoryEntry>;
+  bidPreset?: Maybe<BidPreset>;
+  bidTimeLimitSeconds?: Maybe<Scalars['Int']>;
+  combos?: Maybe<Array<BidGameCombo>>;
+  createdAt: Scalars['String'];
+  enabledCombos?: Maybe<Array<ComboSetting>>;
+  host: BidGamePlayer;
+  id: Scalars['Int'];
+  match?: Maybe<Match>;
+  modifiedAt: Scalars['String'];
+  players: Array<BidGamePlayer>;
+  quickBid: Scalars['Boolean'];
+  status: BidGameStatus;
+};
+
+export type BidGameCombo = {
+  __typename?: 'BidGameCombo';
+  bid?: Maybe<Bid>;
+  faction: Faction;
+  id: Scalars['Int'];
+  playerMat: PlayerMat;
+};
+
+export type BidGamePlayer = {
+  __typename?: 'BidGamePlayer';
+  bid?: Maybe<Bid>;
+  dateJoined: Scalars['String'];
+  id: Scalars['Int'];
+  quickBidReady?: Maybe<Scalars['Boolean']>;
+  user: User;
+};
+
+export type BidGameSettings = {
+  bidPresetId?: InputMaybe<Scalars['Int']>;
+  combos: Array<ComboInput>;
+  timeLimit?: InputMaybe<Scalars['Int']>;
+};
+
+export enum BidGameStatus {
+  Bidding = 'BIDDING',
+  BiddingFinished = 'BIDDING_FINISHED',
+  Created = 'CREATED',
+  Deleted = 'DELETED',
+  Expired = 'EXPIRED',
+  GameRecorded = 'GAME_RECORDED'
+}
+
+export type BidHistoryEntry = {
+  __typename?: 'BidHistoryEntry';
+  coins: Scalars['Int'];
+  date: Scalars['String'];
+  factionId: Scalars['Int'];
+  playerId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
+};
+
 export type BidPreset = {
   __typename?: 'BidPreset';
   bidPresetSettings: Array<BidPresetSetting>;
@@ -30,11 +98,15 @@ export type BidPresetSetting = {
   playerMat: PlayerMat;
 };
 
-export type DiscordUser = {
-  __typename?: 'DiscordUser';
-  discriminator: Scalars['String'];
-  id: Scalars['String'];
-  username: Scalars['String'];
+export type ComboInput = {
+  factionId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
+};
+
+export type ComboSetting = {
+  __typename?: 'ComboSetting';
+  factionId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
 };
 
 export type Faction = {
@@ -42,6 +114,7 @@ export type Faction = {
   factionMatCombos: Array<FactionMatCombo>;
   id: Scalars['Int'];
   name: Scalars['String'];
+  position: Scalars['Int'];
   statsByPlayerCount: Array<FactionStatsWithPlayerCount>;
   topPlayers: Array<PlayerFactionStats>;
   totalMatches: Scalars['Int'];
@@ -149,16 +222,59 @@ export type MatchEdge = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  bid: BidGame;
+  createBidGame: BidGame;
+  joinBidGame: BidGame;
   logMatch?: Maybe<Match>;
+  quickBid: BidGame;
+  startBidGame: BidGame;
+  updateBidGameSettings: BidGame;
+  updateQuickBidSetting: BidGame;
+};
+
+
+export type MutationBidArgs = {
+  bidGameId: Scalars['Int'];
+  coins: Scalars['Int'];
+  comboId: Scalars['Int'];
+};
+
+
+export type MutationJoinBidGameArgs = {
+  bidGameId: Scalars['Int'];
 };
 
 
 export type MutationLogMatchArgs = {
+  bidGameId?: InputMaybe<Scalars['Int']>;
   datePlayed: Scalars['String'];
   numRounds: Scalars['Int'];
   playerMatchResults: Array<PlayerMatchResultInput>;
   recordingUserId?: InputMaybe<Scalars['String']>;
   shouldPostMatchLog: Scalars['Boolean'];
+};
+
+
+export type MutationQuickBidArgs = {
+  bidGameId: Scalars['Int'];
+  quickBids: Array<QuickBidInput>;
+};
+
+
+export type MutationStartBidGameArgs = {
+  bidGameId: Scalars['Int'];
+};
+
+
+export type MutationUpdateBidGameSettingsArgs = {
+  bidGameId: Scalars['Int'];
+  settings: BidGameSettings;
+};
+
+
+export type MutationUpdateQuickBidSettingArgs = {
+  bidGameId: Scalars['Int'];
+  quickBid: Scalars['Boolean'];
 };
 
 export type Node = {
@@ -217,40 +333,50 @@ export type PlayerMat = {
   abbrev: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
+  order: Scalars['Int'];
 };
 
 export type PlayerMatchResult = {
   __typename?: 'PlayerMatchResult';
+  bidGamePlayer?: Maybe<BidGamePlayer>;
   coins: Scalars['Int'];
   faction: Faction;
   id: Scalars['Int'];
   player: Player;
   playerMat: PlayerMat;
-  tieOrder: Scalars['Int'];
+  rank: Scalars['Int'];
 };
 
 export type PlayerMatchResultInput = {
+  bidGamePlayerId?: InputMaybe<Scalars['Int']>;
   coins: Scalars['Int'];
   displayName: Scalars['String'];
   faction: Scalars['String'];
   playerMat: Scalars['String'];
+  rank: Scalars['Int'];
   steamId?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  bidGame: BidGame;
   bidPresets: Array<BidPreset>;
-  discordMe?: Maybe<DiscordUser>;
   faction: Faction;
   factions: Array<Faction>;
   matches: MatchConnection;
+  me?: Maybe<User>;
   player?: Maybe<Player>;
   playerMat: PlayerMat;
   playerMats: Array<PlayerMat>;
   playersByName: PlayerConnection;
   playersByWins: PlayerConnection;
   tiers: Array<Tier>;
+};
+
+
+export type QueryBidGameArgs = {
+  bidGameId: Scalars['Int'];
 };
 
 
@@ -289,6 +415,23 @@ export type QueryPlayersByWinsArgs = {
   fromDate?: InputMaybe<Scalars['String']>;
 };
 
+export type QuickBidInput = {
+  bidCoins: Scalars['Int'];
+  comboId: Scalars['Int'];
+  order: Scalars['Int'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  _empty?: Maybe<Scalars['String']>;
+  bidGameUpdated: BidGame;
+};
+
+
+export type SubscriptionBidGameUpdatedArgs = {
+  bidGameId: Scalars['Int'];
+};
+
 export type Tier = {
   __typename?: 'Tier';
   factionMatCombos: Array<FactionMatCombo>;
@@ -297,15 +440,87 @@ export type Tier = {
   rank: Scalars['Int'];
 };
 
+export type User = {
+  __typename?: 'User';
+  discordId: Scalars['String'];
+  discriminator: Scalars['String'];
+  id: Scalars['Int'];
+  username: Scalars['String'];
+};
+
+export type BidGameFragment = { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null };
+
+export type PlayerMatchResultFragment = { __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } };
+
+export type BidMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+  comboId: Scalars['Int'];
+  coins: Scalars['Int'];
+}>;
+
+
+export type BidMutation = { __typename?: 'Mutation', bid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type CreateBidGameMutationVariables = Exact<{ [key: string]: never; }>;
+
+
+export type CreateBidGameMutation = { __typename?: 'Mutation', createBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type EditBidGameSettingsMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+  settings: BidGameSettings;
+}>;
+
+
+export type EditBidGameSettingsMutation = { __typename?: 'Mutation', updateBidGameSettings: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type JoinBidGameMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+}>;
+
+
+export type JoinBidGameMutation = { __typename?: 'Mutation', joinBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
 export type LogMatchMutationVariables = Exact<{
   numRounds: Scalars['Int'];
   datePlayed: Scalars['String'];
   playerMatchResults: Array<PlayerMatchResultInput> | PlayerMatchResultInput;
   shouldPostMatchLog: Scalars['Boolean'];
+  bidGameId?: InputMaybe<Scalars['Int']>;
 }>;
 
 
-export type LogMatchMutation = { __typename?: 'Mutation', logMatch?: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, tieOrder: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } | null };
+export type LogMatchMutation = { __typename?: 'Mutation', logMatch?: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } | null };
+
+export type QuickBidMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+  quickBids: Array<QuickBidInput> | QuickBidInput;
+}>;
+
+
+export type QuickBidMutation = { __typename?: 'Mutation', quickBid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type StartBidGameMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+}>;
+
+
+export type StartBidGameMutation = { __typename?: 'Mutation', startBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type UpdateQuickBidSettingMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+  quickBid: Scalars['Boolean'];
+}>;
+
+
+export type UpdateQuickBidSettingMutation = { __typename?: 'Mutation', updateQuickBidSetting: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+
+export type BidGameQueryVariables = Exact<{
+  bidGameId: Scalars['Int'];
+}>;
+
+
+export type BidGameQuery = { __typename?: 'Query', bidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
 
 export type BidPresetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -315,7 +530,7 @@ export type BidPresetsQuery = { __typename?: 'Query', bidPresets: Array<{ __type
 export type DiscordMeQueryVariables = Exact<{ [key: string]: never; }>;
 
 
-export type DiscordMeQuery = { __typename?: 'Query', discordMe?: { __typename?: 'DiscordUser', id: string, username: string, discriminator: string } | null };
+export type DiscordMeQuery = { __typename?: 'Query', me?: { __typename?: 'User', id: number, username: string, discriminator: string, discordId: string } | null };
 
 export type FactionStatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -341,7 +556,7 @@ export type MatchesQueryVariables = Exact<{
 }>;
 
 
-export type MatchesQuery = { __typename?: 'Query', matches: { __typename?: 'MatchConnection', edges: Array<{ __typename?: 'MatchEdge', node: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, tieOrder: number, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, endCursor?: string | null } } };
+export type MatchesQuery = { __typename?: 'Query', matches: { __typename?: 'MatchConnection', edges: Array<{ __typename?: 'MatchEdge', node: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, endCursor?: string | null } } };
 
 export type PlayerMatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -373,20 +588,254 @@ export type TopPlayersQueryVariables = Exact<{
 
 export type TopPlayersQuery = { __typename?: 'Query', playersByWins: { __typename?: 'PlayerConnection', edges: Array<{ __typename?: 'PlayerEdge', node: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null, totalWins: number, totalMatches: number } }> } };
 
+export const PlayerMatchResultFragmentDoc = gql`
+    fragment PlayerMatchResult on PlayerMatchResult {
+  id
+  bidGamePlayer {
+    id
+    bid {
+      id
+      coins
+    }
+  }
+  player {
+    id
+    displayName
+    steamId
+  }
+  faction {
+    id
+    name
+  }
+  playerMat {
+    id
+    name
+  }
+  coins
+  rank
+}
+    `;
+export const BidGameFragmentDoc = gql`
+    fragment BidGame on BidGame {
+  id
+  status
+  createdAt
+  modifiedAt
+  players {
+    id
+    user {
+      id
+      username
+    }
+    bid {
+      id
+    }
+    quickBidReady
+  }
+  host {
+    id
+    user {
+      id
+      username
+    }
+  }
+  bidTimeLimitSeconds
+  quickBid
+  bidPreset {
+    id
+    name
+  }
+  enabledCombos {
+    factionId
+    playerMatId
+  }
+  activePlayer {
+    id
+    user {
+      id
+      username
+    }
+  }
+  combos {
+    id
+    faction {
+      id
+      name
+      position
+    }
+    playerMat {
+      id
+      name
+      order
+    }
+    bid {
+      id
+      coins
+    }
+  }
+  match {
+    id
+    playerMatchResults {
+      ...PlayerMatchResult
+    }
+  }
+}
+    ${PlayerMatchResultFragmentDoc}`;
+export const BidDocument = gql`
+    mutation bid($bidGameId: Int!, $comboId: Int!, $coins: Int!) {
+  bid(bidGameId: $bidGameId, comboId: $comboId, coins: $coins) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type BidMutationFn = Apollo.MutationFunction<BidMutation, BidMutationVariables>;
 
+/**
+ * __useBidMutation__
+ *
+ * To run a mutation, you first call `useBidMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useBidMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [bidMutation, { data, loading, error }] = useBidMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *      comboId: // value for 'comboId'
+ *      coins: // value for 'coins'
+ *   },
+ * });
+ */
+export function useBidMutation(baseOptions?: Apollo.MutationHookOptions<BidMutation, BidMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<BidMutation, BidMutationVariables>(BidDocument, options);
+      }
+export type BidMutationHookResult = ReturnType<typeof useBidMutation>;
+export type BidMutationResult = Apollo.MutationResult<BidMutation>;
+export type BidMutationOptions = Apollo.BaseMutationOptions<BidMutation, BidMutationVariables>;
+export const CreateBidGameDocument = gql`
+    mutation createBidGame {
+  createBidGame {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type CreateBidGameMutationFn = Apollo.MutationFunction<CreateBidGameMutation, CreateBidGameMutationVariables>;
+
+/**
+ * __useCreateBidGameMutation__
+ *
+ * To run a mutation, you first call `useCreateBidGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useCreateBidGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [createBidGameMutation, { data, loading, error }] = useCreateBidGameMutation({
+ *   variables: {
+ *   },
+ * });
+ */
+export function useCreateBidGameMutation(baseOptions?: Apollo.MutationHookOptions<CreateBidGameMutation, CreateBidGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<CreateBidGameMutation, CreateBidGameMutationVariables>(CreateBidGameDocument, options);
+      }
+export type CreateBidGameMutationHookResult = ReturnType<typeof useCreateBidGameMutation>;
+export type CreateBidGameMutationResult = Apollo.MutationResult<CreateBidGameMutation>;
+export type CreateBidGameMutationOptions = Apollo.BaseMutationOptions<CreateBidGameMutation, CreateBidGameMutationVariables>;
+export const EditBidGameSettingsDocument = gql`
+    mutation editBidGameSettings($bidGameId: Int!, $settings: BidGameSettings!) {
+  updateBidGameSettings(bidGameId: $bidGameId, settings: $settings) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type EditBidGameSettingsMutationFn = Apollo.MutationFunction<EditBidGameSettingsMutation, EditBidGameSettingsMutationVariables>;
+
+/**
+ * __useEditBidGameSettingsMutation__
+ *
+ * To run a mutation, you first call `useEditBidGameSettingsMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useEditBidGameSettingsMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [editBidGameSettingsMutation, { data, loading, error }] = useEditBidGameSettingsMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *      settings: // value for 'settings'
+ *   },
+ * });
+ */
+export function useEditBidGameSettingsMutation(baseOptions?: Apollo.MutationHookOptions<EditBidGameSettingsMutation, EditBidGameSettingsMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<EditBidGameSettingsMutation, EditBidGameSettingsMutationVariables>(EditBidGameSettingsDocument, options);
+      }
+export type EditBidGameSettingsMutationHookResult = ReturnType<typeof useEditBidGameSettingsMutation>;
+export type EditBidGameSettingsMutationResult = Apollo.MutationResult<EditBidGameSettingsMutation>;
+export type EditBidGameSettingsMutationOptions = Apollo.BaseMutationOptions<EditBidGameSettingsMutation, EditBidGameSettingsMutationVariables>;
+export const JoinBidGameDocument = gql`
+    mutation joinBidGame($bidGameId: Int!) {
+  joinBidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type JoinBidGameMutationFn = Apollo.MutationFunction<JoinBidGameMutation, JoinBidGameMutationVariables>;
+
+/**
+ * __useJoinBidGameMutation__
+ *
+ * To run a mutation, you first call `useJoinBidGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useJoinBidGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [joinBidGameMutation, { data, loading, error }] = useJoinBidGameMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *   },
+ * });
+ */
+export function useJoinBidGameMutation(baseOptions?: Apollo.MutationHookOptions<JoinBidGameMutation, JoinBidGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<JoinBidGameMutation, JoinBidGameMutationVariables>(JoinBidGameDocument, options);
+      }
+export type JoinBidGameMutationHookResult = ReturnType<typeof useJoinBidGameMutation>;
+export type JoinBidGameMutationResult = Apollo.MutationResult<JoinBidGameMutation>;
+export type JoinBidGameMutationOptions = Apollo.BaseMutationOptions<JoinBidGameMutation, JoinBidGameMutationVariables>;
 export const LogMatchDocument = gql`
-    mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $shouldPostMatchLog: Boolean!) {
+    mutation logMatch($numRounds: Int!, $datePlayed: String!, $playerMatchResults: [PlayerMatchResultInput!]!, $shouldPostMatchLog: Boolean!, $bidGameId: Int) {
   logMatch(
     numRounds: $numRounds
     datePlayed: $datePlayed
     playerMatchResults: $playerMatchResults
     shouldPostMatchLog: $shouldPostMatchLog
+    bidGameId: $bidGameId
   ) {
     id
     datePlayed
     numRounds
     playerMatchResults {
       id
+      bidGamePlayer {
+        id
+        bid {
+          id
+          coins
+        }
+      }
       player {
         id
         displayName
@@ -401,7 +850,7 @@ export const LogMatchDocument = gql`
         name
       }
       coins
-      tieOrder
+      rank
     }
     winner {
       id
@@ -428,6 +877,7 @@ export type LogMatchMutationFn = Apollo.MutationFunction<LogMatchMutation, LogMa
  *      datePlayed: // value for 'datePlayed'
  *      playerMatchResults: // value for 'playerMatchResults'
  *      shouldPostMatchLog: // value for 'shouldPostMatchLog'
+ *      bidGameId: // value for 'bidGameId'
  *   },
  * });
  */
@@ -438,6 +888,142 @@ export function useLogMatchMutation(baseOptions?: Apollo.MutationHookOptions<Log
 export type LogMatchMutationHookResult = ReturnType<typeof useLogMatchMutation>;
 export type LogMatchMutationResult = Apollo.MutationResult<LogMatchMutation>;
 export type LogMatchMutationOptions = Apollo.BaseMutationOptions<LogMatchMutation, LogMatchMutationVariables>;
+export const QuickBidDocument = gql`
+    mutation quickBid($bidGameId: Int!, $quickBids: [QuickBidInput!]!) {
+  quickBid(bidGameId: $bidGameId, quickBids: $quickBids) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type QuickBidMutationFn = Apollo.MutationFunction<QuickBidMutation, QuickBidMutationVariables>;
+
+/**
+ * __useQuickBidMutation__
+ *
+ * To run a mutation, you first call `useQuickBidMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useQuickBidMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [quickBidMutation, { data, loading, error }] = useQuickBidMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *      quickBids: // value for 'quickBids'
+ *   },
+ * });
+ */
+export function useQuickBidMutation(baseOptions?: Apollo.MutationHookOptions<QuickBidMutation, QuickBidMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<QuickBidMutation, QuickBidMutationVariables>(QuickBidDocument, options);
+      }
+export type QuickBidMutationHookResult = ReturnType<typeof useQuickBidMutation>;
+export type QuickBidMutationResult = Apollo.MutationResult<QuickBidMutation>;
+export type QuickBidMutationOptions = Apollo.BaseMutationOptions<QuickBidMutation, QuickBidMutationVariables>;
+export const StartBidGameDocument = gql`
+    mutation startBidGame($bidGameId: Int!) {
+  startBidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type StartBidGameMutationFn = Apollo.MutationFunction<StartBidGameMutation, StartBidGameMutationVariables>;
+
+/**
+ * __useStartBidGameMutation__
+ *
+ * To run a mutation, you first call `useStartBidGameMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useStartBidGameMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [startBidGameMutation, { data, loading, error }] = useStartBidGameMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *   },
+ * });
+ */
+export function useStartBidGameMutation(baseOptions?: Apollo.MutationHookOptions<StartBidGameMutation, StartBidGameMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<StartBidGameMutation, StartBidGameMutationVariables>(StartBidGameDocument, options);
+      }
+export type StartBidGameMutationHookResult = ReturnType<typeof useStartBidGameMutation>;
+export type StartBidGameMutationResult = Apollo.MutationResult<StartBidGameMutation>;
+export type StartBidGameMutationOptions = Apollo.BaseMutationOptions<StartBidGameMutation, StartBidGameMutationVariables>;
+export const UpdateQuickBidSettingDocument = gql`
+    mutation updateQuickBidSetting($bidGameId: Int!, $quickBid: Boolean!) {
+  updateQuickBidSetting(bidGameId: $bidGameId, quickBid: $quickBid) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type UpdateQuickBidSettingMutationFn = Apollo.MutationFunction<UpdateQuickBidSettingMutation, UpdateQuickBidSettingMutationVariables>;
+
+/**
+ * __useUpdateQuickBidSettingMutation__
+ *
+ * To run a mutation, you first call `useUpdateQuickBidSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateQuickBidSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateQuickBidSettingMutation, { data, loading, error }] = useUpdateQuickBidSettingMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *      quickBid: // value for 'quickBid'
+ *   },
+ * });
+ */
+export function useUpdateQuickBidSettingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateQuickBidSettingMutation, UpdateQuickBidSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateQuickBidSettingMutation, UpdateQuickBidSettingMutationVariables>(UpdateQuickBidSettingDocument, options);
+      }
+export type UpdateQuickBidSettingMutationHookResult = ReturnType<typeof useUpdateQuickBidSettingMutation>;
+export type UpdateQuickBidSettingMutationResult = Apollo.MutationResult<UpdateQuickBidSettingMutation>;
+export type UpdateQuickBidSettingMutationOptions = Apollo.BaseMutationOptions<UpdateQuickBidSettingMutation, UpdateQuickBidSettingMutationVariables>;
+export const BidGameDocument = gql`
+    query bidGame($bidGameId: Int!) {
+  bidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+
+/**
+ * __useBidGameQuery__
+ *
+ * To run a query within a React component, call `useBidGameQuery` and pass it any options that fit your needs.
+ * When your component renders, `useBidGameQuery` returns an object from Apollo Client that contains loading, error, and data properties
+ * you can use to render your UI.
+ *
+ * @param baseOptions options that will be passed into the query, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options;
+ *
+ * @example
+ * const { data, loading, error } = useBidGameQuery({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *   },
+ * });
+ */
+export function useBidGameQuery(baseOptions: Apollo.QueryHookOptions<BidGameQuery, BidGameQueryVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useQuery<BidGameQuery, BidGameQueryVariables>(BidGameDocument, options);
+      }
+export function useBidGameLazyQuery(baseOptions?: Apollo.LazyQueryHookOptions<BidGameQuery, BidGameQueryVariables>) {
+          const options = {...defaultOptions, ...baseOptions}
+          return Apollo.useLazyQuery<BidGameQuery, BidGameQueryVariables>(BidGameDocument, options);
+        }
+export type BidGameQueryHookResult = ReturnType<typeof useBidGameQuery>;
+export type BidGameLazyQueryHookResult = ReturnType<typeof useBidGameLazyQuery>;
+export type BidGameQueryResult = Apollo.QueryResult<BidGameQuery, BidGameQueryVariables>;
 export const BidPresetsDocument = gql`
     query bidPresets {
   bidPresets {
@@ -487,10 +1073,11 @@ export type BidPresetsLazyQueryHookResult = ReturnType<typeof useBidPresetsLazyQ
 export type BidPresetsQueryResult = Apollo.QueryResult<BidPresetsQuery, BidPresetsQueryVariables>;
 export const DiscordMeDocument = gql`
     query discordMe {
-  discordMe {
+  me {
     id
     username
     discriminator
+    discordId
   }
 }
     `;
@@ -663,22 +1250,7 @@ export const MatchesDocument = gql`
         datePlayed
         numRounds
         playerMatchResults {
-          id
-          player {
-            id
-            displayName
-            steamId
-          }
-          faction {
-            id
-            name
-          }
-          playerMat {
-            id
-            name
-          }
-          coins
-          tieOrder
+          ...PlayerMatchResult
         }
         winner {
           id
@@ -691,7 +1263,7 @@ export const MatchesDocument = gql`
     }
   }
 }
-    `;
+    ${PlayerMatchResultFragmentDoc}`;
 
 /**
  * __useMatchesQuery__

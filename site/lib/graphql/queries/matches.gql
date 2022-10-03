@@ -1,3 +1,5 @@
+# import PlayerMatchResult from "../fragments/player-match-result.gql"
+
 query matches($first: Int!, $after: String) {
   matches(first: $first, after: $after) {
     edges {
@@ -6,22 +8,7 @@ query matches($first: Int!, $after: String) {
         datePlayed
         numRounds
         playerMatchResults {
-          id
-          player {
-            id
-            displayName
-            steamId
-          }
-          faction {
-            id
-            name
-          }
-          playerMat {
-            id
-            name
-          }
-          coins
-          tieOrder
+          ...PlayerMatchResult
         }
         winner {
           id

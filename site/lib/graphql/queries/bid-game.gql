@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+query bidGame($bidGameId: Int!) {
+  bidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}

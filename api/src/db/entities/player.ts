@@ -4,9 +4,12 @@ import {
   Column,
   OneToMany,
   Index,
+  OneToOne,
+  JoinColumn,
 } from 'typeorm';
 
 import PlayerMatchResult from './player-match-result';
+import User from './user';
 
 @Entity()
 export default class Player {
@@ -14,7 +17,7 @@ export default class Player {
   id: number;
 
   @Column()
-  @Index({ unique: true, where: '"steamId" IS NULL' })
+  @Index({ unique: true, where: '"steamId" IS NULL AND "userId" IS NULL' })
   displayName: string;
 
   @Column({ type: 'varchar', nullable: true })
@@ -25,4 +28,11 @@ export default class Player {
     (playerMatchResult) => playerMatchResult.player
   )
   playerMatchResults: PlayerMatchResult[];
+
+  @Column({ type: 'int', nullable: true })
+  userId: number | null;
+
+  @OneToOne(() => User, (user) => user.player)
+  @JoinColumn({ name: 'userId' })
+  user: User | null;
 }

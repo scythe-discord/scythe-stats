@@ -14,6 +14,8 @@ import { MatchRepository } from '../../../db/repositories';
 import { fetchDiscordMe, getOrdinal } from '../../../common/utils';
 import { BOT_TOKEN, LOG_CHANNELS, SITE_URL } from '../../../common/config';
 import { deleteKeysByPattern, MATCH_SENSITIVE_CACHE_PREFIX } from '../../utils';
+import BidGamePlayer from '../../../db/entities/bid-game-player';
+import { pubsub } from '../pubsub';
 
 export const typeDef = gql`
   extend type Mutation {
@@ -23,6 +25,7 @@ export const typeDef = gql`
       playerMatchResults: [PlayerMatchResultInput!]!
       shouldPostMatchLog: Boolean!
       recordingUserId: String
+      bidGameId: Int
     ): Match @rateLimit(keyPrefix: "log-match")
   }
 
@@ -32,6 +35,8 @@ export const typeDef = gql`
     faction: String!
     playerMat: String!
     coins: Int!
+    bidGamePlayerId: Int
+    rank: Int!
   }
 `;
 
@@ -41,13 +46,7 @@ const generateMatchLogMessage = (
   numRounds: number
 ) => {
   const orderedMatchResults = playerMatchResults.sort((a, b) => {
-    if (a.coins < b.coins) {
-      return 1;
-    } else if (a.coins === b.coins && a.tieOrder > b.tieOrder) {
-      return 1;
-    } else {
-      return -1;
-    }
+    return a.rank - b.rank;
   });
 
   const winner = orderedMatchResults[0];
@@ -187,14 +186,25 @@ const validateMatch = async (
   const seenPlayerMats: { [key: string]: boolean } = {};
   const seenPlayers: { [key: string]: boolean } = {};
 
+  loggedMatchResults.sort((a, b) => a.rank - b.rank);
+  let prevFinalScore: number | null = null;
+
   for (let i = 0; i < loggedMatchResults.length; i++) {
     const {
       faction: factionName,
       playerMat: playerMatName,
       displayName,
       coins,
+      bidGamePlayerId,
     } = loggedMatchResults[i];
 
+    let bid: number | null = null;
+
+    if (bidGamePlayerId != null) {
+      const bidGamePlayerRepo = getRepository(BidGamePlayer);
+      const player = await bidGamePlayerRepo.findOneOrFail(bidGamePlayerId);
+      bid = player.bid?.coins ?? null;
+    }
     if (coins < 0) {
       throw new Error('Coins must be valid positive integers');
     }
@@ -204,6 +214,14 @@ const validateMatch = async (
         "One or more players' coins exceeds the max number of coins"
       );
     }
+
+    const finalScore = coins - (bid ?? 0);
+
+    if (prevFinalScore != null && finalScore > prevFinalScore) {
+      throw new Error('Rank and coins data do not align');
+    }
+
+    prevFinalScore = finalScore;
 
     if (
       seenFactions[factionName] ||
@@ -242,6 +260,7 @@ export const resolvers: Schema.Resolvers = {
         playerMatchResults: loggedMatchResults,
         recordingUserId: loggedRecordingUserId,
         shouldPostMatchLog,
+        bidGameId,
       },
       context
     ) => {
@@ -259,7 +278,7 @@ export const resolvers: Schema.Resolvers = {
           throw new Error('You must be logged in to record matches');
         }
 
-        recordingUserId = discordMe.id;
+        recordingUserId = String(discordMe.id);
       }
 
       const blacklistRepo = getRepository(DiscordBlacklist);
@@ -271,11 +290,12 @@ export const resolvers: Schema.Resolvers = {
       }
 
       const matchRepo = getCustomRepository(MatchRepository);
-      const match = await matchRepo.logMatch(
+      const { match, bidGame } = await matchRepo.logMatch(
         numRounds,
         datePlayed,
         loggedMatchResults,
-        recordingUserId
+        recordingUserId,
+        bidGameId
       );
 
       deleteKeysByPattern(`${MATCH_SENSITIVE_CACHE_PREFIX}*`);
@@ -285,6 +305,8 @@ export const resolvers: Schema.Resolvers = {
         // as to not affect the end user
         postMatchLog(match.id);
       }
+
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
 
       return match;
     },

@@ -1,5 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+} from 'typeorm';
 
+import BidGame from './bid-game';
 import PlayerMatchResult from './player-match-result';
 
 @Entity()
@@ -21,4 +28,7 @@ export default class Match {
     (playerMatchResult) => playerMatchResult.match
   )
   playerMatchResults: PlayerMatchResult[];
+
+  @OneToOne(() => BidGame, (bidGame) => bidGame.match)
+  bidGame: BidGame | null;
 }

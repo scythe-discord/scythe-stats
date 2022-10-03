@@ -1,0 +1,275 @@
+import { gql } from 'apollo-server-core';
+import { getCustomRepository } from 'typeorm';
+import { getActivePlayer } from '../../../common/utils/get-active-player';
+import BidGameRepository from '../../../db/repositories/bid-game-repository';
+import Schema from '../codegen';
+import { withFilter } from 'graphql-subscriptions';
+import { MatchRepository } from '../../../db/repositories';
+import { pubsub } from '../pubsub';
+
+export const typeDef = gql`
+  extend type Query {
+    bidGame(bidGameId: Int!): BidGame!
+  }
+
+  extend type Subscription {
+    bidGameUpdated(bidGameId: Int!): BidGame!
+  }
+
+  extend type Mutation {
+    createBidGame: BidGame! # rate limit?
+    joinBidGame(bidGameId: Int!): BidGame! # rate limit?
+    updateBidGameSettings(bidGameId: Int!, settings: BidGameSettings!): BidGame!
+    updateQuickBidSetting(bidGameId: Int!, quickBid: Boolean!): BidGame!
+    startBidGame(bidGameId: Int!): BidGame!
+    bid(bidGameId: Int!, comboId: Int!, coins: Int!): BidGame!
+    quickBid(bidGameId: Int!, quickBids: [QuickBidInput!]!): BidGame!
+  }
+
+  enum BidGameStatus {
+    CREATED
+    DELETED
+    BIDDING
+    BIDDING_FINISHED
+    GAME_RECORDED
+    EXPIRED
+  }
+
+  type Bid {
+    id: Int!
+    coins: Int!
+    bidGamePlayer: BidGamePlayer!
+    date: String!
+    bidGameCombo: BidGameCombo!
+  }
+
+  type BidGameCombo {
+    id: Int!
+    faction: Faction!
+    playerMat: PlayerMat!
+    bid: Bid
+  }
+
+  type BidGamePlayer {
+    id: Int!
+    user: User!
+    dateJoined: String!
+    bid: Bid
+    quickBidReady: Boolean
+  }
+
+  type BidPresetSetting {
+    id: Int!
+    faction: Faction!
+    playerMat: PlayerMat!
+    enabled: Boolean!
+  }
+
+  type BidPreset {
+    id: Int!
+    name: String!
+    bidPresetSettings: [BidPresetSetting!]!
+  }
+
+  input ComboInput {
+    factionId: Int!
+    playerMatId: Int!
+  }
+
+  input BidGameSettings {
+    bidPresetId: Int
+    combos: [ComboInput!]!
+    timeLimit: Int
+  }
+
+  input QuickBidInput {
+    comboId: Int!
+    bidCoins: Int!
+    # lower order means higher priority
+    order: Int!
+  }
+
+  type ComboSetting {
+    factionId: Int!
+    playerMatId: Int!
+  }
+
+  type BidHistoryEntry {
+    coins: Int!
+    playerId: Int!
+    date: String!
+    factionId: Int!
+    playerMatId: Int!
+  }
+
+  type BidGame {
+    id: Int!
+    players: [BidGamePlayer!]!
+    status: BidGameStatus!
+    createdAt: String!
+    modifiedAt: String!
+    bidTimeLimitSeconds: Int
+    combos: [BidGameCombo!]
+    bidPreset: BidPreset
+    host: BidGamePlayer!
+    enabledCombos: [ComboSetting!]
+    activePlayer: BidGamePlayer
+    bidHistory: [BidHistoryEntry!]!
+    quickBid: Boolean!
+    match: Match
+  }
+`;
+
+export const resolvers: Schema.Resolvers = {
+  Query: {
+    bidGame: async (_, { bidGameId }) => {
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.findOneOrFail(bidGameId);
+      return bidGame;
+    },
+  },
+  Mutation: {
+    createBidGame: async (_, __, context) => {
+      const userId = context.session?.userId;
+      if (userId == null) {
+        throw new Error('You must be logged in to create a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.createBidGame(userId);
+      return bidGame;
+    },
+    joinBidGame: async (_, { bidGameId }, context) => {
+      const userId = context.session?.userId;
+      if (userId == null) {
+        throw new Error('You must be logged in to join a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.joinBidGame(bidGameId, userId);
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+
+      return bidGame;
+    },
+    updateBidGameSettings: async (_, { bidGameId, settings }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to update a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.updateBidGameSettings(
+        bidGameId,
+        userId,
+        settings
+      );
+
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    updateQuickBidSetting: async (_, { bidGameId, quickBid }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to update a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.updateQuickBidSetting(
+        bidGameId,
+        userId,
+        quickBid
+      );
+
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    startBidGame: async (_, { bidGameId }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to start a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.startBidGame(bidGameId, userId);
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    bid: async (_, { bidGameId, coins, comboId }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to bid');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.bid(bidGameId, userId, comboId, coins);
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    quickBid: async (_, { bidGameId, quickBids }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to bid');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.quickBid(bidGameId, userId, quickBids);
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+  },
+  Subscription: {
+    bidGameUpdated: {
+      // @ts-expect-error https://github.com/dotansimha/graphql-code-generator/issues/7197
+      subscribe: withFilter(
+        () => {
+          return pubsub.asyncIterator('BID_GAME_UPDATED');
+        },
+        (payload, variables) => {
+          return payload.bidGameUpdated.id === variables.bidGameId;
+        }
+      ),
+    },
+  },
+  BidGamePlayer: {
+    dateJoined: (bidGamePlayer) => bidGamePlayer.dateJoined.toISOString(),
+    quickBidReady: (bidGamePlayer) => !!bidGamePlayer.quickBids,
+  },
+  BidGame: {
+    createdAt: (bidGame) => bidGame.createdAt.toISOString(),
+    modifiedAt: (bidGame) => bidGame.modifiedAt.toISOString(),
+    players: (bidGame) =>
+      bidGame.players.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+    activePlayer: (bidGame) => {
+      if (bidGame.quickBid) {
+        return null;
+      }
+      return getActivePlayer(bidGame) || null;
+    },
+    match: async (bidGame) => {
+      if (!bidGame.match) {
+        return null;
+      }
+
+      const matchRepo = getCustomRepository(MatchRepository);
+
+      const match = await matchRepo.findOneOrFail(bidGame.match.id, {
+        relations: [
+          'playerMatchResults',
+          'playerMatchResults.player',
+          'playerMatchResults.faction',
+          'playerMatchResults.playerMat',
+        ],
+      });
+
+      return match;
+    },
+  },
+  Bid: {
+    date: (bid) => bid.date.toISOString(),
+  },
+};

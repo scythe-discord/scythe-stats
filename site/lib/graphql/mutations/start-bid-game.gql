@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation startBidGame($bidGameId: Int!) {
+  startBidGame(bidGameId: $bidGameId) {
+    ...BidGame
+  }
+}

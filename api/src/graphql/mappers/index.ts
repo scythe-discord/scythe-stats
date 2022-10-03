@@ -9,5 +9,9 @@ export { default as TierModel } from '../../db/entities/tier';
 export { default as MatchModel } from '../../db/entities/match';
 export { default as BidPresetModel } from '../../db/entities/bid-preset';
 export { default as BidPresetSettingModel } from '../../db/entities/bid-preset-setting';
+export { default as BidGameModel } from '../../db/entities/bid-game';
+export { default as BidModel } from '../../db/entities/bid';
+export { default as BidGameComboModel } from '../../db/entities/bid-game-combo';
+export { default as BidGamePlayerModel } from '../../db/entities/bid-game-player';
 
 export * from './faction-mat-combo';

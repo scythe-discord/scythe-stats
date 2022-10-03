@@ -1,5 +1,5 @@
 import { GraphQLResolveInfo } from 'graphql';
-import { FactionModel, PlayerMatModel, PlayerModel, TierModel, MatchModel, FactionMatComboBase, FactionStatsWithPlayerCountBase, FactionMatComboStatsWithPlayerCountBase, BidPresetModel, BidPresetSettingModel } from '../../mappers';
+import { FactionModel, PlayerMatModel, PlayerModel, TierModel, MatchModel, FactionMatComboBase, FactionStatsWithPlayerCountBase, FactionMatComboStatsWithPlayerCountBase, BidPresetModel, BidPresetSettingModel, BidGameModel, BidModel, BidGameComboModel, BidGamePlayerModel } from '../../mappers';
 import { Context } from '../../context';
 export type Maybe<T> = T | null;
 export type InputMaybe<T> = Maybe<T>;
@@ -17,6 +17,74 @@ export type Scalars = {
   Float: number;
 };
 
+export type Bid = {
+  __typename?: 'Bid';
+  bidGameCombo: BidGameCombo;
+  bidGamePlayer: BidGamePlayer;
+  coins: Scalars['Int'];
+  date: Scalars['String'];
+  id: Scalars['Int'];
+};
+
+export type BidGame = {
+  __typename?: 'BidGame';
+  activePlayer?: Maybe<BidGamePlayer>;
+  bidHistory: Array<BidHistoryEntry>;
+  bidPreset?: Maybe<BidPreset>;
+  bidTimeLimitSeconds?: Maybe<Scalars['Int']>;
+  combos?: Maybe<Array<BidGameCombo>>;
+  createdAt: Scalars['String'];
+  enabledCombos?: Maybe<Array<ComboSetting>>;
+  host: BidGamePlayer;
+  id: Scalars['Int'];
+  match?: Maybe<Match>;
+  modifiedAt: Scalars['String'];
+  players: Array<BidGamePlayer>;
+  quickBid: Scalars['Boolean'];
+  status: BidGameStatus;
+};
+
+export type BidGameCombo = {
+  __typename?: 'BidGameCombo';
+  bid?: Maybe<Bid>;
+  faction: Faction;
+  id: Scalars['Int'];
+  playerMat: PlayerMat;
+};
+
+export type BidGamePlayer = {
+  __typename?: 'BidGamePlayer';
+  bid?: Maybe<Bid>;
+  dateJoined: Scalars['String'];
+  id: Scalars['Int'];
+  quickBidReady?: Maybe<Scalars['Boolean']>;
+  user: User;
+};
+
+export type BidGameSettings = {
+  bidPresetId?: InputMaybe<Scalars['Int']>;
+  combos: Array<ComboInput>;
+  timeLimit?: InputMaybe<Scalars['Int']>;
+};
+
+export enum BidGameStatus {
+  Bidding = 'BIDDING',
+  BiddingFinished = 'BIDDING_FINISHED',
+  Created = 'CREATED',
+  Deleted = 'DELETED',
+  Expired = 'EXPIRED',
+  GameRecorded = 'GAME_RECORDED'
+}
+
+export type BidHistoryEntry = {
+  __typename?: 'BidHistoryEntry';
+  coins: Scalars['Int'];
+  date: Scalars['String'];
+  factionId: Scalars['Int'];
+  playerId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
+};
+
 export type BidPreset = {
   __typename?: 'BidPreset';
   bidPresetSettings: Array<BidPresetSetting>;
@@ -32,11 +100,15 @@ export type BidPresetSetting = {
   playerMat: PlayerMat;
 };
 
-export type DiscordUser = {
-  __typename?: 'DiscordUser';
-  discriminator: Scalars['String'];
-  id: Scalars['String'];
-  username: Scalars['String'];
+export type ComboInput = {
+  factionId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
+};
+
+export type ComboSetting = {
+  __typename?: 'ComboSetting';
+  factionId: Scalars['Int'];
+  playerMatId: Scalars['Int'];
 };
 
 export type Faction = {
@@ -44,6 +116,7 @@ export type Faction = {
   factionMatCombos: Array<FactionMatCombo>;
   id: Scalars['Int'];
   name: Scalars['String'];
+  position: Scalars['Int'];
   statsByPlayerCount: Array<FactionStatsWithPlayerCount>;
   topPlayers: Array<PlayerFactionStats>;
   totalMatches: Scalars['Int'];
@@ -151,16 +224,59 @@ export type MatchEdge = {
 export type Mutation = {
   __typename?: 'Mutation';
   _empty?: Maybe<Scalars['String']>;
+  bid: BidGame;
+  createBidGame: BidGame;
+  joinBidGame: BidGame;
   logMatch?: Maybe<Match>;
+  quickBid: BidGame;
+  startBidGame: BidGame;
+  updateBidGameSettings: BidGame;
+  updateQuickBidSetting: BidGame;
+};
+
+
+export type MutationBidArgs = {
+  bidGameId: Scalars['Int'];
+  coins: Scalars['Int'];
+  comboId: Scalars['Int'];
+};
+
+
+export type MutationJoinBidGameArgs = {
+  bidGameId: Scalars['Int'];
 };
 
 
 export type MutationLogMatchArgs = {
+  bidGameId?: InputMaybe<Scalars['Int']>;
   datePlayed: Scalars['String'];
   numRounds: Scalars['Int'];
   playerMatchResults: Array<PlayerMatchResultInput>;
   recordingUserId?: InputMaybe<Scalars['String']>;
   shouldPostMatchLog: Scalars['Boolean'];
+};
+
+
+export type MutationQuickBidArgs = {
+  bidGameId: Scalars['Int'];
+  quickBids: Array<QuickBidInput>;
+};
+
+
+export type MutationStartBidGameArgs = {
+  bidGameId: Scalars['Int'];
+};
+
+
+export type MutationUpdateBidGameSettingsArgs = {
+  bidGameId: Scalars['Int'];
+  settings: BidGameSettings;
+};
+
+
+export type MutationUpdateQuickBidSettingArgs = {
+  bidGameId: Scalars['Int'];
+  quickBid: Scalars['Boolean'];
 };
 
 export type Node = {
@@ -219,40 +335,50 @@ export type PlayerMat = {
   abbrev: Scalars['String'];
   id: Scalars['Int'];
   name: Scalars['String'];
+  order: Scalars['Int'];
 };
 
 export type PlayerMatchResult = {
   __typename?: 'PlayerMatchResult';
+  bidGamePlayer?: Maybe<BidGamePlayer>;
   coins: Scalars['Int'];
   faction: Faction;
   id: Scalars['Int'];
   player: Player;
   playerMat: PlayerMat;
-  tieOrder: Scalars['Int'];
+  rank: Scalars['Int'];
 };
 
 export type PlayerMatchResultInput = {
+  bidGamePlayerId?: InputMaybe<Scalars['Int']>;
   coins: Scalars['Int'];
   displayName: Scalars['String'];
   faction: Scalars['String'];
   playerMat: Scalars['String'];
+  rank: Scalars['Int'];
   steamId?: InputMaybe<Scalars['String']>;
 };
 
 export type Query = {
   __typename?: 'Query';
   _empty?: Maybe<Scalars['String']>;
+  bidGame: BidGame;
   bidPresets: Array<BidPreset>;
-  discordMe?: Maybe<DiscordUser>;
   faction: Faction;
   factions: Array<Faction>;
   matches: MatchConnection;
+  me?: Maybe<User>;
   player?: Maybe<Player>;
   playerMat: PlayerMat;
   playerMats: Array<PlayerMat>;
   playersByName: PlayerConnection;
   playersByWins: PlayerConnection;
   tiers: Array<Tier>;
+};
+
+
+export type QueryBidGameArgs = {
+  bidGameId: Scalars['Int'];
 };
 
 
@@ -291,12 +417,37 @@ export type QueryPlayersByWinsArgs = {
   fromDate?: InputMaybe<Scalars['String']>;
 };
 
+export type QuickBidInput = {
+  bidCoins: Scalars['Int'];
+  comboId: Scalars['Int'];
+  order: Scalars['Int'];
+};
+
+export type Subscription = {
+  __typename?: 'Subscription';
+  _empty?: Maybe<Scalars['String']>;
+  bidGameUpdated: BidGame;
+};
+
+
+export type SubscriptionBidGameUpdatedArgs = {
+  bidGameId: Scalars['Int'];
+};
+
 export type Tier = {
   __typename?: 'Tier';
   factionMatCombos: Array<FactionMatCombo>;
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
+};
+
+export type User = {
+  __typename?: 'User';
+  discordId: Scalars['String'];
+  discriminator: Scalars['String'];
+  id: Scalars['Int'];
+  username: Scalars['String'];
 };
 
 export type WithIndex<TObject> = TObject & Record<string, any>;
@@ -369,10 +520,18 @@ export type DirectiveResolverFn<TResult = {}, TParent = {}, TContext = {}, TArgs
 
 /** Mapping between all available schema types and the resolvers types */
 export type ResolversTypes = ResolversObject<{
+  Bid: ResolverTypeWrapper<BidModel>;
+  BidGame: ResolverTypeWrapper<BidGameModel>;
+  BidGameCombo: ResolverTypeWrapper<BidGameComboModel>;
+  BidGamePlayer: ResolverTypeWrapper<BidGamePlayerModel>;
+  BidGameSettings: BidGameSettings;
+  BidGameStatus: BidGameStatus;
+  BidHistoryEntry: ResolverTypeWrapper<BidHistoryEntry>;
   BidPreset: ResolverTypeWrapper<BidPresetModel>;
   BidPresetSetting: ResolverTypeWrapper<BidPresetSettingModel>;
   Boolean: ResolverTypeWrapper<Scalars['Boolean']>;
-  DiscordUser: ResolverTypeWrapper<DiscordUser>;
+  ComboInput: ComboInput;
+  ComboSetting: ResolverTypeWrapper<ComboSetting>;
   Faction: ResolverTypeWrapper<FactionModel>;
   FactionMatCombo: ResolverTypeWrapper<FactionMatComboBase>;
   FactionMatComboStatsWithPlayerCount: ResolverTypeWrapper<FactionMatComboStatsWithPlayerCountBase>;
@@ -391,19 +550,29 @@ export type ResolversTypes = ResolversObject<{
   PlayerEdge: ResolverTypeWrapper<Omit<PlayerEdge, 'node'> & { node: ResolversTypes['Player'] }>;
   PlayerFactionStats: ResolverTypeWrapper<Omit<PlayerFactionStats, 'player'> & { player: ResolversTypes['Player'] }>;
   PlayerMat: ResolverTypeWrapper<PlayerMatModel>;
-  PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'faction' | 'player' | 'playerMat'> & { faction: ResolversTypes['Faction'], player: ResolversTypes['Player'], playerMat: ResolversTypes['PlayerMat'] }>;
+  PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'bidGamePlayer' | 'faction' | 'player' | 'playerMat'> & { bidGamePlayer?: Maybe<ResolversTypes['BidGamePlayer']>, faction: ResolversTypes['Faction'], player: ResolversTypes['Player'], playerMat: ResolversTypes['PlayerMat'] }>;
   PlayerMatchResultInput: PlayerMatchResultInput;
   Query: ResolverTypeWrapper<{}>;
+  QuickBidInput: QuickBidInput;
   String: ResolverTypeWrapper<Scalars['String']>;
+  Subscription: ResolverTypeWrapper<{}>;
   Tier: ResolverTypeWrapper<TierModel>;
+  User: ResolverTypeWrapper<User>;
 }>;
 
 /** Mapping between all available schema types and the resolvers parents */
 export type ResolversParentTypes = ResolversObject<{
+  Bid: BidModel;
+  BidGame: BidGameModel;
+  BidGameCombo: BidGameComboModel;
+  BidGamePlayer: BidGamePlayerModel;
+  BidGameSettings: BidGameSettings;
+  BidHistoryEntry: BidHistoryEntry;
   BidPreset: BidPresetModel;
   BidPresetSetting: BidPresetSettingModel;
   Boolean: Scalars['Boolean'];
-  DiscordUser: DiscordUser;
+  ComboInput: ComboInput;
+  ComboSetting: ComboSetting;
   Faction: FactionModel;
   FactionMatCombo: FactionMatComboBase;
   FactionMatComboStatsWithPlayerCount: FactionMatComboStatsWithPlayerCountBase;
@@ -422,11 +591,14 @@ export type ResolversParentTypes = ResolversObject<{
   PlayerEdge: Omit<PlayerEdge, 'node'> & { node: ResolversParentTypes['Player'] };
   PlayerFactionStats: Omit<PlayerFactionStats, 'player'> & { player: ResolversParentTypes['Player'] };
   PlayerMat: PlayerMatModel;
-  PlayerMatchResult: Omit<PlayerMatchResult, 'faction' | 'player' | 'playerMat'> & { faction: ResolversParentTypes['Faction'], player: ResolversParentTypes['Player'], playerMat: ResolversParentTypes['PlayerMat'] };
+  PlayerMatchResult: Omit<PlayerMatchResult, 'bidGamePlayer' | 'faction' | 'player' | 'playerMat'> & { bidGamePlayer?: Maybe<ResolversParentTypes['BidGamePlayer']>, faction: ResolversParentTypes['Faction'], player: ResolversParentTypes['Player'], playerMat: ResolversParentTypes['PlayerMat'] };
   PlayerMatchResultInput: PlayerMatchResultInput;
   Query: {};
+  QuickBidInput: QuickBidInput;
   String: Scalars['String'];
+  Subscription: {};
   Tier: TierModel;
+  User: User;
 }>;
 
 export type RateLimitDirectiveArgs = {
@@ -437,6 +609,59 @@ export type RateLimitDirectiveArgs = {
 };
 
 export type RateLimitDirectiveResolver<Result, Parent, ContextType = Context, Args = RateLimitDirectiveArgs> = DirectiveResolverFn<Result, Parent, ContextType, Args>;
+
+export type BidResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Bid'] = ResolversParentTypes['Bid']> = ResolversObject<{
+  bidGameCombo?: Resolver<ResolversTypes['BidGameCombo'], ParentType, ContextType>;
+  bidGamePlayer?: Resolver<ResolversTypes['BidGamePlayer'], ParentType, ContextType>;
+  coins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BidGameResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BidGame'] = ResolversParentTypes['BidGame']> = ResolversObject<{
+  activePlayer?: Resolver<Maybe<ResolversTypes['BidGamePlayer']>, ParentType, ContextType>;
+  bidHistory?: Resolver<Array<ResolversTypes['BidHistoryEntry']>, ParentType, ContextType>;
+  bidPreset?: Resolver<Maybe<ResolversTypes['BidPreset']>, ParentType, ContextType>;
+  bidTimeLimitSeconds?: Resolver<Maybe<ResolversTypes['Int']>, ParentType, ContextType>;
+  combos?: Resolver<Maybe<Array<ResolversTypes['BidGameCombo']>>, ParentType, ContextType>;
+  createdAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  enabledCombos?: Resolver<Maybe<Array<ResolversTypes['ComboSetting']>>, ParentType, ContextType>;
+  host?: Resolver<ResolversTypes['BidGamePlayer'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  match?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType>;
+  modifiedAt?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  players?: Resolver<Array<ResolversTypes['BidGamePlayer']>, ParentType, ContextType>;
+  quickBid?: Resolver<ResolversTypes['Boolean'], ParentType, ContextType>;
+  status?: Resolver<ResolversTypes['BidGameStatus'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BidGameComboResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BidGameCombo'] = ResolversParentTypes['BidGameCombo']> = ResolversObject<{
+  bid?: Resolver<Maybe<ResolversTypes['Bid']>, ParentType, ContextType>;
+  faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BidGamePlayerResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BidGamePlayer'] = ResolversParentTypes['BidGamePlayer']> = ResolversObject<{
+  bid?: Resolver<Maybe<ResolversTypes['Bid']>, ParentType, ContextType>;
+  dateJoined?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  quickBidReady?: Resolver<Maybe<ResolversTypes['Boolean']>, ParentType, ContextType>;
+  user?: Resolver<ResolversTypes['User'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type BidHistoryEntryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BidHistoryEntry'] = ResolversParentTypes['BidHistoryEntry']> = ResolversObject<{
+  coins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  date?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  factionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  playerId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  playerMatId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
 
 export type BidPresetResolvers<ContextType = Context, ParentType extends ResolversParentTypes['BidPreset'] = ResolversParentTypes['BidPreset']> = ResolversObject<{
   bidPresetSettings?: Resolver<Array<ResolversTypes['BidPresetSetting']>, ParentType, ContextType>;
@@ -453,10 +678,9 @@ export type BidPresetSettingResolvers<ContextType = Context, ParentType extends 
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
-export type DiscordUserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['DiscordUser'] = ResolversParentTypes['DiscordUser']> = ResolversObject<{
-  discriminator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  id?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
-  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+export type ComboSettingResolvers<ContextType = Context, ParentType extends ResolversParentTypes['ComboSetting'] = ResolversParentTypes['ComboSetting']> = ResolversObject<{
+  factionId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  playerMatId?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -464,6 +688,7 @@ export type FactionResolvers<ContextType = Context, ParentType extends Resolvers
   factionMatCombos?: Resolver<Array<ResolversTypes['FactionMatCombo']>, ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  position?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   statsByPlayerCount?: Resolver<Array<ResolversTypes['FactionStatsWithPlayerCount']>, ParentType, ContextType>;
   topPlayers?: Resolver<Array<ResolversTypes['PlayerFactionStats']>, ParentType, ContextType, RequireFields<FactionTopPlayersArgs, 'first'>>;
   totalMatches?: Resolver<ResolversTypes['Int'], ParentType, ContextType, Partial<FactionTotalMatchesArgs>>;
@@ -525,7 +750,14 @@ export type MatchEdgeResolvers<ContextType = Context, ParentType extends Resolve
 
 export type MutationResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Mutation'] = ResolversParentTypes['Mutation']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bid?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationBidArgs, 'bidGameId' | 'coins' | 'comboId'>>;
+  createBidGame?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType>;
+  joinBidGame?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationJoinBidGameArgs, 'bidGameId'>>;
   logMatch?: Resolver<Maybe<ResolversTypes['Match']>, ParentType, ContextType, RequireFields<MutationLogMatchArgs, 'datePlayed' | 'numRounds' | 'playerMatchResults' | 'shouldPostMatchLog'>>;
+  quickBid?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationQuickBidArgs, 'bidGameId' | 'quickBids'>>;
+  startBidGame?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationStartBidGameArgs, 'bidGameId'>>;
+  updateBidGameSettings?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationUpdateBidGameSettingsArgs, 'bidGameId' | 'settings'>>;
+  updateQuickBidSetting?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<MutationUpdateQuickBidSettingArgs, 'bidGameId' | 'quickBid'>>;
 }>;
 
 export type NodeResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Node'] = ResolversParentTypes['Node']> = ResolversObject<{
@@ -572,32 +804,40 @@ export type PlayerMatResolvers<ContextType = Context, ParentType extends Resolve
   abbrev?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  order?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type PlayerMatchResultResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PlayerMatchResult'] = ResolversParentTypes['PlayerMatchResult']> = ResolversObject<{
+  bidGamePlayer?: Resolver<Maybe<ResolversTypes['BidGamePlayer']>, ParentType, ContextType>;
   coins?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType>;
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   player?: Resolver<ResolversTypes['Player'], ParentType, ContextType>;
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>;
-  tieOrder?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  rank?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
 export type QueryResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Query'] = ResolversParentTypes['Query']> = ResolversObject<{
   _empty?: Resolver<Maybe<ResolversTypes['String']>, ParentType, ContextType>;
+  bidGame?: Resolver<ResolversTypes['BidGame'], ParentType, ContextType, RequireFields<QueryBidGameArgs, 'bidGameId'>>;
   bidPresets?: Resolver<Array<ResolversTypes['BidPreset']>, ParentType, ContextType>;
-  discordMe?: Resolver<Maybe<ResolversTypes['DiscordUser']>, ParentType, ContextType>;
   faction?: Resolver<ResolversTypes['Faction'], ParentType, ContextType, RequireFields<QueryFactionArgs, 'id'>>;
   factions?: Resolver<Array<ResolversTypes['Faction']>, ParentType, ContextType>;
   matches?: Resolver<ResolversTypes['MatchConnection'], ParentType, ContextType, RequireFields<QueryMatchesArgs, 'first'>>;
+  me?: Resolver<Maybe<ResolversTypes['User']>, ParentType, ContextType>;
   player?: Resolver<Maybe<ResolversTypes['Player']>, ParentType, ContextType, RequireFields<QueryPlayerArgs, 'id'>>;
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType, RequireFields<QueryPlayerMatArgs, 'id'>>;
   playerMats?: Resolver<Array<ResolversTypes['PlayerMat']>, ParentType, ContextType>;
   playersByName?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByNameArgs, 'first' | 'startsWith'>>;
   playersByWins?: Resolver<ResolversTypes['PlayerConnection'], ParentType, ContextType, RequireFields<QueryPlayersByWinsArgs, 'first'>>;
   tiers?: Resolver<Array<ResolversTypes['Tier']>, ParentType, ContextType>;
+}>;
+
+export type SubscriptionResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Subscription'] = ResolversParentTypes['Subscription']> = ResolversObject<{
+  _empty?: SubscriptionResolver<Maybe<ResolversTypes['String']>, "_empty", ParentType, ContextType>;
+  bidGameUpdated?: SubscriptionResolver<ResolversTypes['BidGame'], "bidGameUpdated", ParentType, ContextType, RequireFields<SubscriptionBidGameUpdatedArgs, 'bidGameId'>>;
 }>;
 
 export type TierResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Tier'] = ResolversParentTypes['Tier']> = ResolversObject<{
@@ -608,10 +848,23 @@ export type TierResolvers<ContextType = Context, ParentType extends ResolversPar
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
+export type UserResolvers<ContextType = Context, ParentType extends ResolversParentTypes['User'] = ResolversParentTypes['User']> = ResolversObject<{
+  discordId?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  discriminator?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  username?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
 export type Resolvers<ContextType = Context> = ResolversObject<{
+  Bid?: BidResolvers<ContextType>;
+  BidGame?: BidGameResolvers<ContextType>;
+  BidGameCombo?: BidGameComboResolvers<ContextType>;
+  BidGamePlayer?: BidGamePlayerResolvers<ContextType>;
+  BidHistoryEntry?: BidHistoryEntryResolvers<ContextType>;
   BidPreset?: BidPresetResolvers<ContextType>;
   BidPresetSetting?: BidPresetSettingResolvers<ContextType>;
-  DiscordUser?: DiscordUserResolvers<ContextType>;
+  ComboSetting?: ComboSettingResolvers<ContextType>;
   Faction?: FactionResolvers<ContextType>;
   FactionMatCombo?: FactionMatComboResolvers<ContextType>;
   FactionMatComboStatsWithPlayerCount?: FactionMatComboStatsWithPlayerCountResolvers<ContextType>;
@@ -629,7 +882,9 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   PlayerMat?: PlayerMatResolvers<ContextType>;
   PlayerMatchResult?: PlayerMatchResultResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
+  Subscription?: SubscriptionResolvers<ContextType>;
   Tier?: TierResolvers<ContextType>;
+  User?: UserResolvers<ContextType>;
 }>;
 
 export type DirectiveResolvers<ContextType = Context> = ResolversObject<{

@@ -3,6 +3,7 @@ import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
 import PlayerMatchResult from './player-match-result';
 import MatComboTier from './mat-combo-tier';
 import BidPresetSetting from './bid-preset-setting';
+import BidGameCombo from './bid-game-combo';
 
 @Entity()
 export default class PlayerMat {
@@ -29,4 +30,10 @@ export default class PlayerMat {
     (bidPresetSetting) => bidPresetSetting.playerMat
   )
   bidPresetSettings: BidPresetSetting[];
+
+  @OneToMany(() => BidGameCombo, (bid) => bid.faction)
+  bidGameCombos: BidGameCombo[];
+
+  @Column({ unique: true })
+  order: number;
 }

@@ -36,6 +36,12 @@ export const Mutation = gql`
   }
 `;
 
+export const Subscription = gql`
+  type Subscription {
+    _empty: String
+  }
+`;
+
 const { rateLimitDirectiveTypeDef, rateLimitDirectiveTransformer } =
   rateLimitDirective('rateLimit');
 export default rateLimitDirectiveTransformer(
@@ -43,6 +49,7 @@ export default rateLimitDirectiveTransformer(
     typeDefs: [
       Query,
       Mutation,
+      Subscription,
       relayTypeDef,
       rateLimitDirectiveTypeDef,
       ...authTypeDef,

@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation bid($bidGameId: Int!, $comboId: Int!, $coins: Int!) {
+  bid(bidGameId: $bidGameId, comboId: $comboId, coins: $coins) {
+    ...BidGame
+  }
+}

@@ -18,7 +18,11 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
   textDecoration: 'none',
 }));
 
-const DiscordAuthItem: FC = () => {
+interface Props {
+  isNavItem: boolean;
+}
+
+const DiscordAuthItem: FC<Props> = ({ isNavItem, children }) => {
   const [css, theme] = useStyletron();
   const { discordMe, loading: isAuthLoading } = useContext(AuthContext);
 
@@ -33,15 +37,19 @@ const DiscordAuthItem: FC = () => {
         href={DISCORD_OAUTH_URL}
         kind={BUTTON_KIND.secondary}
         size={BUTTON_SIZE.compact}
-        overrides={{
-          BaseButton: {
-            style: {
-              fontSize: '16px',
-            },
-          },
-        }}
+        overrides={
+          isNavItem
+            ? {
+                BaseButton: {
+                  style: {
+                    fontSize: '16px',
+                  },
+                },
+              }
+            : undefined
+        }
       >
-        Login with Discord
+        {children || 'Login with Discord'}
       </Button>
     );
   }

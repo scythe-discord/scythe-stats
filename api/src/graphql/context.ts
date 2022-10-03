@@ -6,7 +6,7 @@ import { GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
 export interface Context {
   isAdmin: boolean;
   clientIp?: string | string[];
-  session?: Session;
+  session?: Session & { userId?: number };
   req: Request;
   res: Response;
 }

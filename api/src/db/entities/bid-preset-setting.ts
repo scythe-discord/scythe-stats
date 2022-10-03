@@ -26,11 +26,13 @@ export default class BidPresetSetting {
 
   @ManyToOne(() => Faction, (faction) => faction.bidPresetSettings, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   faction: Faction;
 
   @ManyToOne(() => PlayerMat, (playerMat) => playerMat.bidPresetSettings, {
     onDelete: 'CASCADE',
+    eager: true,
   })
   playerMat: PlayerMat;
 }

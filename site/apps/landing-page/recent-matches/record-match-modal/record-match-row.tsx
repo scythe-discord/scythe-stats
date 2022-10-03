@@ -10,6 +10,7 @@ import GQL from 'lib/graphql';
 import { FactionIcon } from 'lib/components';
 
 import { PlayerEntryAction } from './player-entries';
+import { LabelMedium } from 'baseui/typography';
 
 interface Props {
   id: number;
@@ -18,8 +19,12 @@ interface Props {
   player: Value;
   faction: Value;
   playerMat: Value;
+  rank: Value;
   coins: number | string;
   onPlayerEntryChange: Dispatch<PlayerEntryAction>;
+  possibleRanks: number[];
+  bidCoins?: number;
+  bidGamePlayerId?: number;
 }
 
 const FactionLabelContainer = styled('div', () => ({
@@ -53,13 +58,15 @@ const RecordMatchRow: FC<Props> = ({
   playerMat,
   coins,
   onPlayerEntryChange,
+  rank,
+  possibleRanks,
+  bidGamePlayerId,
+  bidCoins,
 }) => {
   const [css] = useStyletron();
 
-  const [
-    loadPlayers,
-    { loading, data: playersByName },
-  ] = GQL.usePlayersByNameLazyQuery();
+  const [loadPlayers, { loading, data: playersByName }] =
+    GQL.usePlayersByNameLazyQuery();
 
   const playerNameRef = useRef('');
 
@@ -91,16 +98,42 @@ const RecordMatchRow: FC<Props> = ({
     : [];
 
   return (
-    <div
-      className={css({
-        display: 'flex',
-        alignItems: 'center',
-      })}
-    >
+    <>
+      <Select
+        type={TYPE.select}
+        options={possibleRanks.map((r) => ({ id: r, label: r }))}
+        disabled={possibleRanks.length === 1 || coins === ''}
+        value={
+          possibleRanks.length === 1
+            ? [{ id: possibleRanks[0], label: possibleRanks[0] }]
+            : rank
+        }
+        placeholder="#"
+        onChange={(params) =>
+          onPlayerEntryChange({ type: 'update', id, field: 'rank', params })
+        }
+        required
+        overrides={{
+          Root: {
+            style: {
+              flex: '0 0 auto',
+              width: 'auto',
+            },
+          },
+          ControlContainer: {
+            style: {
+              width: '60px',
+            },
+          },
+        }}
+        clearable={false}
+      />
+
       <Select
         type={TYPE.search}
         options={playerNameOptions}
         value={player}
+        disabled={bidGamePlayerId != null}
         placeholder="Player Name"
         onChange={(params) =>
           onPlayerEntryChange({ type: 'update', id, field: 'player', params })
@@ -131,6 +164,7 @@ const RecordMatchRow: FC<Props> = ({
           label: name,
         }))}
         value={faction}
+        disabled={bidGamePlayerId != null}
         placeholder="Faction"
         onChange={(params) =>
           onPlayerEntryChange({ type: 'update', id, field: 'faction', params })
@@ -142,7 +176,6 @@ const RecordMatchRow: FC<Props> = ({
           Root: {
             style: {
               flex: '0 0 auto',
-              margin: '0 15px',
               width: 'auto',
             },
           },
@@ -156,6 +189,7 @@ const RecordMatchRow: FC<Props> = ({
       />
       <Select
         type={TYPE.select}
+        disabled={bidGamePlayerId != null}
         options={playerMats.map(({ id, name }) => ({
           id,
           label: name,
@@ -175,7 +209,6 @@ const RecordMatchRow: FC<Props> = ({
           Root: {
             style: {
               flex: '0 0 auto',
-              margin: '0 15px 0 0',
               width: 'auto',
             },
           },
@@ -197,7 +230,6 @@ const RecordMatchRow: FC<Props> = ({
             value: (e.target as HTMLInputElement).value,
           })
         }
-        placeholder="Coins"
         type="number"
         min={0}
         required
@@ -205,7 +237,6 @@ const RecordMatchRow: FC<Props> = ({
           Root: {
             style: {
               flex: '0 0 auto',
-              margin: '0 15px 0 0',
               width: 'auto',
             },
           },
@@ -216,22 +247,36 @@ const RecordMatchRow: FC<Props> = ({
           },
         }}
       />
-      <Button
-        kind={KIND.tertiary}
-        size={SIZE.compact}
-        shape={SHAPE.square}
-        onClick={() => onPlayerEntryChange({ type: 'remove', id })}
-        overrides={{
-          Root: {
-            style: {
-              flex: '0 0 auto',
-            }
-          }
-        }}
-      >
-        <Delete size={24} />
-      </Button>
-    </div>
+      {bidGamePlayerId && bidCoins != null ? (
+        <LabelMedium
+          className={css({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'flex-end',
+          })}
+        >
+          - ${bidCoins} = ${Number(coins) - bidCoins}
+        </LabelMedium>
+      ) : (
+        <div className={css({ display: 'flex', alignItems: 'center' })}>
+          <Button
+            kind={KIND.tertiary}
+            size={SIZE.compact}
+            shape={SHAPE.square}
+            onClick={() => onPlayerEntryChange({ type: 'remove', id })}
+            overrides={{
+              Root: {
+                style: {
+                  flex: '0 0 auto',
+                },
+              },
+            }}
+          >
+            <Delete size={24} />
+          </Button>
+        </div>
+      )}
+    </>
   );
 };
 

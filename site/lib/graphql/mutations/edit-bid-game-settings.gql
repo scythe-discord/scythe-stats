@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation editBidGameSettings($bidGameId: Int!, $settings: BidGameSettings!) {
+  updateBidGameSettings(bidGameId: $bidGameId, settings: $settings) {
+    ...BidGame
+  }
+}

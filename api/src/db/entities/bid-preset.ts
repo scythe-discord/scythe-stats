@@ -1,4 +1,5 @@
 import { Entity, PrimaryGeneratedColumn, Column, OneToMany } from 'typeorm';
+import BidGame from './bid-game';
 import BidPresetSetting from './bid-preset-setting';
 
 @Entity()
@@ -14,7 +15,14 @@ export default class BidPreset {
 
   @OneToMany(
     () => BidPresetSetting,
-    (bidPresetSetting) => bidPresetSetting.bidPreset
+    (bidPresetSetting) => bidPresetSetting.bidPreset,
+    { eager: true }
   )
   bidPresetSettings: BidPresetSetting[];
+
+  @OneToMany(() => BidGame, (bidGame) => bidGame.bidPreset)
+  bidGames: BidGame[];
+
+  @Column({ type: 'boolean', unique: true, nullable: true })
+  default: boolean | null;
 }

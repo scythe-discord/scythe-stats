@@ -12,7 +12,12 @@ import { API_SERVER_PORT, SESSION_SECRET, SITE_URL } from './common/config';
 import { redisClient } from './common/services';
 import { authRouter } from './routes';
 import http from 'http';
-import { ApolloServerPluginDrainHttpServer } from 'apollo-server-core';
+import {
+  ApolloServerPluginDrainHttpServer,
+  ApolloServerPluginLandingPageLocalDefault,
+} from 'apollo-server-core';
+import { WebSocketServer } from 'ws';
+import { useServer } from 'graphql-ws/lib/use/ws';
 
 const MAX_COOKIE_AGE = 1000 * 60 * 60 * 24 * 7;
 
@@ -63,16 +68,41 @@ async function startApolloServer() {
   const graphqlServer = new ApolloServer({
     schema,
     context: resolveContext,
-    plugins: [ApolloServerPluginDrainHttpServer({ httpServer })],
+    plugins: [
+      ApolloServerPluginDrainHttpServer({ httpServer }),
+      {
+        async serverWillStart() {
+          return {
+            async drainServer() {
+              await serverCleanup.dispose();
+            },
+          };
+        },
+      },
+      ApolloServerPluginLandingPageLocalDefault({
+        embed: true,
+      }),
+    ],
   });
   await graphqlServer.start();
 
   graphqlServer.applyMiddleware({ app, cors: false, path: '/graphql' });
 
+  console.log(`🚀  Server ready at ${graphqlServer.graphqlPath}`);
+
+  const wsServer = new WebSocketServer({
+    // This is the `httpServer` we created in a previous step.
+    server: httpServer,
+    // Pass a different path here if your ApolloServer serves at
+    // a different path.
+    path: '/graphql',
+  });
+
+  const serverCleanup = useServer({ schema }, wsServer);
+
   await new Promise<void>((resolve) =>
     httpServer.listen({ port: API_SERVER_PORT }, resolve)
   );
-  console.log(`🚀  Server ready at ${graphqlServer.graphqlPath}`);
 }
 
 startApolloServer().then().catch();

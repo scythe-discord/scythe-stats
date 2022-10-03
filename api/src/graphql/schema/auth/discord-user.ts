@@ -6,19 +6,20 @@ import Schema from '../codegen';
 
 export const typeDef = gql`
   extend type Query {
-    discordMe: DiscordUser
+    me: User
   }
 
-  type DiscordUser {
-    id: String!
+  type User {
+    id: Int!
     username: String!
     discriminator: String!
+    discordId: String!
   }
 `;
 
 export const resolvers: Schema.Resolvers = {
   Query: {
-    discordMe: async (_, __, context) => {
+    me: async (_, __, context) => {
       return fetchDiscordMe(context);
     },
   },

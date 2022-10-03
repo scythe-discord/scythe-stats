@@ -3,7 +3,7 @@ import { FC, createContext, useEffect, useState } from 'react';
 import GQL from 'lib/graphql';
 
 export interface AuthContextInfo {
-  discordMe: Pick<GQL.DiscordUser, 'id' | 'username' | 'discriminator'> | null;
+  discordMe: Pick<GQL.User, 'id' | 'username' | 'discriminator'> | null;
   loading: boolean;
 }
 
@@ -27,7 +27,7 @@ export const AuthProvider: FC<Props> = ({ initAuthCheck, ...rest }) => {
     }
   }, [initAuthCheck, initLoadComplete]);
 
-  const discordMe = data && data.discordMe ? data.discordMe : null;
+  const discordMe = data && data.me ? data.me : null;
 
   return (
     <AuthContext.Provider

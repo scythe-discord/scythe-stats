@@ -2,7 +2,7 @@ import { gql } from 'apollo-server-express';
 import { toGlobalId, connectionFromArray } from 'graphql-relay';
 import { getRepository } from 'typeorm';
 
-import { Match, PlayerMatchResult } from '../../../db/entities';
+import { Match } from '../../../db/entities';
 import Schema from '../codegen';
 
 export const typeDef = gql`
@@ -34,7 +34,8 @@ export const typeDef = gql`
     faction: Faction!
     playerMat: PlayerMat!
     coins: Int!
-    tieOrder: Int!
+    rank: Int!
+    bidGamePlayer: BidGamePlayer
   }
 `;
 
@@ -61,28 +62,15 @@ export const resolvers: Schema.Resolvers = {
     id: (match) => toGlobalId('Match', match.id.toString()),
     datePlayed: (match) => match.datePlayed.toISOString(),
     winner: async (match) => {
-      let playerMatchResults = match.playerMatchResults;
+      const foundResults = match.playerMatchResults.find(
+        ({ rank }) => rank === 1
+      );
 
-      if (!playerMatchResults) {
-        const playerMatchResultRepo = getRepository(PlayerMatchResult);
-        playerMatchResults = await playerMatchResultRepo.find({
-          where: {
-            match: match.id,
-          },
-        });
+      if (!foundResults) {
+        throw new Error('No winner found');
       }
 
-      const orderedResults = [...playerMatchResults].sort((a, b) => {
-        if (a.coins < b.coins) {
-          return 1;
-        } else if (a.coins === b.coins && a.tieOrder > b.tieOrder) {
-          return 1;
-        }
-
-        return -1;
-      });
-
-      return orderedResults[0];
+      return foundResults;
     },
   },
 };

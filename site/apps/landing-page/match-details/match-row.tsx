@@ -10,6 +10,7 @@ interface Props {
   faction: string;
   playerMat: string;
   coins: number;
+  bidCoins: number | undefined;
 }
 
 const CenteredBodyCell = withStyle(StyledBodyCell, {
@@ -23,6 +24,7 @@ const MatchRow: FC<Props> = ({
   faction,
   playerMat,
   coins,
+  bidCoins,
 }) => {
   const [css] = useStyletron();
 
@@ -52,7 +54,10 @@ const MatchRow: FC<Props> = ({
         {faction}
       </CenteredBodyCell>
       <CenteredBodyCell $striped={striped}>{playerMat}</CenteredBodyCell>
-      <CenteredBodyCell $striped={striped}>{coins}</CenteredBodyCell>
+      <CenteredBodyCell $striped={striped}>
+        {coins}
+        {bidCoins != null && ` - ${bidCoins} = ${coins - bidCoins}`}
+      </CenteredBodyCell>
     </>
   );
 };

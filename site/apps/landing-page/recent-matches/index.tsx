@@ -21,7 +21,11 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
   const [lastFetchedCursor, setLastFetchedCursor] = useState<string | null>(
     null
   );
-  const { data: recentMatches, loading, fetchMore } = GQL.useMatchesQuery({
+  const {
+    data: recentMatches,
+    loading,
+    fetchMore,
+  } = GQL.useMatchesQuery({
     query: GQL.MatchesDocument,
     variables: {
       first: 10,
@@ -141,6 +145,7 @@ const RecentMatches: FC<Props> = ({ factionStats, playerMats }) => {
             })}
             selectedMatch={selectedMatch}
             isLoading={!recentMatches}
+            bidGamePage={false}
           />
         </div>
       </div>
