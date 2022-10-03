@@ -257,16 +257,21 @@ export const resolvers: Schema.Resolvers = {
     },
   },
   BidGamePlayer: {
-    dateJoined: (bidGamePlayer) => bidGamePlayer.dateJoined.toISOString(),
+    dateJoined: (bidGamePlayer) =>
+      new Date(bidGamePlayer.dateJoined).toISOString(),
     quickBidReady: (bidGamePlayer) => !!bidGamePlayer.quickBids,
   },
   BidGame: {
-    createdAt: (bidGame) => bidGame.createdAt.toISOString(),
-    modifiedAt: (bidGame) => bidGame.modifiedAt.toISOString(),
+    createdAt: (bidGame) => {
+      return new Date(bidGame.createdAt).toISOString();
+    },
+    modifiedAt: (bidGame) => new Date(bidGame.modifiedAt).toISOString(),
     players: (bidGame) =>
       bidGame.players.sort((a, b) => {
         if (a.order == null || b.order == null || a.order === b.order) {
-          return a.dateJoined.getTime() - b.dateJoined.getTime();
+          return (
+            new Date(a.dateJoined).getTime() - new Date(b.dateJoined).getTime()
+          );
         }
         return a.order - b.order;
       }),
@@ -296,6 +301,6 @@ export const resolvers: Schema.Resolvers = {
     },
   },
   Bid: {
-    date: (bid) => bid.date.toISOString(),
+    date: (bid) => new Date(bid.date).toISOString(),
   },
 };

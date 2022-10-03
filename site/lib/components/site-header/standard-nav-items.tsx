@@ -91,44 +91,44 @@ const StandardNavItems: FC = () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <Badge
-          content={
-            <span className={css({ fontVariant: 'all-small-caps' })}>Beta</span>
-          }
-          placement="topRightEdge"
-          hierarchy="secondary"
-          color="primary"
-          horizontalOffset="-20px"
-        >
-          <Button
-            kind={BUTTON_KIND.secondary}
-            size={BUTTON_SIZE.compact}
-            $as="a"
-            href={DISCORD_OAUTH_URL}
-            overrides={{
-              BaseButton: {
-                style: {
-                  fontSize: '16px',
-                },
+        <Button
+          kind={BUTTON_KIND.secondary}
+          size={BUTTON_SIZE.compact}
+          $as="a"
+          href={DISCORD_OAUTH_URL}
+          overrides={{
+            BaseButton: {
+              style: {
+                fontSize: '16px',
               },
-            }}
-            onClick={async (e) => {
-              if (!discordMe) {
-                return;
-              }
+            },
+          }}
+          onClick={async (e) => {
+            if (!discordMe) {
+              return;
+            }
 
-              e.preventDefault();
-              const { data } = await mutate();
+            e.preventDefault();
+            const { data } = await mutate();
 
-              if (data?.createBidGame.id) {
-                router.push(`/bid/${data.createBidGame.id}`);
-              }
-            }}
-            isLoading={loading || isAuthLoading}
-          >
-            Create Bid Game
-          </Button>
-        </Badge>
+            if (data?.createBidGame.id) {
+              router.push(`/bid/${data.createBidGame.id}`);
+            }
+          }}
+          isLoading={loading || isAuthLoading}
+        >
+          Create Bid Game
+          <Badge
+            overrides={{ Badge: { style: { marginLeft: '10px' } } }}
+            content={
+              <span className={css({ fontVariant: 'all-small-caps' })}>
+                Beta
+              </span>
+            }
+            hierarchy="secondary"
+            color="primary"
+          />
+        </Button>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
         <DiscordAuthItem isNavItem />

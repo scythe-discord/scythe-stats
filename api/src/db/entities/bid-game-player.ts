@@ -38,7 +38,7 @@ export default class BidGamePlayer {
   })
   bid: Bid | null;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   dateJoined: Date;
 
   @Column({ nullable: true, type: 'int' })

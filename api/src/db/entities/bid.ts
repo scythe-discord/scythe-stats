@@ -23,7 +23,7 @@ export default class Bid {
   @JoinColumn()
   bidGamePlayer: BidGamePlayer;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   date: Date;
 
   @OneToOne(() => BidGameCombo, (bidGameCombo) => bidGameCombo.bid, {

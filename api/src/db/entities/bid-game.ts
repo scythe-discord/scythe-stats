@@ -57,10 +57,10 @@ export default class BidGame {
   })
   combos: BidGameCombo[] | null;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   modifiedAt: Date;
 
   @Column({ type: 'int', nullable: true })

@@ -1,5 +1,5 @@
 import { useStyletron } from 'baseui';
-import { Banner } from 'baseui/banner';
+import { Banner, KIND, Kind } from 'baseui/banner';
 import { StyledLink } from 'baseui/link';
 import { BidGameFragment, BidGameStatus } from 'lib/graphql/codegen';
 import React, { useContext } from 'react';
@@ -29,7 +29,8 @@ export default function StatusBanner({
   const { discordMe } = useContext(AuthContext);
   const [css] = useStyletron();
 
-  let banner: { title: string; text: React.ReactNode } | null = null;
+  let banner: { title: string; text: React.ReactNode; kind?: Kind } | null =
+    null;
 
   if (bidGame) {
     if (bidGame.status === BidGameStatus.Created) {
@@ -157,6 +158,7 @@ export default function StatusBanner({
       banner = {
         title: 'This game has expired.',
         text: 'A player in this game has recorded another bid game. In order to preserve the integrity of rankings, the results of this game can no longer be recorded.',
+        kind: KIND.negative,
       };
     }
   }
@@ -166,6 +168,7 @@ export default function StatusBanner({
       <Banner
         overrides={{ Root: { style: () => ({ margin: '30px 0px' }) } }}
         title={banner.title}
+        kind={banner.kind || KIND.info}
       >
         {banner.text}
       </Banner>

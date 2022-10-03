@@ -79,39 +79,41 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <Badge
-                content={
-                  <span className={css({ fontVariant: 'all-small-caps' })}>
-                    Beta
-                  </span>
-                }
-                placement="rightBottomEdge"
-                hierarchy="secondary"
-                color="primary"
-                horizontalOffset="-20px"
+              <a
+                href={DISCORD_OAUTH_URL}
+                onClick={async (e) => {
+                  if (!discordMe) {
+                    return;
+                  }
+
+                  e.preventDefault();
+
+                  if (loading || isAuthLoading) {
+                    return;
+                  }
+                  const { data } = await mutate();
+
+                  if (data?.createBidGame.id) {
+                    router.push(`/bid/${data.createBidGame.id}`);
+                  }
+                }}
               >
-                <a
-                  href={DISCORD_OAUTH_URL}
-                  onClick={async (e) => {
-                    if (!discordMe) {
-                      return;
-                    }
-
-                    e.preventDefault();
-
-                    if (loading || isAuthLoading) {
-                      return;
-                    }
-                    const { data } = await mutate();
-
-                    if (data?.createBidGame.id) {
-                      router.push(`/bid/${data.createBidGame.id}`);
-                    }
+                <StyledLink>Create Bid Game</StyledLink>
+                <Badge
+                  overrides={{
+                    Badge: {
+                      style: { marginLeft: '10px', textDecoration: 'none' },
+                    },
                   }}
-                >
-                  <StyledLink>Create Bid Game</StyledLink>
-                </a>
-              </Badge>
+                  content={
+                    <span className={css({ fontVariant: 'all-small-caps' })}>
+                      Beta
+                    </span>
+                  }
+                  hierarchy="secondary"
+                  color="primary"
+                />
+              </a>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
               <StyledLink

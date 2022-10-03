@@ -51,11 +51,13 @@ export class BidGamePlayerToMatchPlayer1664392907141
         }))
     );
 
-    await queryRunner.query(
-      `UPDATE "player_match_result" AS "pmr" SET "rank" = c.rank FROM (values ${idRankObjs
-        .map(({ id, rank }) => `(${id}, ${rank})`)
-        .join(', ')}) AS c(id, rank) WHERE c.id = pmr.id;`
-    );
+    if (idRankObjs.length > 0) {
+      await queryRunner.query(
+        `UPDATE "player_match_result" AS "pmr" SET "rank" = c.rank FROM (values ${idRankObjs
+          .map(({ id, rank }) => `(${id}, ${rank})`)
+          .join(', ')}) AS c(id, rank) WHERE c.id = pmr.id;`
+      );
+    }
 
     await queryRunner.query(
       `ALTER TABLE "player_match_result" ALTER COLUMN "rank" SET NOT NULL`

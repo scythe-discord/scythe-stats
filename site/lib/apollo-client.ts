@@ -1,6 +1,6 @@
 import { ApolloClient, HttpLink, InMemoryCache, split } from '@apollo/client';
 import { GraphQLWsLink } from '@apollo/client/link/subscriptions';
-import { GRAPHQL_API_URL } from 'lib/env';
+import { GRAPHQL_API_URL, WS_GRAPHQL_API_URL } from 'lib/env';
 import { createClient } from 'graphql-ws';
 import { getMainDefinition } from '@apollo/client/utilities';
 
@@ -8,7 +8,7 @@ const wsLink =
   typeof window !== 'undefined'
     ? new GraphQLWsLink(
         createClient({
-          url: 'ws://localhost:4000/graphql',
+          url: WS_GRAPHQL_API_URL,
         })
       )
     : null;
