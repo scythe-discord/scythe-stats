@@ -354,6 +354,7 @@ export type PlayerMatchResult = {
   id: Scalars['Int'];
   player: Player;
   playerMat: PlayerMat;
+  playerTrueskill?: Maybe<PlayerTrueskill>;
   rank: Scalars['Int'];
 };
 
@@ -365,6 +366,12 @@ export type PlayerMatchResultInput = {
   playerMat: Scalars['String'];
   rank: Scalars['Int'];
   steamId?: InputMaybe<Scalars['String']>;
+};
+
+export type PlayerTrueskill = {
+  __typename?: 'PlayerTrueskill';
+  after: Trueskill;
+  before: Trueskill;
 };
 
 export type Query = {
@@ -448,6 +455,12 @@ export type Tier = {
   id: Scalars['Int'];
   name: Scalars['String'];
   rank: Scalars['Int'];
+};
+
+export type Trueskill = {
+  __typename?: 'Trueskill';
+  mu: Scalars['Float'];
+  sigma: Scalars['Float'];
 };
 
 export type User = {
@@ -560,11 +573,13 @@ export type ResolversTypes = ResolversObject<{
   PlayerMat: ResolverTypeWrapper<PlayerMatModel>;
   PlayerMatchResult: ResolverTypeWrapper<Omit<PlayerMatchResult, 'bidGamePlayer' | 'faction' | 'player' | 'playerMat'> & { bidGamePlayer?: Maybe<ResolversTypes['BidGamePlayer']>, faction: ResolversTypes['Faction'], player: ResolversTypes['Player'], playerMat: ResolversTypes['PlayerMat'] }>;
   PlayerMatchResultInput: PlayerMatchResultInput;
+  PlayerTrueskill: ResolverTypeWrapper<PlayerTrueskill>;
   Query: ResolverTypeWrapper<{}>;
   QuickBidInput: QuickBidInput;
   String: ResolverTypeWrapper<Scalars['String']>;
   Subscription: ResolverTypeWrapper<{}>;
   Tier: ResolverTypeWrapper<TierModel>;
+  Trueskill: ResolverTypeWrapper<Trueskill>;
   User: ResolverTypeWrapper<User>;
 }>;
 
@@ -601,11 +616,13 @@ export type ResolversParentTypes = ResolversObject<{
   PlayerMat: PlayerMatModel;
   PlayerMatchResult: Omit<PlayerMatchResult, 'bidGamePlayer' | 'faction' | 'player' | 'playerMat'> & { bidGamePlayer?: Maybe<ResolversParentTypes['BidGamePlayer']>, faction: ResolversParentTypes['Faction'], player: ResolversParentTypes['Player'], playerMat: ResolversParentTypes['PlayerMat'] };
   PlayerMatchResultInput: PlayerMatchResultInput;
+  PlayerTrueskill: PlayerTrueskill;
   Query: {};
   QuickBidInput: QuickBidInput;
   String: Scalars['String'];
   Subscription: {};
   Tier: TierModel;
+  Trueskill: Trueskill;
   User: User;
 }>;
 
@@ -825,7 +842,14 @@ export type PlayerMatchResultResolvers<ContextType = Context, ParentType extends
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   player?: Resolver<ResolversTypes['Player'], ParentType, ContextType>;
   playerMat?: Resolver<ResolversTypes['PlayerMat'], ParentType, ContextType>;
+  playerTrueskill?: Resolver<Maybe<ResolversTypes['PlayerTrueskill']>, ParentType, ContextType>;
   rank?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type PlayerTrueskillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['PlayerTrueskill'] = ResolversParentTypes['PlayerTrueskill']> = ResolversObject<{
+  after?: Resolver<ResolversTypes['Trueskill'], ParentType, ContextType>;
+  before?: Resolver<ResolversTypes['Trueskill'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -855,6 +879,12 @@ export type TierResolvers<ContextType = Context, ParentType extends ResolversPar
   id?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
   name?: Resolver<ResolversTypes['String'], ParentType, ContextType>;
   rank?: Resolver<ResolversTypes['Int'], ParentType, ContextType>;
+  __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
+}>;
+
+export type TrueskillResolvers<ContextType = Context, ParentType extends ResolversParentTypes['Trueskill'] = ResolversParentTypes['Trueskill']> = ResolversObject<{
+  mu?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
+  sigma?: Resolver<ResolversTypes['Float'], ParentType, ContextType>;
   __isTypeOf?: IsTypeOfResolverFn<ParentType, ContextType>;
 }>;
 
@@ -891,9 +921,11 @@ export type Resolvers<ContextType = Context> = ResolversObject<{
   PlayerFactionStats?: PlayerFactionStatsResolvers<ContextType>;
   PlayerMat?: PlayerMatResolvers<ContextType>;
   PlayerMatchResult?: PlayerMatchResultResolvers<ContextType>;
+  PlayerTrueskill?: PlayerTrueskillResolvers<ContextType>;
   Query?: QueryResolvers<ContextType>;
   Subscription?: SubscriptionResolvers<ContextType>;
   Tier?: TierResolvers<ContextType>;
+  Trueskill?: TrueskillResolvers<ContextType>;
   User?: UserResolvers<ContextType>;
 }>;
 

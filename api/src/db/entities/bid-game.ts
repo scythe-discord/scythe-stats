@@ -6,6 +6,7 @@ import {
   JoinColumn,
   Column,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { Combo } from '../../common/utils/types';
 import { BidGameStatus } from '../../graphql/schema/codegen/generated';
@@ -16,6 +17,7 @@ import BidPreset from './bid-preset';
 import Match from './match';
 
 @Entity()
+@Index(['ranked', 'status'])
 export default class BidGame {
   @PrimaryGeneratedColumn()
   id: number;

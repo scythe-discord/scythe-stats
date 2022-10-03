@@ -2,6 +2,7 @@ import { ReactNode, FC, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
+import { Badge } from 'baseui/badge';
 import { LabelLarge } from 'baseui/typography';
 import Link from 'next/link';
 import classNames from 'classnames';
@@ -90,34 +91,44 @@ const StandardNavItems: FC = () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
-        <Button
-          kind={BUTTON_KIND.secondary}
-          size={BUTTON_SIZE.compact}
-          $as="a"
-          href={DISCORD_OAUTH_URL}
-          overrides={{
-            BaseButton: {
-              style: {
-                fontSize: '16px',
-              },
-            },
-          }}
-          onClick={async (e) => {
-            if (!discordMe) {
-              return;
-            }
-
-            e.preventDefault();
-            const { data } = await mutate();
-
-            if (data?.createBidGame.id) {
-              router.push(`/bid/${data.createBidGame.id}`);
-            }
-          }}
-          isLoading={loading || isAuthLoading}
+        <Badge
+          content={
+            <span className={css({ fontVariant: 'all-small-caps' })}>Beta</span>
+          }
+          placement="topRightEdge"
+          hierarchy="secondary"
+          color="primary"
+          horizontalOffset="-20px"
         >
-          Create Bid Game
-        </Button>
+          <Button
+            kind={BUTTON_KIND.secondary}
+            size={BUTTON_SIZE.compact}
+            $as="a"
+            href={DISCORD_OAUTH_URL}
+            overrides={{
+              BaseButton: {
+                style: {
+                  fontSize: '16px',
+                },
+              },
+            }}
+            onClick={async (e) => {
+              if (!discordMe) {
+                return;
+              }
+
+              e.preventDefault();
+              const { data } = await mutate();
+
+              if (data?.createBidGame.id) {
+                router.push(`/bid/${data.createBidGame.id}`);
+              }
+            }}
+            isLoading={loading || isAuthLoading}
+          >
+            Create Bid Game
+          </Button>
+        </Badge>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
         <DiscordAuthItem isNavItem />

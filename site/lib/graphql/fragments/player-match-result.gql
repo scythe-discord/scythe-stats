@@ -22,4 +22,14 @@ fragment PlayerMatchResult on PlayerMatchResult {
   }
   coins
   rank
+  playerTrueskill {
+    before {
+      sigma
+      mu
+    }
+    after {
+      sigma
+      mu
+    }
+  }
 }

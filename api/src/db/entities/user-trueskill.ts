@@ -31,9 +31,6 @@ export default class UserTrueskill {
   })
   sigma: number;
 
-  @Column({ type: 'jsonb', default: [] })
-  history: { mu: number; sigma: number }[];
-
   @Column({ type: 'int' })
   userId: number;
 

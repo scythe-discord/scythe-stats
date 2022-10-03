@@ -206,7 +206,7 @@ const validateMatch = async (
       bid = player.bid?.coins ?? null;
     }
     if (coins < 0) {
-      throw new Error('Coins must be valid positive integers');
+      throw new Error('Coins must be valid non-negative integers');
     }
 
     if (coins > 250) {

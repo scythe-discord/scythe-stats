@@ -82,6 +82,12 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
     () => setRecordMatchModalOpen(false),
     []
   );
+  const onCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(window.location.toString());
+    toaster.info('Link copied to clipboard.', {
+      autoHideDuration: 3000,
+    });
+  }, []);
 
   const ownPlayer =
     (data &&
@@ -179,19 +185,35 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
               >
                 <Card>
                   <div>
-                    <HeadingSmall
-                      as="h3"
-                      overrides={{
-                        Block: {
-                          style: {
-                            marginTop: 0,
-                            marginBottom: '10px',
-                          },
-                        },
-                      }}
+                    <div
+                      className={css({
+                        display: 'flex',
+                        gap: '16px',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      })}
                     >
-                      Bid Game
-                    </HeadingSmall>
+                      <HeadingSmall
+                        as="h3"
+                        overrides={{
+                          Block: {
+                            style: {
+                              marginTop: 0,
+                              marginBottom: '10px',
+                            },
+                          },
+                        }}
+                      >
+                        Bid Game
+                      </HeadingSmall>
+                      <Button
+                        kind={KIND.secondary}
+                        size={SIZE.compact}
+                        onClick={onCopyLink}
+                      >
+                        Share
+                      </Button>
+                    </div>
                     {data && (
                       <>
                         <LabelMedium>
@@ -333,7 +355,7 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                   ) : (
                     <CombosList
                       // initialize when combos are first loaded
-                      key={data.bidGame.combos?.length}
+                      key={JSON.stringify(data.bidGame.combos)}
                       bidGame={data.bidGame}
                       ownPlayer={ownPlayer}
                     />
@@ -351,6 +373,7 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                   joinGameLoading={joinBidGameLoading}
                   startGameLoading={startBidGameLoading}
                   ownPlayer={ownPlayer}
+                  onCopyLink={onCopyLink}
                 />
               </div>
             </div>

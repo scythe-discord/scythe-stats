@@ -12,6 +12,7 @@ import BuyMeACoffee from './buy-me-a-coffee';
 import { AuthContext, DISCORD_OAUTH_URL } from '../auth';
 import { useCreateBidGameMutation } from 'lib/graphql/codegen';
 import { useRouter } from 'next/router';
+import { Badge } from 'baseui/badge';
 
 const StyledLink = withStyle(BaseLink as any, {
   textDecoration: 'none',
@@ -78,27 +79,39 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <a
-                href={DISCORD_OAUTH_URL}
-                onClick={async (e) => {
-                  if (!discordMe) {
-                    return;
-                  }
-
-                  e.preventDefault();
-
-                  if (loading || isAuthLoading) {
-                    return;
-                  }
-                  const { data } = await mutate();
-
-                  if (data?.createBidGame.id) {
-                    router.push(`/bid/${data.createBidGame.id}`);
-                  }
-                }}
+              <Badge
+                content={
+                  <span className={css({ fontVariant: 'all-small-caps' })}>
+                    Beta
+                  </span>
+                }
+                placement="rightBottomEdge"
+                hierarchy="secondary"
+                color="primary"
+                horizontalOffset="-20px"
               >
-                <StyledLink>Create Bid Game</StyledLink>
-              </a>
+                <a
+                  href={DISCORD_OAUTH_URL}
+                  onClick={async (e) => {
+                    if (!discordMe) {
+                      return;
+                    }
+
+                    e.preventDefault();
+
+                    if (loading || isAuthLoading) {
+                      return;
+                    }
+                    const { data } = await mutate();
+
+                    if (data?.createBidGame.id) {
+                      router.push(`/bid/${data.createBidGame.id}`);
+                    }
+                  }}
+                >
+                  <StyledLink>Create Bid Game</StyledLink>
+                </a>
+              </Badge>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
               <StyledLink
