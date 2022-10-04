@@ -228,7 +228,7 @@ const validateMatch = async (
     const finalScore = coins - (bid ?? 0);
 
     if (prevFinalScore != null && finalScore > prevFinalScore) {
-      throw new Error('Rank and coins data do not align');
+      throw new Error('Rank and coins data do not align.');
     }
 
     prevFinalScore = finalScore;

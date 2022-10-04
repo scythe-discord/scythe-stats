@@ -1,8 +1,6 @@
 import { FC, useCallback, useRef, Dispatch } from 'react';
 import { useDebounceCallback } from '@react-hook/debounce';
 import { useStyletron, styled } from 'baseui';
-import { Button, KIND, SIZE, SHAPE } from 'baseui/button';
-import { Delete } from 'baseui/icon';
 import { Select, Value, Option, TYPE } from 'baseui/select';
 import { Input } from 'baseui/input';
 
@@ -10,7 +8,7 @@ import GQL from 'lib/graphql';
 import { FactionIcon } from 'lib/components';
 
 import { PlayerEntryAction } from './player-entries';
-import { LabelMedium } from 'baseui/typography';
+import { ParagraphMedium } from 'baseui/typography';
 
 interface Props {
   id: number;
@@ -19,10 +17,8 @@ interface Props {
   player: Value;
   faction: Value;
   playerMat: Value;
-  rank: Value;
   coins: number | string;
   onPlayerEntryChange: Dispatch<PlayerEntryAction>;
-  possibleRanks: number[];
   bidCoins?: number;
   bidGamePlayerId?: number;
 }
@@ -58,8 +54,6 @@ const RecordMatchRow: FC<Props> = ({
   playerMat,
   coins,
   onPlayerEntryChange,
-  rank,
-  possibleRanks,
   bidGamePlayerId,
   bidCoins,
 }) => {
@@ -98,185 +92,120 @@ const RecordMatchRow: FC<Props> = ({
     : [];
 
   return (
-    <>
-      <Select
-        type={TYPE.select}
-        options={possibleRanks.map((r) => ({ id: r, label: r }))}
-        disabled={possibleRanks.length === 1 || coins === ''}
-        value={
-          possibleRanks.length === 1
-            ? [{ id: possibleRanks[0], label: possibleRanks[0] }]
-            : rank
-        }
-        placeholder="#"
-        onChange={(params) =>
-          onPlayerEntryChange({ type: 'update', id, field: 'rank', params })
-        }
-        required
-        overrides={{
-          Root: {
-            style: {
-              flex: '0 0 auto',
-              width: 'auto',
-            },
-          },
-          ControlContainer: {
-            style: {
-              width: '60px',
-            },
-          },
+    <div
+      className={css({ display: 'flex', gap: '10px', alignItems: 'center' })}
+    >
+      <div
+        className={css({ flex: '1 1 0', minWidth: '135px', width: 'auto' })}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
-        clearable={false}
-      />
-
-      <Select
-        type={TYPE.search}
-        options={playerNameOptions}
-        value={player}
-        disabled={bidGamePlayerId != null}
-        placeholder="Player Name"
-        onChange={(params) =>
-          onPlayerEntryChange({ type: 'update', id, field: 'player', params })
-        }
-        onInputChange={onChangePlayerInput}
-        isLoading={loading}
-        creatable
-        required
-        overrides={{
-          Root: {
-            style: {
-              flex: '1 1 auto',
-              minWidth: '135px',
-              width: 'auto',
-            },
-          },
-          ControlContainer: {
-            style: {
-              width: '100%',
-            },
-          },
+      >
+        <Select
+          type={TYPE.search}
+          options={playerNameOptions}
+          value={player}
+          disabled={bidGamePlayerId != null}
+          placeholder="Player Name"
+          onChange={(params) =>
+            onPlayerEntryChange({ type: 'update', id, field: 'player', params })
+          }
+          onInputChange={onChangePlayerInput}
+          isLoading={loading}
+          creatable
+          required
+        />
+      </div>
+      <div
+        className={css({ flex: '0 0 140px' })}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
-      />
-      <Select
-        type={TYPE.select}
-        options={factions.map(({ id, name }) => ({
-          id,
-          label: name,
-        }))}
-        value={faction}
-        disabled={bidGamePlayerId != null}
-        placeholder="Faction"
-        onChange={(params) =>
-          onPlayerEntryChange({ type: 'update', id, field: 'faction', params })
-        }
-        getOptionLabel={getFactionLabel}
-        getValueLabel={getFactionLabel}
-        required
-        overrides={{
-          Root: {
-            style: {
-              flex: '0 0 auto',
-              width: 'auto',
-            },
-          },
-          ControlContainer: {
-            style: {
-              width: '160px',
-            },
-          },
-        }}
-        clearable={false}
-      />
-      <Select
-        type={TYPE.select}
-        disabled={bidGamePlayerId != null}
-        options={playerMats.map(({ id, name }) => ({
-          id,
-          label: name,
-        }))}
-        value={playerMat}
-        placeholder="Player Mat"
-        onChange={(params) =>
-          onPlayerEntryChange({
-            type: 'update',
+      >
+        <Select
+          type={TYPE.select}
+          options={factions.map(({ id, name }) => ({
             id,
-            field: 'playerMat',
-            params,
-          })
-        }
-        required
-        overrides={{
-          Root: {
-            style: {
-              flex: '0 0 auto',
-              width: 'auto',
-            },
-          },
-          ControlContainer: {
-            style: {
-              width: '155px',
-            },
-          },
+            label: name,
+          }))}
+          value={faction}
+          disabled={bidGamePlayerId != null}
+          placeholder="Faction"
+          onChange={(params) =>
+            onPlayerEntryChange({
+              type: 'update',
+              id,
+              field: 'faction',
+              params,
+            })
+          }
+          getOptionLabel={getFactionLabel}
+          getValueLabel={getFactionLabel}
+          required
+          clearable={false}
+        />
+      </div>
+      <div
+        className={css({ flex: '0 0 140px' })}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
-        clearable={false}
-      />
-      <Input
-        value={coins}
-        onChange={(e) =>
-          onPlayerEntryChange({
-            type: 'update',
+      >
+        <Select
+          type={TYPE.select}
+          disabled={bidGamePlayerId != null}
+          options={playerMats.map(({ id, name }) => ({
             id,
-            field: 'coins',
-            value: (e.target as HTMLInputElement).value,
-          })
-        }
-        type="number"
-        min={0}
-        required
-        overrides={{
-          Root: {
-            style: {
-              flex: '0 0 auto',
-              width: 'auto',
-            },
-          },
-          InputContainer: {
-            style: {
-              width: '100px',
-            },
-          },
+            label: name,
+          }))}
+          value={playerMat}
+          placeholder="Player Mat"
+          onChange={(params) =>
+            onPlayerEntryChange({
+              type: 'update',
+              id,
+              field: 'playerMat',
+              params,
+            })
+          }
+          required
+          clearable={false}
+        />
+      </div>
+      <div
+        className={css({ flex: '0 0 100px' })}
+        onMouseDown={(e) => {
+          e.stopPropagation();
         }}
-      />
+      >
+        <Input
+          value={coins}
+          placeholder="Coins"
+          onChange={(e) =>
+            onPlayerEntryChange({
+              type: 'update',
+              id,
+              field: 'coins',
+              value: (e.target as HTMLInputElement).value,
+            })
+          }
+          type="number"
+          min={0}
+          required
+        />
+      </div>
       {bidGamePlayerId && bidCoins != null ? (
-        <LabelMedium
+        <ParagraphMedium
           className={css({
             display: 'flex',
             alignItems: 'center',
-            justifyContent: 'flex-end',
+            flex: '0 0 80px',
           })}
         >
           - ${bidCoins} = ${Number(coins) - bidCoins}
-        </LabelMedium>
-      ) : (
-        <div className={css({ display: 'flex', alignItems: 'center' })}>
-          <Button
-            kind={KIND.tertiary}
-            size={SIZE.compact}
-            shape={SHAPE.square}
-            onClick={() => onPlayerEntryChange({ type: 'remove', id })}
-            overrides={{
-              Root: {
-                style: {
-                  flex: '0 0 auto',
-                },
-              },
-            }}
-          >
-            <Delete size={24} />
-          </Button>
-        </div>
-      )}
-    </>
+        </ParagraphMedium>
+      ) : null}
+    </div>
   );
 };
 
