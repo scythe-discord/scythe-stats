@@ -214,17 +214,22 @@ export const resolvers: Schema.Resolvers = {
         displayName: string;
         steamId: string | null;
         totalWins: string;
+        userId: number | null;
       }[];
 
-      return topPlayersRes.map(({ totalWins, id, displayName, steamId }) => ({
-        player: {
-          id: Number.parseInt(id),
-          displayName,
-          steamId,
-          playerMatchResults: [],
-        },
-        totalWins: Number.parseInt(totalWins) || 0,
-      }));
+      return topPlayersRes.map(
+        ({ totalWins, id, displayName, steamId, userId }) => ({
+          player: {
+            id: Number.parseInt(id),
+            displayName,
+            steamId,
+            playerMatchResults: [],
+            user: null,
+            userId,
+          },
+          totalWins: Number.parseInt(totalWins) || 0,
+        })
+      );
     },
   },
 };
