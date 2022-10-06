@@ -82,6 +82,8 @@ const RecentMatches: FC<Props> = ({ factions, playerMats, bidPresets }) => {
         factions={factions}
         playerMats={playerMats}
         bidPresets={bidPresets}
+        // Not used, clean up entire module later
+        bidGameId={1}
       ></CreateRoomModal>
     </>
   );
