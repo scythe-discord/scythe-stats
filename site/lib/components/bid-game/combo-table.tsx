@@ -62,7 +62,7 @@ export default function ComboTable({
           />
         }
       >
-        {(row, idx) => {
+        {(row: any, idx) => {
           const allChecked = isAllChecked(row);
           const hasChecked = isAnyChecked(row);
 
@@ -117,7 +117,7 @@ export default function ComboTable({
 
         return (
           <TableBuilderColumn header={header}>
-            {(row, rowIdx) => {
+            {(row: any, rowIdx) => {
               return (
                 <div
                   className={css({
