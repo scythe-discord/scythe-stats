@@ -16,7 +16,7 @@ module.exports = {
     },
     'import/resolver': {
       typescript: {
-        directory: 'site/tsconfig.json',
+        directory: 'tsconfig.json',
       },
     },
   },
