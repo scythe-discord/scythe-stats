@@ -41,9 +41,8 @@ router.get('/login', async (req, res) => {
       scope: string;
     };
 
-
     if (req.session) {
-      req.session.discordTokenInfo = parsedBody;
+      (req.session as any).discordTokenInfo = parsedBody;
     }
   } catch (e) {
     console.error(e);

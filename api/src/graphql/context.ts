@@ -6,7 +6,16 @@ import { GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
 export interface Context {
   isAdmin: boolean;
   clientIp?: string | string[];
-  session?: Session & { userId?: number };
+  session?: Session & {
+    userId?: number;
+    discordTokenInfo?: {
+      access_token: string;
+      token_type: string;
+      expires_in: number;
+      refresh_token: string;
+      scope: string;
+    };
+  };
   req: Request;
   res: Response;
 }
