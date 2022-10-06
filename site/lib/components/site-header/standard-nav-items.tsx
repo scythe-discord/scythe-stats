@@ -2,6 +2,7 @@ import { ReactNode, FC, useContext } from 'react';
 import { useStyletron, withStyle } from 'baseui';
 import { StyledNavigationItem } from 'baseui/header-navigation';
 import { StyledLink as BaseLink } from 'baseui/link';
+import { Badge } from 'baseui/badge';
 import { LabelLarge } from 'baseui/typography';
 import Link from 'next/link';
 import classNames from 'classnames';
@@ -117,6 +118,16 @@ const StandardNavItems: FC = () => {
           isLoading={loading || isAuthLoading}
         >
           Create Bid Game
+          <Badge
+            overrides={{ Badge: { style: { marginLeft: '10px' } } }}
+            content={
+              <span className={css({ fontVariant: 'all-small-caps' })}>
+                Beta
+              </span>
+            }
+            hierarchy="secondary"
+            color="primary"
+          />
         </Button>
       </SpacedNavigationItem>
       <SpacedNavigationItem>

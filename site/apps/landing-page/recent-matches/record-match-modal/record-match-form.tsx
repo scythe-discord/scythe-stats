@@ -12,20 +12,19 @@ import GQL from 'lib/graphql';
 import { PlayerEntry, PlayerEntryAction } from './player-entries';
 import RecordMatchRow from './record-match-row';
 import { BidGameFragment } from 'lib/graphql/codegen';
-import { LabelSmall } from 'baseui/typography';
+import { List } from 'baseui/dnd-list';
 
 interface Props {
   factions: Pick<GQL.Faction, 'id' | 'name'>[];
   playerMats: Pick<GQL.PlayerMat, 'id' | 'name'>[];
   bidGame?: BidGameFragment;
   playerEntries: PlayerEntry[];
-  formError?: string | null;
+  formError?: React.ReactNode;
   numRounds: string;
   shouldPostMatchLog: boolean;
   onNumRoundsChange: Dispatch<SetStateAction<string>>;
   onShouldPostMatchLogChange: Dispatch<SetStateAction<boolean>>;
   onPlayerEntryChange: Dispatch<PlayerEntryAction>;
-  idToPossibleRankMap: Record<number, number[]>;
   isBidGame?: boolean;
 }
 
@@ -39,7 +38,6 @@ const RecordMatchForm: FC<Props> = ({
   onNumRoundsChange,
   onShouldPostMatchLogChange,
   onPlayerEntryChange,
-  idToPossibleRankMap,
   isBidGame,
 }) => {
   const [css] = useStyletron();
@@ -50,75 +48,108 @@ const RecordMatchForm: FC<Props> = ({
         <Notification
           kind={NOTIFICATION_KIND.negative}
           overrides={{
-            Body: { style: { width: 'auto', marginBottom: '20px' } },
+            Body: { style: { width: 'auto', margin: '0px 0px 20px' } },
           }}
         >
           {formError}
         </Notification>
       )}
-      <FormControl label={() => 'Rounds Played'}>
-        <Input
-          placeholder="Enter rounds"
-          value={numRounds}
-          min={1}
-          type="number"
-          onChange={(e) => {
-            onNumRoundsChange((e.target as HTMLInputElement).value);
-          }}
-          autoFocus
-          overrides={{
-            Root: {
-              style: {
-                width: '165px',
+      <div
+        className={css({
+          display: 'flex',
+          justifyContent: 'space-between',
+          gap: '10px',
+          alignItems: 'flex-end',
+          marginBottom: '15px',
+        })}
+      >
+        <div>
+          <FormControl
+            label={() => 'Rounds Played'}
+            overrides={{
+              ControlContainer: {
+                style: () => ({ margin: '0px' }),
               },
-            },
-          }}
-        />
-      </FormControl>
+            }}
+          >
+            <Input
+              placeholder="Enter rounds"
+              value={numRounds}
+              min={1}
+              type="number"
+              onChange={(e) => {
+                onNumRoundsChange((e.target as HTMLInputElement).value);
+              }}
+              autoFocus
+              overrides={{
+                Root: {
+                  style: {
+                    width: '165px',
+                  },
+                },
+              }}
+            />
+          </FormControl>
+        </div>
+      </div>
       <FormControl>
         <div
           className={css({
-            display: 'grid',
-            gridTemplateColumns: '60px 2fr 1fr 1fr 1fr auto',
+            display: 'flex',
+            flexDirection: 'column',
             gap: '10px',
           })}
         >
-          <LabelSmall>Rank</LabelSmall>
-          <LabelSmall>Player</LabelSmall>
-          <LabelSmall>Faction</LabelSmall>
-          <LabelSmall>Player Mat</LabelSmall>
-          <LabelSmall>Coins</LabelSmall>
-          {isBidGame ? <LabelSmall>Final Score</LabelSmall> : <div />}
-          {playerEntries.map(
-            ({
-              id,
-              player,
-              faction,
-              playerMat,
-              coins,
-              rank,
-              bidCoins,
-              bidGamePlayerId,
-            }) => {
-              return (
-                <RecordMatchRow
-                  key={id}
-                  id={id}
-                  factions={factions}
-                  playerMats={playerMats}
-                  player={player}
-                  faction={faction}
-                  playerMat={playerMat}
-                  coins={coins}
-                  onPlayerEntryChange={onPlayerEntryChange}
-                  rank={rank}
-                  possibleRanks={idToPossibleRankMap[id]}
-                  bidCoins={bidCoins}
-                  bidGamePlayerId={bidGamePlayerId}
-                />
-              );
-            }
-          )}
+          <List
+            removable={!isBidGame}
+            overrides={{
+              List: {
+                style: () => ({
+                  margin: '0px',
+                }),
+              },
+              Label: {
+                style: () => ({
+                  minWidth: '0px',
+                }),
+              },
+              Item: {
+                style: () => ({
+                  padding: '5px',
+                }),
+              },
+            }}
+            items={playerEntries.map(
+              ({
+                id,
+                player,
+                faction,
+                playerMat,
+                coins,
+                bidCoins,
+                bidGamePlayerId,
+              }) => {
+                return (
+                  <RecordMatchRow
+                    key={id}
+                    id={id}
+                    factions={factions}
+                    playerMats={playerMats}
+                    player={player}
+                    faction={faction}
+                    playerMat={playerMat}
+                    coins={coins}
+                    onPlayerEntryChange={onPlayerEntryChange}
+                    bidCoins={bidCoins}
+                    bidGamePlayerId={bidGamePlayerId}
+                  />
+                );
+              }
+            )}
+            onChange={({ oldIndex, newIndex }) => {
+              onPlayerEntryChange({ type: 'reorder', oldIndex, newIndex });
+            }}
+          />
         </div>
       </FormControl>
       {!isBidGame && (

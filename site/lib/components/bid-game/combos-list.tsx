@@ -244,7 +244,10 @@ export default function CombosList({
                         },
                       });
                     }}
-                    disabled={bidGame.activePlayer?.id !== ownPlayer.id}
+                    disabled={
+                      bidGame.activePlayer?.id !== ownPlayer.id ||
+                      bids[combo.id] <= (combo.bid?.coins ?? 0)
+                    }
                   >
                     Bid
                   </Button>

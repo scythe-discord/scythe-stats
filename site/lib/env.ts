@@ -2,6 +2,9 @@ export const API_URL = process.env.NEXT_PUBLIC_API_URL || '';
 
 export const GRAPHQL_API_URL = process.env.NEXT_PUBLIC_GRAPHQL_API_URL || '';
 
+export const WS_GRAPHQL_API_URL =
+  process.env.NEXT_PUBLIC_WS_GRAPHQL_API_URL || '';
+
 export const PUBLIC_ASSETS_URL =
   process.env.NEXT_PUBLIC_PUBLIC_ASSETS_URL || '';
 

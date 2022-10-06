@@ -1,0 +1,7 @@
+# import BidGame from "../fragments/bid-game.gql"
+
+mutation updateRankedBidGameSetting($bidGameId: Int!, $ranked: Boolean!) {
+  updateRankedBidGameSetting(bidGameId: $bidGameId, ranked: $ranked) {
+    ...BidGame
+  }
+}

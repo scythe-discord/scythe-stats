@@ -71,6 +71,7 @@ const MatchDetails: FC<Props> = ({
       coins,
       rank,
       bidGamePlayer,
+      playerTrueskill,
     }) => {
       const bidCoins = bidGamePlayer?.bid ? bidGamePlayer.bid.coins : undefined;
 
@@ -82,6 +83,7 @@ const MatchDetails: FC<Props> = ({
         coins,
         rank,
         bidCoins,
+        playerTrueskill,
       };
     }
   );
@@ -98,12 +100,12 @@ const MatchDetails: FC<Props> = ({
             }),
         className
       )}
-      $gridTemplateColumns="auto 150px 150px 115px"
+      $gridTemplateColumns="auto auto 120px 100px"
     >
       <CenteredHeadCell>Player</CenteredHeadCell>
-      <CenteredHeadCell>Faction</CenteredHeadCell>
-      <CenteredHeadCell>Player Mat</CenteredHeadCell>
+      <CenteredHeadCell>Combination</CenteredHeadCell>
       <CenteredHeadCell>Coins</CenteredHeadCell>
+      <CenteredHeadCell>Rating</CenteredHeadCell>
       {matchDetailRows.map((row, index) => {
         const striped = index % 2 !== 0;
         return <MatchRow key={index} {...row} striped={striped} />;

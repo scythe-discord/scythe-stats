@@ -17,7 +17,7 @@ export default class Match {
   @Column()
   numRounds: number;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   datePlayed: Date;
 
   @Column({ type: 'varchar', nullable: true })

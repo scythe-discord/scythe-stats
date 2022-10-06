@@ -12,6 +12,7 @@ import BuyMeACoffee from './buy-me-a-coffee';
 import { AuthContext, DISCORD_OAUTH_URL } from '../auth';
 import { useCreateBidGameMutation } from 'lib/graphql/codegen';
 import { useRouter } from 'next/router';
+import { Badge } from 'baseui/badge';
 
 const StyledLink = withStyle(BaseLink as any, {
   textDecoration: 'none',
@@ -98,6 +99,20 @@ const CondensedNavItems: FC = () => {
                 }}
               >
                 <StyledLink>Create Bid Game</StyledLink>
+                <Badge
+                  overrides={{
+                    Badge: {
+                      style: { marginLeft: '10px', textDecoration: 'none' },
+                    },
+                  }}
+                  content={
+                    <span className={css({ fontVariant: 'all-small-caps' })}>
+                      Beta
+                    </span>
+                  }
+                  hierarchy="secondary"
+                  color="primary"
+                />
               </a>
             </SpacedNavigationItem>
             <SpacedNavigationItem>

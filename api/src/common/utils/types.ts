@@ -4,3 +4,14 @@ export interface Combo {
 }
 
 export type Bid = Combo & { coins: number; playerId: number; date: Date };
+
+export interface TrueskillChange {
+  before: {
+    sigma: number;
+    mu: number;
+  };
+  after: {
+    sigma: number;
+    mu: number;
+  };
+}

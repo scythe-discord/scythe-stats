@@ -21,6 +21,7 @@ export const typeDef = gql`
     joinBidGame(bidGameId: Int!): BidGame! # rate limit?
     updateBidGameSettings(bidGameId: Int!, settings: BidGameSettings!): BidGame!
     updateQuickBidSetting(bidGameId: Int!, quickBid: Boolean!): BidGame!
+    updateRankedBidGameSetting(bidGameId: Int!, ranked: Boolean!): BidGame!
     startBidGame(bidGameId: Int!): BidGame!
     bid(bidGameId: Int!, comboId: Int!, coins: Int!): BidGame!
     quickBid(bidGameId: Int!, quickBids: [QuickBidInput!]!): BidGame!
@@ -116,6 +117,7 @@ export const typeDef = gql`
     activePlayer: BidGamePlayer
     bidHistory: [BidHistoryEntry!]!
     quickBid: Boolean!
+    ranked: Boolean!
     match: Match
   }
 `;
@@ -176,10 +178,29 @@ export const resolvers: Schema.Resolvers = {
       }
 
       const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.updateQuickBidSetting(
+      const bidGame = await bidGameRepo.updateSetting(
         bidGameId,
         userId,
+        'quickBid',
         quickBid
+      );
+
+      pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
+      return bidGame;
+    },
+    updateRankedBidGameSetting: async (_, { bidGameId, ranked }, context) => {
+      const userId = context.session?.userId;
+
+      if (userId == null) {
+        throw new Error('You must be logged in to update a bid game');
+      }
+
+      const bidGameRepo = getCustomRepository(BidGameRepository);
+      const bidGame = await bidGameRepo.updateSetting(
+        bidGameId,
+        userId,
+        'ranked',
+        ranked
       );
 
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
@@ -236,14 +257,24 @@ export const resolvers: Schema.Resolvers = {
     },
   },
   BidGamePlayer: {
-    dateJoined: (bidGamePlayer) => bidGamePlayer.dateJoined.toISOString(),
+    dateJoined: (bidGamePlayer) =>
+      new Date(bidGamePlayer.dateJoined).toISOString(),
     quickBidReady: (bidGamePlayer) => !!bidGamePlayer.quickBids,
   },
   BidGame: {
-    createdAt: (bidGame) => bidGame.createdAt.toISOString(),
-    modifiedAt: (bidGame) => bidGame.modifiedAt.toISOString(),
+    createdAt: (bidGame) => {
+      return new Date(bidGame.createdAt).toISOString();
+    },
+    modifiedAt: (bidGame) => new Date(bidGame.modifiedAt).toISOString(),
     players: (bidGame) =>
-      bidGame.players.sort((a, b) => (a.order ?? 0) - (b.order ?? 0)),
+      bidGame.players.sort((a, b) => {
+        if (a.order == null || b.order == null || a.order === b.order) {
+          return (
+            new Date(a.dateJoined).getTime() - new Date(b.dateJoined).getTime()
+          );
+        }
+        return a.order - b.order;
+      }),
     activePlayer: (bidGame) => {
       if (bidGame.quickBid) {
         return null;
@@ -270,6 +301,6 @@ export const resolvers: Schema.Resolvers = {
     },
   },
   Bid: {
-    date: (bid) => bid.date.toISOString(),
+    date: (bid) => new Date(bid.date).toISOString(),
   },
 };

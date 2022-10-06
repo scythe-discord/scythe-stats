@@ -8,14 +8,21 @@ export interface PlayerEntry {
   faction: Value;
   playerMat: Value;
   coins: string;
-  rank: Value;
 }
 
 export type PlayerEntryAction =
   | {
+      type: 'sort';
+    }
+  | {
+      type: 'reorder';
+      oldIndex: number;
+      newIndex: number;
+    }
+  | {
       type: 'update';
       id: number;
-      field: 'player' | 'faction' | 'playerMat' | 'rank';
+      field: 'player' | 'faction' | 'playerMat';
       params: OnChangeParams;
     }
   | {
@@ -34,3 +41,7 @@ export type PlayerEntryAction =
   | {
       type: 'clear';
     };
+
+export const getFinalScore = (playerEntry: PlayerEntry) => {
+  return Number(playerEntry.coins) - (playerEntry.bidCoins ?? 0);
+};

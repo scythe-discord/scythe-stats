@@ -6,6 +6,7 @@ import {
   JoinColumn,
   Column,
   ManyToOne,
+  Index,
 } from 'typeorm';
 import { Combo } from '../../common/utils/types';
 import { BidGameStatus } from '../../graphql/schema/codegen/generated';
@@ -16,6 +17,7 @@ import BidPreset from './bid-preset';
 import Match from './match';
 
 @Entity()
+@Index(['ranked', 'status'])
 export default class BidGame {
   @PrimaryGeneratedColumn()
   id: number;
@@ -55,10 +57,10 @@ export default class BidGame {
   })
   combos: BidGameCombo[] | null;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   createdAt: Date;
 
-  @Column()
+  @Column({ type: 'timestamptz' })
   modifiedAt: Date;
 
   @Column({ type: 'int', nullable: true })
@@ -72,4 +74,7 @@ export default class BidGame {
 
   @Column({ type: 'boolean', default: false })
   quickBid: boolean;
+
+  @Column({ type: 'boolean', default: false })
+  ranked: boolean;
 }

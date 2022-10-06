@@ -39,6 +39,7 @@ export type BidGame = {
   modifiedAt: Scalars['String'];
   players: Array<BidGamePlayer>;
   quickBid: Scalars['Boolean'];
+  ranked: Scalars['Boolean'];
   status: BidGameStatus;
 };
 
@@ -230,6 +231,7 @@ export type Mutation = {
   startBidGame: BidGame;
   updateBidGameSettings: BidGame;
   updateQuickBidSetting: BidGame;
+  updateRankedBidGameSetting: BidGame;
 };
 
 
@@ -275,6 +277,12 @@ export type MutationUpdateBidGameSettingsArgs = {
 export type MutationUpdateQuickBidSettingArgs = {
   bidGameId: Scalars['Int'];
   quickBid: Scalars['Boolean'];
+};
+
+
+export type MutationUpdateRankedBidGameSettingArgs = {
+  bidGameId: Scalars['Int'];
+  ranked: Scalars['Boolean'];
 };
 
 export type Node = {
@@ -344,6 +352,7 @@ export type PlayerMatchResult = {
   id: Scalars['Int'];
   player: Player;
   playerMat: PlayerMat;
+  playerTrueskill?: Maybe<PlayerTrueskill>;
   rank: Scalars['Int'];
 };
 
@@ -355,6 +364,12 @@ export type PlayerMatchResultInput = {
   playerMat: Scalars['String'];
   rank: Scalars['Int'];
   steamId?: InputMaybe<Scalars['String']>;
+};
+
+export type PlayerTrueskill = {
+  __typename?: 'PlayerTrueskill';
+  after: Trueskill;
+  before: Trueskill;
 };
 
 export type Query = {
@@ -440,6 +455,12 @@ export type Tier = {
   rank: Scalars['Int'];
 };
 
+export type Trueskill = {
+  __typename?: 'Trueskill';
+  mu: Scalars['Float'];
+  sigma: Scalars['Float'];
+};
+
 export type User = {
   __typename?: 'User';
   discordId: Scalars['String'];
@@ -448,9 +469,9 @@ export type User = {
   username: Scalars['String'];
 };
 
-export type BidGameFragment = { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null };
+export type BidGameFragment = { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null };
 
-export type PlayerMatchResultFragment = { __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } };
+export type PlayerMatchResultFragment = { __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null };
 
 export type BidMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
@@ -459,12 +480,12 @@ export type BidMutationVariables = Exact<{
 }>;
 
 
-export type BidMutation = { __typename?: 'Mutation', bid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type BidMutation = { __typename?: 'Mutation', bid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type CreateBidGameMutationVariables = Exact<{ [key: string]: never; }>;
 
 
-export type CreateBidGameMutation = { __typename?: 'Mutation', createBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type CreateBidGameMutation = { __typename?: 'Mutation', createBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type EditBidGameSettingsMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
@@ -472,14 +493,14 @@ export type EditBidGameSettingsMutationVariables = Exact<{
 }>;
 
 
-export type EditBidGameSettingsMutation = { __typename?: 'Mutation', updateBidGameSettings: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type EditBidGameSettingsMutation = { __typename?: 'Mutation', updateBidGameSettings: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type JoinBidGameMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
 }>;
 
 
-export type JoinBidGameMutation = { __typename?: 'Mutation', joinBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type JoinBidGameMutation = { __typename?: 'Mutation', joinBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type LogMatchMutationVariables = Exact<{
   numRounds: Scalars['Int'];
@@ -490,7 +511,7 @@ export type LogMatchMutationVariables = Exact<{
 }>;
 
 
-export type LogMatchMutation = { __typename?: 'Mutation', logMatch?: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } | null };
+export type LogMatchMutation = { __typename?: 'Mutation', logMatch?: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }>, winner: { __typename?: 'PlayerMatchResult', id: number } } | null };
 
 export type QuickBidMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
@@ -498,14 +519,14 @@ export type QuickBidMutationVariables = Exact<{
 }>;
 
 
-export type QuickBidMutation = { __typename?: 'Mutation', quickBid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type QuickBidMutation = { __typename?: 'Mutation', quickBid: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type StartBidGameMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
 }>;
 
 
-export type StartBidGameMutation = { __typename?: 'Mutation', startBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type StartBidGameMutation = { __typename?: 'Mutation', startBidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type UpdateQuickBidSettingMutationVariables = Exact<{
   bidGameId: Scalars['Int'];
@@ -513,14 +534,22 @@ export type UpdateQuickBidSettingMutationVariables = Exact<{
 }>;
 
 
-export type UpdateQuickBidSettingMutation = { __typename?: 'Mutation', updateQuickBidSetting: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type UpdateQuickBidSettingMutation = { __typename?: 'Mutation', updateQuickBidSetting: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
+
+export type UpdateRankedBidGameSettingMutationVariables = Exact<{
+  bidGameId: Scalars['Int'];
+  ranked: Scalars['Boolean'];
+}>;
+
+
+export type UpdateRankedBidGameSettingMutation = { __typename?: 'Mutation', updateRankedBidGameSetting: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type BidGameQueryVariables = Exact<{
   bidGameId: Scalars['Int'];
 }>;
 
 
-export type BidGameQuery = { __typename?: 'Query', bidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }> } | null } };
+export type BidGameQuery = { __typename?: 'Query', bidGame: { __typename?: 'BidGame', id: number, status: BidGameStatus, createdAt: string, modifiedAt: string, bidTimeLimitSeconds?: number | null, quickBid: boolean, ranked: boolean, players: Array<{ __typename?: 'BidGamePlayer', id: number, quickBidReady?: boolean | null, user: { __typename?: 'User', id: number, username: string }, bid?: { __typename?: 'Bid', id: number } | null }>, host: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } }, bidPreset?: { __typename?: 'BidPreset', id: number, name: string } | null, enabledCombos?: Array<{ __typename?: 'ComboSetting', factionId: number, playerMatId: number }> | null, activePlayer?: { __typename?: 'BidGamePlayer', id: number, user: { __typename?: 'User', id: number, username: string } } | null, combos?: Array<{ __typename?: 'BidGameCombo', id: number, faction: { __typename?: 'Faction', id: number, name: string, position: number }, playerMat: { __typename?: 'PlayerMat', id: number, name: string, order: number }, bid?: { __typename?: 'Bid', id: number, coins: number } | null }> | null, match?: { __typename?: 'Match', id: string, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }> } | null } };
 
 export type BidPresetsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -556,7 +585,7 @@ export type MatchesQueryVariables = Exact<{
 }>;
 
 
-export type MatchesQuery = { __typename?: 'Query', matches: { __typename?: 'MatchConnection', edges: Array<{ __typename?: 'MatchEdge', node: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string } }>, winner: { __typename?: 'PlayerMatchResult', id: number } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, endCursor?: string | null } } };
+export type MatchesQuery = { __typename?: 'Query', matches: { __typename?: 'MatchConnection', edges: Array<{ __typename?: 'MatchEdge', node: { __typename?: 'Match', id: string, datePlayed: string, numRounds: number, playerMatchResults: Array<{ __typename?: 'PlayerMatchResult', id: number, coins: number, rank: number, bidGamePlayer?: { __typename?: 'BidGamePlayer', id: number, bid?: { __typename?: 'Bid', id: number, coins: number } | null } | null, player: { __typename?: 'Player', id: string, displayName: string, steamId?: string | null }, faction: { __typename?: 'Faction', id: number, name: string }, playerMat: { __typename?: 'PlayerMat', id: number, name: string }, playerTrueskill?: { __typename?: 'PlayerTrueskill', before: { __typename?: 'Trueskill', sigma: number, mu: number }, after: { __typename?: 'Trueskill', sigma: number, mu: number } } | null }>, winner: { __typename?: 'PlayerMatchResult', id: number } } }>, pageInfo: { __typename?: 'PageInfo', hasNextPage?: boolean | null, endCursor?: string | null } } };
 
 export type PlayerMatsQueryVariables = Exact<{ [key: string]: never; }>;
 
@@ -613,6 +642,16 @@ export const PlayerMatchResultFragmentDoc = gql`
   }
   coins
   rank
+  playerTrueskill {
+    before {
+      sigma
+      mu
+    }
+    after {
+      sigma
+      mu
+    }
+  }
 }
     `;
 export const BidGameFragmentDoc = gql`
@@ -641,6 +680,7 @@ export const BidGameFragmentDoc = gql`
   }
   bidTimeLimitSeconds
   quickBid
+  ranked
   bidPreset {
     id
     name
@@ -828,36 +868,14 @@ export const LogMatchDocument = gql`
     datePlayed
     numRounds
     playerMatchResults {
-      id
-      bidGamePlayer {
-        id
-        bid {
-          id
-          coins
-        }
-      }
-      player {
-        id
-        displayName
-        steamId
-      }
-      faction {
-        id
-        name
-      }
-      playerMat {
-        id
-        name
-      }
-      coins
-      rank
+      ...PlayerMatchResult
     }
     winner {
       id
     }
   }
 }
-    `;
+    ${PlayerMatchResultFragmentDoc}`;
 export type LogMatchMutationFn = Apollo.MutationFunction<LogMatchMutation, LogMatchMutationVariables>;
 
 /**
@@ -989,6 +1007,40 @@ export function useUpdateQuickBidSettingMutation(baseOptions?: Apollo.MutationHo
 export type UpdateQuickBidSettingMutationHookResult = ReturnType<typeof useUpdateQuickBidSettingMutation>;
 export type UpdateQuickBidSettingMutationResult = Apollo.MutationResult<UpdateQuickBidSettingMutation>;
 export type UpdateQuickBidSettingMutationOptions = Apollo.BaseMutationOptions<UpdateQuickBidSettingMutation, UpdateQuickBidSettingMutationVariables>;
+export const UpdateRankedBidGameSettingDocument = gql`
+    mutation updateRankedBidGameSetting($bidGameId: Int!, $ranked: Boolean!) {
+  updateRankedBidGameSetting(bidGameId: $bidGameId, ranked: $ranked) {
+    ...BidGame
+  }
+}
+    ${BidGameFragmentDoc}`;
+export type UpdateRankedBidGameSettingMutationFn = Apollo.MutationFunction<UpdateRankedBidGameSettingMutation, UpdateRankedBidGameSettingMutationVariables>;
+
+/**
+ * __useUpdateRankedBidGameSettingMutation__
+ *
+ * To run a mutation, you first call `useUpdateRankedBidGameSettingMutation` within a React component and pass it any options that fit your needs.
+ * When your component renders, `useUpdateRankedBidGameSettingMutation` returns a tuple that includes:
+ * - A mutate function that you can call at any time to execute the mutation
+ * - An object with fields that represent the current status of the mutation's execution
+ *
+ * @param baseOptions options that will be passed into the mutation, supported options are listed on: https://www.apollographql.com/docs/react/api/react-hooks/#options-2;
+ *
+ * @example
+ * const [updateRankedBidGameSettingMutation, { data, loading, error }] = useUpdateRankedBidGameSettingMutation({
+ *   variables: {
+ *      bidGameId: // value for 'bidGameId'
+ *      ranked: // value for 'ranked'
+ *   },
+ * });
+ */
+export function useUpdateRankedBidGameSettingMutation(baseOptions?: Apollo.MutationHookOptions<UpdateRankedBidGameSettingMutation, UpdateRankedBidGameSettingMutationVariables>) {
+        const options = {...defaultOptions, ...baseOptions}
+        return Apollo.useMutation<UpdateRankedBidGameSettingMutation, UpdateRankedBidGameSettingMutationVariables>(UpdateRankedBidGameSettingDocument, options);
+      }
+export type UpdateRankedBidGameSettingMutationHookResult = ReturnType<typeof useUpdateRankedBidGameSettingMutation>;
+export type UpdateRankedBidGameSettingMutationResult = Apollo.MutationResult<UpdateRankedBidGameSettingMutation>;
+export type UpdateRankedBidGameSettingMutationOptions = Apollo.BaseMutationOptions<UpdateRankedBidGameSettingMutation, UpdateRankedBidGameSettingMutationVariables>;
 export const BidGameDocument = gql`
     query bidGame($bidGameId: Int!) {
   bidGame(bidGameId: $bidGameId) {

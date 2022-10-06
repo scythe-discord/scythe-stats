@@ -1,3 +1,5 @@
+# import PlayerMatchResult from "../fragments/player-match-result.gql"
+
 mutation logMatch(
   $numRounds: Int!
   $datePlayed: String!
@@ -16,29 +18,7 @@ mutation logMatch(
     datePlayed
     numRounds
     playerMatchResults {
-      id
-      bidGamePlayer {
-        id
-        bid {
-          id
-          coins
-        }
-      }
-      player {
-        id
-        displayName
-        steamId
-      }
-      faction {
-        id
-        name
-      }
-      playerMat {
-        id
-        name
-      }
-      coins
-      rank
+      ...PlayerMatchResult
     }
     winner {
       id

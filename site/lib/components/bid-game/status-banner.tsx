@@ -1,5 +1,5 @@
 import { useStyletron } from 'baseui';
-import { Banner } from 'baseui/banner';
+import { Banner, KIND, Kind } from 'baseui/banner';
 import { StyledLink } from 'baseui/link';
 import { BidGameFragment, BidGameStatus } from 'lib/graphql/codegen';
 import React, { useContext } from 'react';
@@ -15,6 +15,7 @@ export default function StatusBanner({
   onClickJoinGame,
   joinGameLoading,
   ownPlayer,
+  onCopyLink,
 }: {
   bidGame: BidGameFragment;
   onClickEditGameSettings: () => void;
@@ -23,11 +24,13 @@ export default function StatusBanner({
   joinGameLoading: boolean;
   startGameLoading: boolean;
   ownPlayer: BidGameFragment['players'][number] | undefined;
+  onCopyLink: () => void;
 }) {
   const { discordMe } = useContext(AuthContext);
   const [css] = useStyletron();
 
-  let banner: { title: string; text: React.ReactNode } | null = null;
+  let banner: { title: string; text: React.ReactNode; kind?: Kind } | null =
+    null;
 
   if (bidGame) {
     if (bidGame.status === BidGameStatus.Created) {
@@ -40,9 +43,17 @@ export default function StatusBanner({
                 className={css({ cursor: 'pointer' })}
                 onClick={() => onClickEditGameSettings()}
               >
-                Update the game settings
-              </StyledLink>
-              , and once all players have joined,{' '}
+                Update
+              </StyledLink>{' '}
+              the game settings ,{' '}
+              <StyledLink
+                className={css({ cursor: 'pointer' })}
+                onClick={onCopyLink}
+              >
+                copy
+              </StyledLink>{' '}
+              and share the link to this game with other players, and once all
+              players have joined,{' '}
               <StyledLink
                 className={css({ cursor: 'pointer' })}
                 onClick={() => {
@@ -140,8 +151,14 @@ export default function StatusBanner({
       };
     } else if (bidGame.status === BidGameStatus.GameRecorded) {
       banner = {
-        title: 'Game complete.',
+        title: 'Game complete and recorded.',
         text: null,
+      };
+    } else if (bidGame.status === BidGameStatus.Expired) {
+      banner = {
+        title: 'This game has expired.',
+        text: 'A player in this game has recorded another bid game. In order to preserve the integrity of rankings, the results of this game can no longer be recorded.',
+        kind: KIND.negative,
       };
     }
   }
@@ -151,6 +168,7 @@ export default function StatusBanner({
       <Banner
         overrides={{ Root: { style: () => ({ margin: '30px 0px' }) } }}
         title={banner.title}
+        kind={banner.kind || KIND.info}
       >
         {banner.text}
       </Banner>

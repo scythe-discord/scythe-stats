@@ -7,6 +7,7 @@ import {
 } from 'typeorm';
 import BidGamePlayer from './bid-game-player';
 import Player from './player';
+import UserTrueskill from './user-trueskill';
 
 @Entity()
 export default class User {
@@ -31,4 +32,10 @@ export default class User {
 
   @OneToOne(() => Player, (player) => player.user, { cascade: true })
   player: Player;
+
+  @OneToOne(() => UserTrueskill, (trueskill) => trueskill.user, {
+    cascade: true,
+    eager: true,
+  })
+  trueskill: UserTrueskill;
 }

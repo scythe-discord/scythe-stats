@@ -9,6 +9,7 @@ import {
   useJoinBidGameMutation,
   useStartBidGameMutation,
   useUpdateQuickBidSettingMutation,
+  useUpdateRankedBidGameSettingMutation,
 } from 'lib/graphql/codegen';
 import { useRouter } from 'next/router';
 import { gql } from '@apollo/client';
@@ -59,7 +60,8 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
     variables: { bidGameId: bidGameIdAsNumber },
   });
 
-  const [mutate] = useUpdateQuickBidSettingMutation();
+  const [updateQuickBidSetting] = useUpdateQuickBidSettingMutation();
+  const [updateRankedSetting] = useUpdateRankedBidGameSettingMutation();
 
   const [isSettingModalVisible, setIsSettingModalVisible] = useState(false);
   const [recordMatchModalOpen, setRecordMatchModalOpen] = useState(false);
@@ -80,6 +82,12 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
     () => setRecordMatchModalOpen(false),
     []
   );
+  const onCopyLink = useCallback(() => {
+    navigator.clipboard.writeText(window.location.toString());
+    toaster.info('Link copied to clipboard.', {
+      autoHideDuration: 3000,
+    });
+  }, []);
 
   const ownPlayer =
     (data &&
@@ -177,19 +185,35 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
               >
                 <Card>
                   <div>
-                    <HeadingSmall
-                      as="h3"
-                      overrides={{
-                        Block: {
-                          style: {
-                            marginTop: 0,
-                            marginBottom: '10px',
-                          },
-                        },
-                      }}
+                    <div
+                      className={css({
+                        display: 'flex',
+                        gap: '16px',
+                        justifyContent: 'space-between',
+                        alignItems: 'flex-start',
+                      })}
                     >
-                      Bid Game
-                    </HeadingSmall>
+                      <HeadingSmall
+                        as="h3"
+                        overrides={{
+                          Block: {
+                            style: {
+                              marginTop: 0,
+                              marginBottom: '10px',
+                            },
+                          },
+                        }}
+                      >
+                        Bid Game
+                      </HeadingSmall>
+                      <Button
+                        kind={KIND.secondary}
+                        size={SIZE.compact}
+                        onClick={onCopyLink}
+                      >
+                        Share
+                      </Button>
+                    </div>
                     {data && (
                       <>
                         <LabelMedium>
@@ -212,27 +236,51 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                         </LabelMedium>
                         {isHost &&
                         data.bidGame.status === BidGameStatus.Created ? (
-                          <div className={css({ marginTop: '20px' })}>
-                            <Checkbox
-                              checked={data.bidGame.quickBid}
-                              onChange={async (e) => {
-                                mutate({
-                                  variables: {
-                                    bidGameId: bidGameIdAsNumber,
-                                    quickBid: e.target.checked,
-                                  },
-                                });
-                              }}
-                              checkmarkType={STYLE_TYPE.toggle_round}
-                              labelPlacement={LABEL_PLACEMENT.right}
-                            >
-                              Quick Bid
-                            </Checkbox>
-                          </div>
+                          <>
+                            <div className={css({ marginTop: '20px' })}>
+                              <Checkbox
+                                checked={data.bidGame.quickBid}
+                                onChange={async (e) => {
+                                  updateQuickBidSetting({
+                                    variables: {
+                                      bidGameId: bidGameIdAsNumber,
+                                      quickBid: e.target.checked,
+                                    },
+                                  });
+                                }}
+                                checkmarkType={STYLE_TYPE.toggle_round}
+                                labelPlacement={LABEL_PLACEMENT.right}
+                              >
+                                Quick Bid
+                              </Checkbox>
+                            </div>
+                            <div className={css({ marginTop: '20px' })}>
+                              <Checkbox
+                                checked={data.bidGame.ranked}
+                                onChange={async (e) => {
+                                  updateRankedSetting({
+                                    variables: {
+                                      bidGameId: bidGameIdAsNumber,
+                                      ranked: e.target.checked,
+                                    },
+                                  });
+                                }}
+                                checkmarkType={STYLE_TYPE.toggle_round}
+                                labelPlacement={LABEL_PLACEMENT.right}
+                              >
+                                Ranked
+                              </Checkbox>
+                            </div>
+                          </>
                         ) : (
-                          data.bidGame.quickBid && (
-                            <LabelMedium>Quick Bid</LabelMedium>
-                          )
+                          <>
+                            {data.bidGame.quickBid && (
+                              <LabelMedium>Quick Bid</LabelMedium>
+                            )}
+                            {data.bidGame.ranked && (
+                              <LabelMedium>Ranked</LabelMedium>
+                            )}
+                          </>
                         )}
                       </>
                     )}
@@ -307,7 +355,7 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                   ) : (
                     <CombosList
                       // initialize when combos are first loaded
-                      key={data.bidGame.combos?.length}
+                      key={JSON.stringify(data.bidGame.combos)}
                       bidGame={data.bidGame}
                       ownPlayer={ownPlayer}
                     />
@@ -325,6 +373,7 @@ const BidGame: NextComponentType<BaseContext, Props, Props> = ({
                   joinGameLoading={joinBidGameLoading}
                   startGameLoading={startBidGameLoading}
                   ownPlayer={ownPlayer}
+                  onCopyLink={onCopyLink}
                 />
               </div>
             </div>

@@ -28,6 +28,16 @@ export const typeDef = gql`
     node: Match!
   }
 
+  type Trueskill {
+    sigma: Float!
+    mu: Float!
+  }
+
+  type PlayerTrueskill {
+    before: Trueskill!
+    after: Trueskill!
+  }
+
   type PlayerMatchResult {
     id: Int!
     player: Player!
@@ -36,6 +46,7 @@ export const typeDef = gql`
     coins: Int!
     rank: Int!
     bidGamePlayer: BidGamePlayer
+    playerTrueskill: PlayerTrueskill
   }
 `;
 
