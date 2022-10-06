@@ -19,6 +19,7 @@ import {
 import { getFactionEmblem } from 'lib/scythe';
 import { ParagraphMedium } from 'baseui/typography';
 import { KIND } from 'baseui/button';
+import Image from 'next/image';
 
 export type QuickBidWithCombo = QuickBidInput & {
   combo: NonNullable<BidGameFragment['combos']>[number];
@@ -38,7 +39,7 @@ const QuickBidListItem: FC<{
     <div
       className={css({ display: 'flex', gap: '10px', alignItems: 'center' })}
     >
-      <img
+      <Image
         src={getFactionEmblem(quickBid.combo.faction.name)}
         alt={quickBid.combo.faction.name}
         width={36}

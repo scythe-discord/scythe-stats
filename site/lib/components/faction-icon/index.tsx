@@ -5,6 +5,7 @@ import { StatefulTooltip, PLACEMENT } from 'baseui/tooltip';
 import classNames from 'classnames';
 
 import { getFactionEmblem } from 'lib/scythe';
+import Image from 'next/image';
 
 interface Props {
   faction: string;
@@ -12,7 +13,7 @@ interface Props {
   className?: string;
 }
 
-const FactionIcon: FC<Props> = ({ faction, size, className }) => {
+const FactionIcon: FC<Props> = ({ faction, size = 16, className }) => {
   const [css] = useStyletron();
   const emblemSrc = getFactionEmblem(faction);
 
@@ -26,12 +27,13 @@ const FactionIcon: FC<Props> = ({ faction, size, className }) => {
       ignoreBoundary={true}
       content={() => <Block>{faction}</Block>}
     >
-      <img
+      <Image
         src={emblemSrc}
         alt={faction}
+        width={size}
+        height={size}
         className={classNames(
           css({
-            width: `${size}px` || '16px',
             cursor: 'pointer',
           }),
           className

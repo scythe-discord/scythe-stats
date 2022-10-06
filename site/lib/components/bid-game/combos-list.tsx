@@ -14,6 +14,7 @@ import { Skeleton } from 'baseui/skeleton';
 import ConfirmQuickBidModal, {
   QuickBidWithCombo,
 } from './confirm-quick-bid-modal';
+import Image from 'next/image';
 
 type Combo = NonNullable<BidGameFragment['combos']>[number];
 
@@ -118,7 +119,7 @@ export default function CombosList({
                 </>
               ) : (
                 <>
-                  <img
+                  <Image
                     src={getFactionEmblem(combo.faction.name)}
                     alt={combo.faction.name}
                     width={36}

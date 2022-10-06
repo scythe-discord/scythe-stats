@@ -8,5 +8,3 @@ export const pubsub = new RedisPubSub({
     password: REDIS_PASSWORD,
   },
 });
-
-// console.log(pubsub);
