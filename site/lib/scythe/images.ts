@@ -1,7 +1,5 @@
 import urljoin from 'url-join';
 
-import { PUBLIC_ASSETS_URL } from '../env';
-
 const FACTION_ICONS_PATH = '/faction-icons';
 const FACTION_MATS_PATH = '/faction-mats';
 const PLAYER_MATS_PATH = '/player-mats';
