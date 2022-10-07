@@ -30,6 +30,20 @@ const overrides = {
   colors: {
     linkVisited: primitives.primary,
   },
+  typography: {
+    HeadingSmall: {
+      fontWeight: 500,
+    },
+    HeadingLarge: {
+      fontWeight: 500,
+    },
+    HeadingXLarge: {
+      fontWeight: 500,
+    },
+    HeadingXXLarge: {
+      fontWeight: 500,
+    },
+  },
 };
 
 export default createDarkTheme(primitives, overrides);
