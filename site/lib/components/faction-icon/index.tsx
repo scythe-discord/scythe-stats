@@ -27,18 +27,19 @@ const FactionIcon: FC<Props> = ({ faction, size = 16, className }) => {
       ignoreBoundary={true}
       content={() => <Block>{faction}</Block>}
     >
-      <Image
-        src={emblemSrc}
-        alt={faction}
-        width={size}
-        height={size}
+      <div
         className={classNames(
           css({
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
             cursor: 'pointer',
           }),
           className
         )}
-      />
+      >
+        <Image src={emblemSrc} alt={faction} width={size} height={size} />
+      </div>
     </StatefulTooltip>
   );
 };
