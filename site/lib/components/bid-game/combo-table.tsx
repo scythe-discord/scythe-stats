@@ -43,7 +43,7 @@ export default function ComboTable({
 
   return (
     <TableBuilder data={tableData}>
-      <TableBuilderColumn
+      <TableBuilderColumn<ComboTableRow>
         overrides={{
           TableHeadCell: {
             style: () => ({
@@ -62,7 +62,7 @@ export default function ComboTable({
           />
         }
       >
-        {(row: any, idx) => {
+        {(row, idx) => {
           const allChecked = isAllChecked(row);
           const hasChecked = isAnyChecked(row);
 
@@ -116,8 +116,8 @@ export default function ComboTable({
         );
 
         return (
-          <TableBuilderColumn header={header}>
-            {(row: any, rowIdx) => {
+          <TableBuilderColumn<ComboTableRow> header={header}>
+            {(row, rowIdx) => {
               return (
                 <div
                   className={css({
