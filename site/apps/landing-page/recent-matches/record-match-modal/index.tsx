@@ -177,7 +177,7 @@ const RecordMatchModal: FC<ModalProps & Props> = ({
 
       const finalScore = getFinalScore(entry);
 
-      if (lastFinalScore != null && coinsAsNum > lastFinalScore) {
+      if (lastFinalScore != null && finalScore > lastFinalScore) {
         if (bidGame) {
           error = 'Players must be sorted in rank order after bids.';
         } else {
