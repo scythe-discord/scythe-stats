@@ -69,12 +69,12 @@ const CondensedNavItems: FC = () => {
             })}
           >
             <SpacedNavigationItem>
-              <Link href="/" passHref={true}>
+              <Link href="/" passHref={true} legacyBehavior={true}>
                 <StyledLink>Home</StyledLink>
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
-              <Link href="/tiers" passHref={true}>
+              <Link href="/tiers" passHref={true} legacyBehavior={true}>
                 <StyledLink>Tier List</StyledLink>
               </Link>
             </SpacedNavigationItem>
