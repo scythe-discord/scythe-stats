@@ -16,7 +16,8 @@ module.exports = {
     },
     'import/resolver': {
       typescript: {
-        directory: 'tsconfig.json',
+        alwaysTryTypes: true,
+        project: 'site',
       },
     },
   },

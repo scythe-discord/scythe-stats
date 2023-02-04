@@ -7,7 +7,7 @@
   "author": "Brady Shi",
   "license": "GPL-3.0-only",
   "engines": {
-    "node": ">=12.0.0"
+    "node": ">=16.15.0"
   },
   "dependencies": {
     "@apollo/client": "^3.6.4",
