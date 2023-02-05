@@ -97,6 +97,7 @@ const MatchDetails: FC<Props> = ({
           ? css({ gridAutoRows: '50px' })
           : css({
               minHeight: `${MIN_MATCH_DETAILS_HEIGHT}px`,
+              maxWidth: `${TIMELINE_WIDTH}px`,
             }),
         className
       )}
