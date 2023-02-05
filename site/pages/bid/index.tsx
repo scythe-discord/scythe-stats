@@ -41,12 +41,15 @@ export const getServerSideProps = async () => {
     GQL.FactionsQueryVariables
   >({
     query: GQL.FactionsDocument,
+    fetchPolicy: 'no-cache',
   });
   const { data: playerMats } = await client.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,
+    fetchPolicy: 'no-cache',
   });
   const { data: bidPresets } = await client.query<GQL.BidPresetsQuery>({
     query: GQL.BidPresetsDocument,
+    fetchPolicy: 'no-cache',
   });
 
   return {

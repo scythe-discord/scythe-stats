@@ -103,15 +103,18 @@ export const getServerSideProps = async () => {
     GQL.FactionStatsQueryVariables
   >({
     query: GQL.FactionStatsDocument,
+    fetchPolicy: 'no-cache',
   });
   const { data: playerMats } = await client.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,
+    fetchPolicy: 'no-cache',
   });
   const { data: topPlayersAllTime } = await client.query<
     GQL.TopPlayersQuery,
     GQL.TopPlayersQueryVariables
   >({
     query: GQL.TopPlayersDocument,
+    fetchPolicy: 'no-cache',
     variables: {
       first: 5,
     },
@@ -121,6 +124,7 @@ export const getServerSideProps = async () => {
     GQL.TopPlayersQueryVariables
   >({
     query: GQL.TopPlayersDocument,
+    fetchPolicy: 'no-cache',
     variables: {
       first: 5,
       fromDate: moment().subtract(1, 'month').toISOString(),

@@ -88,12 +88,14 @@ export const getServerSideProps = async () => {
     GQL.TiersQueryVariables
   >({
     query: GQL.TiersDocument,
+    fetchPolicy: 'no-cache',
     variables: {
       numTopPlayers: 1,
     },
   });
   const { data: playerMats } = await client.query<GQL.PlayerMatsQuery>({
     query: GQL.PlayerMatsDocument,
+    fetchPolicy: 'no-cache',
   });
 
   const randomTier =
