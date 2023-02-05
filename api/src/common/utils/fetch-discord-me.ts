@@ -1,5 +1,4 @@
 import got from 'got';
-import { getCustomRepository } from 'typeorm';
 
 import { Context } from '../../graphql/context';
 import UserRepository from '../../db/repositories/user-repository';
@@ -40,8 +39,7 @@ export const fetchDiscordMe = async (
       premium_type: number;
     };
 
-    const userRepository = getCustomRepository(UserRepository);
-    const userId = await userRepository.upsertUser({
+    const userId = await UserRepository.upsertUser({
       discordId,
       username,
       discriminator,

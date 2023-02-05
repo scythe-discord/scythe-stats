@@ -1,4 +1,4 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { merge } from 'lodash';
 
 import { typeDef as authTypeDef, resolvers as authResolvers } from './auth';

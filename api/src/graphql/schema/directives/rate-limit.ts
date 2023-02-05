@@ -1,5 +1,5 @@
 import { defaultFieldResolver, GraphQLSchema } from 'graphql';
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { RateLimiterRedis } from 'rate-limiter-flexible';
 
 import { mapSchema, getDirective, MapperKind } from '@graphql-tools/utils';

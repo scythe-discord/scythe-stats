@@ -14,6 +14,7 @@ export const AuthContext = createContext<AuthContextInfo>({
 
 interface Props {
   initAuthCheck: boolean;
+  children: React.ReactNode;
 }
 
 export const AuthProvider: FC<Props> = ({ initAuthCheck, ...rest }) => {

@@ -6,14 +6,14 @@ import Document, {
   NextScript,
 } from 'next/document';
 import { Provider as StyletronProvider } from 'styletron-react';
-import { Sheet, Server } from 'styletron-engine-atomic';
+import { Server } from 'styletron-engine-atomic';
 
 import { GA_TRACKING_ID } from 'lib/env';
 
 import { styletron } from '../styletron';
 
 interface Props {
-  stylesheets: Sheet[];
+  stylesheets: any[];
 }
 
 class MyDocument extends Document<Props> {

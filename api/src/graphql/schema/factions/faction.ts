@@ -1,6 +1,6 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
 
+import { scytheDb } from '../../../db';
 import {
   Faction,
   PlayerMatchResult,
@@ -35,22 +35,22 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     faction: async (_, { id }) => {
-      const factionRepo = getRepository(Faction);
-      const faction = await factionRepo.findOneOrFail({
+      const factionRepo = scytheDb.getRepository(Faction);
+      const faction = await factionRepo.findOneByOrFail({
         id,
       });
 
       return faction;
     },
     factions: async () => {
-      const factionRepo = getRepository(Faction);
+      const factionRepo = scytheDb.getRepository(Faction);
       const allFactions = await factionRepo.find();
       return allFactions;
     },
   },
   Faction: {
     totalWins: async (faction, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr.id)', 'totalWins')
@@ -105,7 +105,7 @@ export const resolvers: Schema.Resolvers = {
       return Number.parseInt(totalWinsRes.totalWins) || 0;
     },
     totalMatches: async (faction, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr.id)', 'totalMatches')
@@ -149,7 +149,7 @@ export const resolvers: Schema.Resolvers = {
       return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
     factionMatCombos: async (faction) => {
-      const playerMatRepo = getRepository(PlayerMat);
+      const playerMatRepo = scytheDb.getRepository(PlayerMat);
       const playerMats = await playerMatRepo.find();
       return playerMats.map((playerMat) => ({
         faction,
@@ -157,7 +157,7 @@ export const resolvers: Schema.Resolvers = {
       }));
     },
     topPlayers: async ({ id: factionId }, { first, playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('player.*')

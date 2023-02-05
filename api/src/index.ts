@@ -1,28 +1,29 @@
 import 'reflect-metadata';
-import { ApolloServer } from 'apollo-server-express';
+import { ApolloServer } from '@apollo/server';
+import { expressMiddleware } from '@apollo/server/express4';
+import { json } from 'body-parser';
 
 import express from 'express';
 import session from 'express-session';
 import cors from 'cors';
 import connectRedis from 'connect-redis';
-import { resolveContext } from './graphql/context';
+import { Context, resolveContext } from './graphql/context';
 import schema from './graphql/schema';
-import { dbConnection } from './db';
+import { scytheDb } from './db';
 import { API_SERVER_PORT, SESSION_SECRET, SITE_URL } from './common/config';
 import { redisClient } from './common/services';
 import { authRouter } from './routes';
 import http from 'http';
-import {
-  ApolloServerPluginDrainHttpServer,
-  ApolloServerPluginLandingPageLocalDefault,
-} from 'apollo-server-core';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { ApolloServerPluginLandingPageLocalDefault } from '@apollo/server/plugin/landingPage/default';
 import { WebSocketServer } from 'ws';
 import { useServer } from 'graphql-ws/lib/use/ws';
 
 const MAX_COOKIE_AGE = 1000 * 60 * 60 * 24 * 7;
 
 async function startApolloServer() {
-  dbConnection
+  scytheDb
+    .initialize()
     .then(() => {
       console.log('Database connection ready!');
     })
@@ -65,9 +66,8 @@ async function startApolloServer() {
   app.use(session(sessionConf));
   app.use('/auth', authRouter);
 
-  const graphqlServer = new ApolloServer({
+  const graphqlServer = new ApolloServer<Context>({
     schema,
-    context: resolveContext,
     plugins: [
       ApolloServerPluginDrainHttpServer({ httpServer }),
       {
@@ -85,10 +85,19 @@ async function startApolloServer() {
     ],
   });
   await graphqlServer.start();
+  app.use(
+    '/graphql',
+    cors({
+      origin: [SITE_URL, 'https://studio.apollographql.com'],
+      credentials: true,
+    }),
+    json(),
+    expressMiddleware<Context>(graphqlServer, {
+      context: resolveContext,
+    })
+  );
 
-  graphqlServer.applyMiddleware({ app, cors: false, path: '/graphql' });
-
-  console.log(`🚀  Server ready at ${graphqlServer.graphqlPath}`);
+  console.log(`🚀  Server ready at ${SITE_URL}`);
 
   const wsServer = new WebSocketServer({
     // This is the `httpServer` we created in a previous step.

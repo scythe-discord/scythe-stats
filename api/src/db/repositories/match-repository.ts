@@ -1,4 +1,4 @@
-import { EntityRepository, Repository, EntityManager, In } from 'typeorm';
+import { EntityManager, In } from 'typeorm';
 import { rate } from 'openskill';
 
 import { delay } from '../../common/utils';
@@ -17,6 +17,7 @@ import BidGamePlayer from '../entities/bid-game-player';
 
 import PlayerRepository from './player-repository';
 import { TrueskillChange } from '../../common/utils/types';
+import { scytheDb } from '..';
 
 const MAX_RETRIES = 5;
 const MAX_RETRY_DELAY = 1500;
@@ -27,9 +28,115 @@ const getResultsOrderedByPlace = (
   return [...loggedMatchResults].sort((a, b) => a.rank - b.rank);
 };
 
-@EntityRepository(Match)
-export default class MatchRepository extends Repository<Match> {
-  logMatch = async (
+const formPlayerMatchResults = async (
+  entityManager: EntityManager,
+  match: Match,
+  loggedMatchResults: PlayerMatchResultInput[]
+): Promise<PlayerMatchResult[]> => {
+  const playerMatchResults: PlayerMatchResult[] = [];
+  const resultsByPlace = getResultsOrderedByPlace(loggedMatchResults);
+
+  let playerTrueskills: Record<number, TrueskillChange> | null = null;
+  if (match.bidGame?.ranked) {
+    const bidGamePlayerIdToResult: Record<number, PlayerMatchResultInput> =
+      loggedMatchResults.reduce((acc, curr) => {
+        if (curr.bidGamePlayerId != null) {
+          acc[curr.bidGamePlayerId] = curr;
+        }
+        return acc;
+      }, {} as Record<number, PlayerMatchResultInput>);
+    const trueskillBeforeArr: TrueskillChange['before'][] = [];
+    const newRatings = rate(
+      match.bidGame.players.map((p) => {
+        trueskillBeforeArr.push({
+          sigma: p.user.trueskill.sigma,
+          mu: p.user.trueskill.mu,
+        });
+        return [p.user.trueskill];
+      }),
+      {
+        rank: match.bidGame.players.map((p) =>
+          bidGamePlayerIdToResult[p.id].rank === 1 ? 1 : 2
+        ),
+      }
+    );
+
+    playerTrueskills = newRatings.reduce((acc, [newRating], idx) => {
+      if (!match.bidGame) {
+        return acc;
+      }
+      acc[match.bidGame.players[idx].id] = {
+        before: trueskillBeforeArr[idx],
+        after: newRating,
+      };
+      return acc;
+    }, {} as Record<number, TrueskillChange>);
+
+    await entityManager.save(
+      match.bidGame.players.map((p) => {
+        const newTrueskill = playerTrueskills?.[p.id];
+        if (newTrueskill) {
+          p.user.trueskill.sigma = newTrueskill.after.sigma;
+          p.user.trueskill.mu = newTrueskill.after.mu;
+        }
+        return p.user.trueskill;
+      })
+    );
+  }
+
+  for (let i = 0; i < resultsByPlace.length; i++) {
+    const {
+      displayName,
+      steamId,
+      faction: factionName,
+      playerMat: playerMatName,
+      coins,
+      rank,
+      bidGamePlayerId,
+    } = resultsByPlace[i];
+
+    const faction = await entityManager.findOneOrFail(Faction, {
+      where: { name: factionName },
+    });
+    const playerMat = await entityManager.findOneOrFail(PlayerMat, {
+      where: { name: playerMatName },
+    });
+    const player = await entityManager
+      .withRepository(PlayerRepository)
+      .findOrCreatePlayer(
+        displayName.trim(),
+        steamId ? steamId.trim() : steamId
+      );
+    const bidGamePlayer: BidGamePlayer | null =
+      bidGamePlayerId != null
+        ? await entityManager.getRepository(BidGamePlayer).findOneByOrFail({
+            id: bidGamePlayerId,
+          })
+        : null;
+
+    const playerMatchResult = await entityManager.save(
+      scytheDb.manager.create(PlayerMatchResult, {
+        match,
+        faction,
+        playerMat,
+        player,
+        coins,
+        rank,
+        bidGamePlayer,
+        playerTrueskill:
+          bidGamePlayerId == null || playerTrueskills == null
+            ? null
+            : playerTrueskills[bidGamePlayerId],
+      })
+    );
+
+    playerMatchResults.push(playerMatchResult);
+  }
+  return playerMatchResults;
+};
+
+const MatchRepository = scytheDb.getRepository(Match).extend({
+  logMatch: async (
     numRounds: number,
     datePlayed: string,
     loggedMatchResults: PlayerMatchResultInput[],
@@ -42,16 +149,15 @@ export default class MatchRepository extends Repository<Match> {
 
     while (numAttempts < MAX_RETRIES) {
       try {
-        await this.manager.transaction(
+        await scytheDb.manager.transaction(
           'SERIALIZABLE',
           async (transactionalEntityManager) => {
             bidGame =
               bidGameId == null
                 ? null
-                : await transactionalEntityManager.findOneOrFail(
-                    BidGame,
-                    bidGameId
-                  );
+                : await transactionalEntityManager.findOneByOrFail(BidGame, {
+                    id: bidGameId,
+                  });
 
             if (bidGame) {
               if (bidGame.status !== BidGameStatus.BiddingFinished) {
@@ -109,7 +215,7 @@ export default class MatchRepository extends Repository<Match> {
               })
             );
 
-            match.playerMatchResults = await this.formPlayerMatchResults(
+            match.playerMatchResults = await formPlayerMatchResults(
               transactionalEntityManager,
               match,
               loggedMatchResults
@@ -145,112 +251,7 @@ export default class MatchRepository extends Repository<Match> {
     match.datePlayed = new Date(match.datePlayed);
 
     return { match, bidGame };
-  };
+  },
+});
 
-  formPlayerMatchResults = async (
-    entityManager: EntityManager,
-    match: Match,
-    loggedMatchResults: PlayerMatchResultInput[]
-  ): Promise<PlayerMatchResult[]> => {
-    const playerMatchResults: PlayerMatchResult[] = [];
-    const resultsByPlace = getResultsOrderedByPlace(loggedMatchResults);
-
-    let playerTrueskills: Record<number, TrueskillChange> | null = null;
-    if (match.bidGame?.ranked) {
-      const bidGamePlayerIdToResult: Record<number, PlayerMatchResultInput> =
-        loggedMatchResults.reduce((acc, curr) => {
-          if (curr.bidGamePlayerId != null) {
-            acc[curr.bidGamePlayerId] = curr;
-          }
-          return acc;
-        }, {} as Record<number, PlayerMatchResultInput>);
-      const trueskillBeforeArr: TrueskillChange['before'][] = [];
-      const newRatings = rate(
-        match.bidGame.players.map((p) => {
-          trueskillBeforeArr.push({
-            sigma: p.user.trueskill.sigma,
-            mu: p.user.trueskill.mu,
-          });
-          return [p.user.trueskill];
-        }),
-        {
-          rank: match.bidGame.players.map((p) =>
-            bidGamePlayerIdToResult[p.id].rank === 1 ? 1 : 2
-          ),
-        }
-      );
-
-      playerTrueskills = newRatings.reduce((acc, [newRating], idx) => {
-        if (!match.bidGame) {
-          return acc;
-        }
-        acc[match.bidGame.players[idx].id] = {
-          before: trueskillBeforeArr[idx],
-          after: newRating,
-        };
-        return acc;
-      }, {} as Record<number, TrueskillChange>);
-
-      await entityManager.save(
-        match.bidGame.players.map((p) => {
-          const newTrueskill = playerTrueskills?.[p.id];
-          if (newTrueskill) {
-            p.user.trueskill.sigma = newTrueskill.after.sigma;
-            p.user.trueskill.mu = newTrueskill.after.mu;
-          }
-          return p.user.trueskill;
-        })
-      );
-    }
-
-    for (let i = 0; i < resultsByPlace.length; i++) {
-      const {
-        displayName,
-        steamId,
-        faction: factionName,
-        playerMat: playerMatName,
-        coins,
-        rank,
-        bidGamePlayerId,
-      } = resultsByPlace[i];
-
-      const faction = await entityManager.findOneOrFail(Faction, {
-        where: { name: factionName },
-      });
-      const playerMat = await entityManager.findOneOrFail(PlayerMat, {
-        where: { name: playerMatName },
-      });
-      const player = await entityManager
-        .getCustomRepository(PlayerRepository)
-        .findOrCreatePlayer(
-          displayName.trim(),
-          steamId ? steamId.trim() : steamId
-        );
-      const bidGamePlayer: BidGamePlayer | null =
-        bidGamePlayerId != null
-          ? await entityManager
-              .getRepository(BidGamePlayer)
-              .findOneOrFail(bidGamePlayerId)
-          : null;
-
-      const playerMatchResult = await entityManager.save(
-        this.manager.create(PlayerMatchResult, {
-          match,
-          faction,
-          playerMat,
-          player,
-          coins,
-          rank,
-          bidGamePlayer,
-          playerTrueskill:
-            bidGamePlayerId == null || playerTrueskills == null
-              ? null
-              : playerTrueskills[bidGamePlayerId],
-        })
-      );
-
-      playerMatchResults.push(playerMatchResult);
-    }
-    return playerMatchResults;
-  };
-}
+export default MatchRepository;

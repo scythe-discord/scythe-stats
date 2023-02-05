@@ -1,5 +1,4 @@
-import { gql } from 'apollo-server-core';
-import { getCustomRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
 import { getActivePlayer } from '../../../common/utils/get-active-player';
 import BidGameRepository from '../../../db/repositories/bid-game-repository';
 import Schema from '../codegen';
@@ -125,8 +124,9 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     bidGame: async (_, { bidGameId }) => {
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.findOneOrFail(bidGameId);
+      const bidGame = await BidGameRepository.findOneByOrFail({
+        id: bidGameId,
+      });
       return bidGame;
     },
   },
@@ -137,8 +137,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to create a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.createBidGame(userId);
+      const bidGame = await BidGameRepository.createBidGame(userId);
       return bidGame;
     },
     joinBidGame: async (_, { bidGameId }, context) => {
@@ -147,8 +146,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to join a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.joinBidGame(bidGameId, userId);
+      const bidGame = await BidGameRepository.joinBidGame(bidGameId, userId);
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
 
       return bidGame;
@@ -160,8 +158,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to update a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.updateBidGameSettings(
+      const bidGame = await BidGameRepository.updateBidGameSettings(
         bidGameId,
         userId,
         settings
@@ -177,8 +174,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to update a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.updateSetting(
+      const bidGame = await BidGameRepository.updateSetting(
         bidGameId,
         userId,
         'quickBid',
@@ -195,8 +191,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to update a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.updateSetting(
+      const bidGame = await BidGameRepository.updateSetting(
         bidGameId,
         userId,
         'ranked',
@@ -213,8 +208,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to start a bid game');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.startBidGame(bidGameId, userId);
+      const bidGame = await BidGameRepository.startBidGame(bidGameId, userId);
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
       return bidGame;
     },
@@ -225,8 +219,12 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to bid');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.bid(bidGameId, userId, comboId, coins);
+      const bidGame = await BidGameRepository.bid(
+        bidGameId,
+        userId,
+        comboId,
+        coins
+      );
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
       return bidGame;
     },
@@ -237,8 +235,11 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('You must be logged in to bid');
       }
 
-      const bidGameRepo = getCustomRepository(BidGameRepository);
-      const bidGame = await bidGameRepo.quickBid(bidGameId, userId, quickBids);
+      const bidGame = await BidGameRepository.quickBid(
+        bidGameId,
+        userId,
+        quickBids
+      );
       pubsub.publish('BID_GAME_UPDATED', { bidGameUpdated: bidGame });
       return bidGame;
     },
@@ -286,9 +287,10 @@ export const resolvers: Schema.Resolvers = {
         return null;
       }
 
-      const matchRepo = getCustomRepository(MatchRepository);
-
-      const match = await matchRepo.findOneOrFail(bidGame.match.id, {
+      const match = await MatchRepository.findOneOrFail({
+        where: {
+          id: bidGame.match.id,
+        },
         relations: [
           'playerMatchResults',
           'playerMatchResults.player',

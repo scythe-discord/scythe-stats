@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { toGlobalId, connectionFromArray } from 'graphql-relay';
-import { getRepository } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { Match } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -53,7 +53,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     matches: async (_, args) => {
-      const matchRepository = getRepository(Match);
+      const matchRepository = scytheDb.getRepository(Match);
       const matches = await matchRepository.find({
         relations: [
           'playerMatchResults',

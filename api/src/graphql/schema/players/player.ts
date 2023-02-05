@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { toGlobalId, fromGlobalId } from 'graphql-relay';
-import { getRepository } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { PlayerMatchResult, Player } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -33,15 +33,15 @@ export const resolvers: Schema.Resolvers = {
   Query: {
     player: async (_, { id: globalId }) => {
       const { id } = fromGlobalId(globalId);
-      const playerRepo = getRepository(Player);
-      const player = await playerRepo.findOne(id);
+      const playerRepo = scytheDb.getRepository(Player);
+      const player = await playerRepo.findOneBy({ id: parseInt(id) });
       return player || null;
     },
   },
   Player: {
     id: (player) => toGlobalId('Player', player.id.toString()),
     totalWins: async (player, { factionId, fromDate }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .innerJoin(
@@ -73,7 +73,7 @@ export const resolvers: Schema.Resolvers = {
       return wins;
     },
     totalMatches: async (player, { factionId, fromDate }) => {
-      const playerMatchResultRepo = getRepository(PlayerMatchResult);
+      const playerMatchResultRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = playerMatchResultRepo
         .createQueryBuilder('result')
         .where('result."playerId" = :playerId', { playerId: player.id });

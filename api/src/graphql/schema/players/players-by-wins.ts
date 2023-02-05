@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { connectionFromArray } from 'graphql-relay';
-import { getRepository } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { Player, PlayerMatchResult } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -23,7 +23,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     playersByWins: async (_, { first, after, factionId, fromDate }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr."playerId")', 'playerWins')
@@ -56,7 +56,8 @@ export const resolvers: Schema.Resolvers = {
         query = query.andWhere('match."datePlayed" >= :fromDate', { fromDate });
       }
 
-      const playersWithWins = (await query.getRawMany()) as PlayerWithWinCount[];
+      const playersWithWins =
+        (await query.getRawMany()) as PlayerWithWinCount[];
 
       return connectionFromArray(playersWithWins, { first, after });
     },

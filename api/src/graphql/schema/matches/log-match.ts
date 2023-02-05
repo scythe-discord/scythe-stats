@@ -1,8 +1,13 @@
-import { gql } from 'apollo-server-express';
-import { Client, TextChannel, MessageEmbed, Intents } from 'discord.js';
-import { getRepository, getCustomRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
+import {
+  Client,
+  TextChannel,
+  EmbedBuilder,
+  GatewayIntentBits,
+} from 'discord.js';
 
 import Schema from '../codegen';
+import { scytheDb } from '../../../db';
 import {
   Match,
   Faction,
@@ -70,7 +75,7 @@ const generateMatchLogMessage = (
     numRounds === 1 ? 'round' : 'rounds'
   } with $${winnerFinalScore} ${winnerFinalScore === 1 ? 'coin' : 'coins'}!`;
 
-  let matchEmbed = new MessageEmbed()
+  let matchEmbed = new EmbedBuilder()
     .setColor('#05A357')
     .setTitle('Match Log')
     .setDescription(description)
@@ -110,14 +115,19 @@ const generateMatchLogMessage = (
         : ''
     }`;
 
-    matchEmbed = matchEmbed.addField(fieldName, fieldValue);
+    matchEmbed = matchEmbed.addFields([
+      {
+        name: fieldName,
+        value: fieldValue,
+      },
+    ]);
   });
 
   return matchEmbed;
 };
 
 const postMatchLog = (matchId: number) => {
-  const matchRepository = getRepository(Match);
+  const matchRepository = scytheDb.getRepository(Match);
   return matchRepository
     .findOneOrFail({
       where: {
@@ -133,9 +143,9 @@ const postMatchLog = (matchId: number) => {
     .then(({ playerMatchResults, numRounds }) => {
       const client = new Client({
         intents: [
-          Intents.FLAGS.GUILDS,
-          Intents.FLAGS.GUILD_MESSAGES,
-          Intents.FLAGS.GUILD_EMOJIS_AND_STICKERS,
+          GatewayIntentBits.Guilds,
+          GatewayIntentBits.GuildMessages,
+          GatewayIntentBits.GuildEmojisAndStickers,
         ],
       });
 
@@ -211,8 +221,10 @@ const validateMatch = async (
     let bid: number | null = null;
 
     if (bidGamePlayerId != null) {
-      const bidGamePlayerRepo = getRepository(BidGamePlayer);
-      const player = await bidGamePlayerRepo.findOneOrFail(bidGamePlayerId);
+      const bidGamePlayerRepo = scytheDb.getRepository(BidGamePlayer);
+      const player = await bidGamePlayerRepo.findOneByOrFail({
+        id: bidGamePlayerId,
+      });
       bid = player.bid?.coins ?? null;
     }
     if (coins < 0) {
@@ -247,8 +259,8 @@ const validateMatch = async (
     seenPlayerMats[playerMatName] = true;
     seenPlayers[displayName] = true;
 
-    const factionRepo = getRepository(Faction);
-    const playerMatRepo = getRepository(PlayerMat);
+    const factionRepo = scytheDb.getRepository(Faction);
+    const playerMatRepo = scytheDb.getRepository(PlayerMat);
 
     if ((await factionRepo.count({ where: { name: factionName } })) === 0) {
       throw new Error(`Faction with name ${factionName} not found`);
@@ -291,7 +303,7 @@ export const resolvers: Schema.Resolvers = {
         recordingUserId = String(discordMe.id);
       }
 
-      const blacklistRepo = getRepository(DiscordBlacklist);
+      const blacklistRepo = scytheDb.getRepository(DiscordBlacklist);
       const blacklistedId = await blacklistRepo.findOne({
         where: { discordId: recordingUserId },
       });
@@ -299,8 +311,7 @@ export const resolvers: Schema.Resolvers = {
         throw new Error('Your account has been flagged for recording matches');
       }
 
-      const matchRepo = getCustomRepository(MatchRepository);
-      const { match, bidGame } = await matchRepo.logMatch(
+      const { match, bidGame } = await MatchRepository.logMatch(
         numRounds,
         datePlayed,
         loggedMatchResults,

@@ -1,6 +1,7 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
+import { Equal } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { Tier, MatComboTier } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -20,7 +21,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     tiers: async () => {
-      const tierRepo = getRepository(Tier);
+      const tierRepo = scytheDb.getRepository(Tier);
       const tiers = await tierRepo.find();
 
       return tiers;
@@ -28,11 +29,11 @@ export const resolvers: Schema.Resolvers = {
   },
   Tier: {
     factionMatCombos: async (tier) => {
-      const matComboTierRepo = getRepository(MatComboTier);
+      const matComboTierRepo = scytheDb.getRepository(MatComboTier);
 
       const matComboTiers = await matComboTierRepo.find({
         where: {
-          tier,
+          tier: Equal(tier.id),
         },
         relations: ['faction', 'playerMat'],
       });

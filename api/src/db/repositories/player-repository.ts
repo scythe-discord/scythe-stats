@@ -1,10 +1,26 @@
-import { EntityRepository, Repository } from 'typeorm';
+import { IsNull } from 'typeorm';
 
 import { Player, PlayerMatchResult } from '../entities';
+import { scytheDb } from '..';
 
-@EntityRepository(Player)
-export default class PlayerRepository extends Repository<Player> {
-  findOrCreatePlayer = async (
+const mergeFloatingPlayers = async (player: Player): Promise<void> => {
+  const floatingPlayer = await scytheDb.manager.findOneBy(Player, {
+    displayName: player.displayName,
+    steamId: IsNull(),
+  });
+
+  if (floatingPlayer) {
+    await scytheDb.manager.update(
+      PlayerMatchResult,
+      { player: floatingPlayer },
+      { player }
+    );
+    await scytheDb.manager.delete(Player, { id: floatingPlayer.id });
+  }
+};
+
+const PlayerRepository = scytheDb.getRepository(Player).extend({
+  findOrCreatePlayer: async (
     displayName: string,
     steamId: string | null = null,
     userId: number | null = null
@@ -21,22 +37,22 @@ export default class PlayerRepository extends Repository<Player> {
       playerFilter = { steamId };
     }
 
-    const existingPlayer = await this.manager.findOne(Player, {
+    const existingPlayer = await scytheDb.manager.findOne(Player, {
       where: playerFilter,
     });
 
     if (existingPlayer) {
       if (existingPlayer.displayName !== displayName) {
         existingPlayer.displayName = displayName;
-        await this.manager.save(existingPlayer);
-        await this.mergeFloatingPlayers(existingPlayer);
+        await scytheDb.manager.save(existingPlayer);
+        await mergeFloatingPlayers(existingPlayer);
       }
 
       return existingPlayer;
     }
 
-    const newPlayer = await this.manager.save(
-      await this.manager.create(Player, {
+    const newPlayer = await scytheDb.manager.save(
+      await scytheDb.manager.create(Player, {
         displayName,
         steamId,
         userId,
@@ -44,25 +60,11 @@ export default class PlayerRepository extends Repository<Player> {
     );
 
     if (steamId) {
-      await this.mergeFloatingPlayers(newPlayer);
+      await mergeFloatingPlayers(newPlayer);
     }
 
     return newPlayer;
-  };
+  },
+});
 
-  mergeFloatingPlayers = async (player: Player): Promise<void> => {
-    const floatingPlayer = await this.manager.findOne(Player, {
-      displayName: player.displayName,
-      steamId: null,
-    });
-
-    if (floatingPlayer) {
-      await this.manager.update(
-        PlayerMatchResult,
-        { player: floatingPlayer },
-        { player }
-      );
-      await this.manager.delete(Player, { id: floatingPlayer.id });
-    }
-  };
-}
+export default PlayerRepository;

@@ -1,6 +1,6 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
 
+import { scytheDb } from '../../../db';
 import { PlayerMat } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -21,15 +21,15 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     playerMat: async (_, { id }) => {
-      const playerMatRepo = getRepository(PlayerMat);
-      const playerMat = await playerMatRepo.findOneOrFail({
+      const playerMatRepo = scytheDb.getRepository(PlayerMat);
+      const playerMat = await playerMatRepo.findOneByOrFail({
         id,
       });
 
       return playerMat;
     },
     playerMats: async () => {
-      const playerMatRepo = getRepository(PlayerMat);
+      const playerMatRepo = scytheDb.getRepository(PlayerMat);
       const allPlayerMats = await playerMatRepo.find();
       return allPlayerMats;
     },

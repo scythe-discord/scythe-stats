@@ -1,6 +1,7 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
+import { Equal } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { PlayerMatchResult, Match, MatComboTier } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -22,12 +23,12 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   FactionMatCombo: {
     tier: async ({ faction, playerMat }) => {
-      const matComboTierRepo = getRepository(MatComboTier);
+      const matComboTierRepo = scytheDb.getRepository(MatComboTier);
 
       const matComboTier = await matComboTierRepo.findOneOrFail({
         where: {
-          faction,
-          playerMat,
+          faction: Equal(faction.id),
+          playerMat: Equal(playerMat.id),
         },
         relations: ['tier'],
       });
@@ -38,7 +39,7 @@ export const resolvers: Schema.Resolvers = {
       { faction: { id: factionId }, playerMat: { id: playerMatId } },
       { first }
     ) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       const playersWithWins = await pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr."playerId")', 'totalWins')
@@ -73,7 +74,7 @@ export const resolvers: Schema.Resolvers = {
       }));
     },
     totalWins: async ({ faction, playerMat }, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr.id)', 'totalWins')
@@ -131,7 +132,7 @@ export const resolvers: Schema.Resolvers = {
       return Number.parseInt(totalWinsRes.totalWins) || 0;
     },
     totalMatches: async ({ faction, playerMat }, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('COUNT(pmr.id)', 'totalMatches')
@@ -178,7 +179,7 @@ export const resolvers: Schema.Resolvers = {
       return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
     avgCoinsOnWin: async ({ faction, playerMat }, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('AVG(pmr.coins)', 'avgCoins')
@@ -236,7 +237,7 @@ export const resolvers: Schema.Resolvers = {
       return Math.floor(parseFloat(avgCoinsRes.avgCoins)) || 0;
     },
     avgRoundsOnWin: async ({ faction, playerMat }, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('AVG(match."numRounds")', 'avgRounds')
@@ -295,7 +296,7 @@ export const resolvers: Schema.Resolvers = {
       return parseFloat(avgRoundsRes.avgRounds) || 0;
     },
     leastRoundsForWin: async ({ faction, playerMat }, { playerCounts }) => {
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
       let query = pmrRepo
         .createQueryBuilder('pmr')
         .select('MIN(match."numRounds")', 'minRounds')

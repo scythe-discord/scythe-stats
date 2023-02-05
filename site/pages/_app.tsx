@@ -18,6 +18,9 @@ import { styletron } from '../styletron';
 
 interface Props {
   initAuthCheck: boolean;
+  pageProps: {
+    initialApolloState: any;
+  };
 }
 
 const handleRouteStart = () => {

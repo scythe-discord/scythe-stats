@@ -1,5 +1,5 @@
 import { shuffle } from 'lodash';
-import { EntityRepository, In, Repository } from 'typeorm';
+import { In } from 'typeorm';
 import { getActivePlayer } from '../../common/utils/get-active-player';
 import { Combo } from '../../common/utils/types';
 import {
@@ -11,646 +11,642 @@ import {
 import { Bid, BidGame, BidPreset, Faction, PlayerMat, User } from '../entities';
 import BidGameCombo from '../entities/bid-game-combo';
 import BidGamePlayer from '../entities/bid-game-player';
+import { scytheDb } from '..';
 
 const MIN_PLAYERS = 2;
 const MAX_PLAYERS = 7;
 
-@EntityRepository(BidGame)
-export default class BidGameRepository extends Repository<BidGame> {
-  createBidGame = async (userId: number): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
+const createBidGame = async (userId: number): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
 
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        const user = await transactionalEntityManager.findOneOrFail(
-          User,
-          userId
-        );
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      const user = await transactionalEntityManager.findOneByOrFail(User, {
+        id: userId,
+      });
 
-        const bidGamePlayer = await transactionalEntityManager.save(
-          transactionalEntityManager.create(BidGamePlayer, {
-            user,
-            dateJoined: date,
-          })
-        );
+      const bidGamePlayer = await transactionalEntityManager.save(
+        transactionalEntityManager.create(BidGamePlayer, {
+          user,
+          dateJoined: date,
+        })
+      );
 
-        const bidPreset = await transactionalEntityManager.findOneOrFail(
-          BidPreset,
-          {
-            where: {
-              default: true,
-            },
-          }
-        );
+      const bidPreset = await transactionalEntityManager.findOneOrFail(
+        BidPreset,
+        {
+          where: {
+            default: true,
+          },
+        }
+      );
 
-        bidGame = await transactionalEntityManager.save(
-          transactionalEntityManager.create(BidGame, {
-            createdAt: date,
-            modifiedAt: date,
-            players: [bidGamePlayer],
-            host: bidGamePlayer,
-            bidPreset,
-            enabledCombos: bidPreset.bidPresetSettings
-              .filter((setting) => setting.enabled)
-              .map(({ faction, playerMat }) => ({
-                factionId: faction.id,
-                playerMatId: playerMat.id,
-              })),
-          })
-        );
-      }
-    );
-
-    if (!bidGame) {
-      throw new Error(
-        'Something unexpected occurred while creating a bid game'
+      bidGame = await transactionalEntityManager.save(
+        transactionalEntityManager.create(BidGame, {
+          createdAt: date,
+          modifiedAt: date,
+          players: [bidGamePlayer],
+          host: bidGamePlayer,
+          bidPreset,
+          enabledCombos: bidPreset.bidPresetSettings
+            .filter((setting) => setting.enabled)
+            .map(({ faction, playerMat }) => ({
+              factionId: faction.id,
+              playerMatId: playerMat.id,
+            })),
+        })
       );
     }
+  );
 
-    return bidGame;
-  };
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred while creating a bid game');
+  }
 
-  joinBidGame = async (bidGameId: number, userId: number): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
+  return bidGame;
+};
 
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        const user = await transactionalEntityManager.findOneOrFail(
-          User,
-          userId
+const joinBidGame = async (
+  bidGameId: number,
+  userId: number
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
+
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      const user = await transactionalEntityManager.findOneByOrFail(User, {
+        id: userId,
+      });
+
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
+
+      if (bidGame.status !== BidGameStatus.Created) {
+        throw new Error('The game you are trying to join has already started');
+      }
+
+      if (bidGame.players.length >= MAX_PLAYERS) {
+        throw new Error('The game you are trying to join is full');
+      }
+
+      const bidGamePlayer = await transactionalEntityManager.save(
+        transactionalEntityManager.create(BidGamePlayer, {
+          user,
+          dateJoined: date,
+        })
+      );
+
+      bidGame.modifiedAt = date;
+      bidGame.players.push(bidGamePlayer);
+
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
+    }
+  );
+
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred while creating a bid game');
+  }
+
+  return bidGame;
+};
+
+const updateBidGameSettings = async (
+  bidGameId: number,
+  userId: number,
+  bidGameSettings: BidGameSettings
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
+
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
+
+      if (bidGame.status !== BidGameStatus.Created) {
+        throw new Error('That game has already started');
+      }
+
+      if (bidGame.host.user.id !== userId) {
+        throw new Error('You must be the host to do that');
+      }
+
+      const { bidPresetId, combos, timeLimit } = bidGameSettings;
+
+      const bidPreset =
+        bidPresetId == null
+          ? null
+          : await transactionalEntityManager.findOneByOrFail(BidPreset, {
+              id: bidPresetId,
+            });
+
+      const factionIds = new Set(combos.map(({ factionId }) => factionId));
+      const playerMatIds = new Set(
+        combos.map(({ playerMatId }) => playerMatId)
+      );
+
+      const numFoundFactionIds = await transactionalEntityManager.count(
+        Faction,
+        {
+          where: { id: In([...factionIds]) },
+        }
+      );
+
+      if (numFoundFactionIds !== factionIds.size) {
+        throw new Error('Invalid faction IDs');
+      }
+
+      const numFoundPlayerMatIds = await transactionalEntityManager.count(
+        PlayerMat,
+        {
+          where: { id: In([...playerMatIds]) },
+        }
+      );
+
+      if (numFoundPlayerMatIds !== playerMatIds.size) {
+        throw new Error('Invalid player mat IDs');
+      }
+
+      bidGame.enabledCombos = combos;
+      bidGame.bidTimeLimitSeconds = timeLimit || null;
+      bidGame.bidPreset = bidPreset;
+      bidGame.modifiedAt = date;
+
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
+    }
+  );
+
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred');
+  }
+
+  return bidGame;
+};
+
+const updateSetting = async (
+  bidGameId: number,
+  userId: number,
+  key: 'quickBid' | 'ranked',
+  value: boolean
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
+
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
+
+      if (bidGame.status !== BidGameStatus.Created) {
+        throw new Error('That game has already started');
+      }
+
+      if (bidGame.host.user.id !== userId) {
+        throw new Error('You must be the host to do that');
+      }
+
+      bidGame[key] = value;
+      bidGame.modifiedAt = date;
+
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
+    }
+  );
+
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred');
+  }
+
+  return bidGame;
+};
+
+const startBidGame = async (
+  bidGameId: number,
+  userId: number
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
+
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
+
+      if (bidGame.host.user.id !== userId) {
+        throw new Error('You must be the host to do that');
+      }
+
+      if (bidGame.status !== BidGameStatus.Created) {
+        throw new Error('That game has already started');
+      }
+
+      if (bidGame.players.length < MIN_PLAYERS) {
+        throw new Error('Not enough players');
+      }
+
+      if (bidGame.players.length > MAX_PLAYERS) {
+        throw new Error('Too many players');
+      }
+
+      const shuffledCombos = shuffle(bidGame.enabledCombos);
+
+      const chosenCombos = assignCombos(
+        bidGame.players.length,
+        shuffledCombos,
+        []
+      );
+
+      if (!chosenCombos) {
+        throw new Error(
+          'No valid assignment of faction/player mat combinations found. Try choosing more combinations'
         );
+      }
 
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
-        );
+      const [factions, playerMats] = await Promise.all([
+        transactionalEntityManager.find(Faction),
+        transactionalEntityManager.find(PlayerMat),
+      ]);
 
-        if (bidGame.status !== BidGameStatus.Created) {
+      const factionMap: Record<number, Faction> = {};
+      const playerMatMap: Record<number, PlayerMat> = {};
+
+      factions.forEach((faction) => (factionMap[faction.id] = faction));
+      playerMats.forEach(
+        (playerMat) => (playerMatMap[playerMat.id] = playerMat)
+      );
+
+      const bidGameCombos = chosenCombos.map(({ factionId, playerMatId }) => {
+        const faction = factionMap[factionId];
+        const playerMat = playerMatMap[playerMatId];
+        return transactionalEntityManager.create(BidGameCombo, {
+          faction,
+          playerMat,
+          bidGame,
+        });
+      });
+
+      bidGame.status = BidGameStatus.Bidding;
+      bidGame.modifiedAt = date;
+      bidGame.combos = bidGameCombos;
+
+      const orders = shuffle(
+        Array(bidGame.players.length)
+          .fill(null)
+          .map((_, idx) => idx + 1)
+      );
+
+      bidGame.players.forEach((player, idx) => {
+        player.order = orders[idx];
+      });
+
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
+    }
+  );
+
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred');
+  }
+
+  return bidGame;
+};
+
+const bid = async (
+  bidGameId: number,
+  userId: number,
+  comboId: number,
+  coins: number
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
+
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
+
+      const player = bidGame.players.find(
+        (player) => player.user.id === userId
+      );
+
+      if (!player) {
+        throw new Error('You must be in the game to bid');
+      }
+
+      const activePlayer = getActivePlayer(bidGame);
+
+      if (!activePlayer) {
+        throw new Error('An error has occurred');
+      }
+
+      if (player.id !== activePlayer.id) {
+        throw new Error('It is not your turn to bid');
+      }
+
+      if (bidGame.status !== BidGameStatus.Bidding) {
+        throw new Error('That game has already started');
+      }
+
+      if (player.bid) {
+        throw new Error('You already have an active bid');
+      }
+
+      bidGame.status = BidGameStatus.Bidding;
+      bidGame.modifiedAt = date;
+      const foundCombo = bidGame.combos?.find(({ id }) => id === comboId);
+
+      if (!foundCombo) {
+        throw new Error('That combo is not in this game');
+      }
+
+      if (foundCombo.bid) {
+        if (foundCombo.bid.coins >= coins) {
           throw new Error(
-            'The game you are trying to join has already started'
+            `Your bid must be higher than the current bid of ${foundCombo.bid.coins}`
           );
         }
 
-        if (bidGame.players.length >= MAX_PLAYERS) {
-          throw new Error('The game you are trying to join is full');
-        }
-
-        const bidGamePlayer = await transactionalEntityManager.save(
-          transactionalEntityManager.create(BidGamePlayer, {
-            user,
-            dateJoined: date,
-          })
+        const previousBidder = bidGame.players.find(
+          (p) => p.bid?.id === foundCombo.bid?.id
         );
 
-        bidGame.modifiedAt = date;
-        bidGame.players.push(bidGamePlayer);
+        await transactionalEntityManager.delete(Bid, foundCombo.bid.id);
 
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
+        if (previousBidder) {
+          previousBidder.bid = null;
+        }
       }
-    );
-
-    if (!bidGame) {
-      throw new Error(
-        'Something unexpected occurred while creating a bid game'
+      const bid = await transactionalEntityManager.save(
+        transactionalEntityManager.create(Bid, {
+          bidGameCombo: foundCombo,
+          bidGamePlayer: player,
+          coins,
+          date,
+        })
       );
-    }
 
-    return bidGame;
-  };
+      player.bid = bid;
+      foundCombo.bid = bid;
 
-  updateBidGameSettings = async (
-    bidGameId: number,
-    userId: number,
-    bidGameSettings: BidGameSettings
-  ): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
+      await transactionalEntityManager.save(player);
+      await transactionalEntityManager.save(foundCombo);
 
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
-        );
-
-        if (bidGame.status !== BidGameStatus.Created) {
-          throw new Error('That game has already started');
-        }
-
-        if (bidGame.host.user.id !== userId) {
-          throw new Error('You must be the host to do that');
-        }
-
-        const { bidPresetId, combos, timeLimit } = bidGameSettings;
-
-        const bidPreset =
-          bidPresetId == null
-            ? null
-            : await transactionalEntityManager.findOneOrFail(
-                BidPreset,
-                bidPresetId
-              );
-
-        const factionIds = new Set(combos.map(({ factionId }) => factionId));
-        const playerMatIds = new Set(
-          combos.map(({ playerMatId }) => playerMatId)
-        );
-
-        const numFoundFactionIds = await transactionalEntityManager.count(
-          Faction,
-          {
-            where: { id: In([...factionIds]) },
-          }
-        );
-
-        if (numFoundFactionIds !== factionIds.size) {
-          throw new Error('Invalid faction IDs');
-        }
-
-        const numFoundPlayerMatIds = await transactionalEntityManager.count(
-          PlayerMat,
-          {
-            where: { id: In([...playerMatIds]) },
-          }
-        );
-
-        if (numFoundPlayerMatIds !== playerMatIds.size) {
-          throw new Error('Invalid player mat IDs');
-        }
-
-        bidGame.enabledCombos = combos;
-        bidGame.bidTimeLimitSeconds = timeLimit || null;
-        bidGame.bidPreset = bidPreset;
-        bidGame.modifiedAt = date;
-
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
+      if (bidGame.combos?.every((combo) => !!combo.bid)) {
+        bidGame.status = BidGameStatus.BiddingFinished;
       }
-    );
 
-    if (!bidGame) {
-      throw new Error('Something unexpected occurred');
+      bidGame.bidHistory.push({
+        coins,
+        date,
+        factionId: foundCombo.faction.id,
+        playerMatId: foundCombo.playerMat.id,
+        playerId: player.id,
+      });
+
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
     }
+  );
 
-    return bidGame;
-  };
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred');
+  }
 
-  updateSetting = async (
-    bidGameId: number,
-    userId: number,
-    key: 'quickBid' | 'ranked',
-    value: boolean
-  ): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
+  return bidGame;
+};
 
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
-        );
+const quickBid = async (
+  bidGameId: number,
+  userId: number,
+  quickBids: Array<QuickBidInput>
+): Promise<BidGame> => {
+  let bidGame: BidGame | undefined;
 
-        if (bidGame.status !== BidGameStatus.Created) {
-          throw new Error('That game has already started');
-        }
+  await scytheDb.manager.transaction(
+    'SERIALIZABLE',
+    async (transactionalEntityManager) => {
+      const date = new Date();
+      bidGame = await transactionalEntityManager.findOneByOrFail(BidGame, {
+        id: bidGameId,
+      });
 
-        if (bidGame.host.user.id !== userId) {
-          throw new Error('You must be the host to do that');
-        }
+      const player = bidGame.players.find(
+        (player) => player.user.id === userId
+      );
 
-        bidGame[key] = value;
-        bidGame.modifiedAt = date;
-
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
+      if (!player) {
+        throw new Error('You must be in the game to bid');
       }
-    );
 
-    if (!bidGame) {
-      throw new Error('Something unexpected occurred');
-    }
-
-    return bidGame;
-  };
-
-  startBidGame = async (
-    bidGameId: number,
-    userId: number
-  ): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
-
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
-        );
-
-        if (bidGame.host.user.id !== userId) {
-          throw new Error('You must be the host to do that');
-        }
-
-        if (bidGame.status !== BidGameStatus.Created) {
-          throw new Error('That game has already started');
-        }
-
-        if (bidGame.players.length < MIN_PLAYERS) {
-          throw new Error('Not enough players');
-        }
-
-        if (bidGame.players.length > MAX_PLAYERS) {
-          throw new Error('Too many players');
-        }
-
-        const shuffledCombos = shuffle(bidGame.enabledCombos);
-
-        const chosenCombos = assignCombos(
-          bidGame.players.length,
-          shuffledCombos,
-          []
-        );
-
-        if (!chosenCombos) {
-          throw new Error(
-            'No valid assignment of faction/player mat combinations found. Try choosing more combinations'
-          );
-        }
-
-        const [factions, playerMats] = await Promise.all([
-          transactionalEntityManager.find(Faction),
-          transactionalEntityManager.find(PlayerMat),
-        ]);
-
-        const factionMap: Record<number, Faction> = {};
-        const playerMatMap: Record<number, PlayerMat> = {};
-
-        factions.forEach((faction) => (factionMap[faction.id] = faction));
-        playerMats.forEach(
-          (playerMat) => (playerMatMap[playerMat.id] = playerMat)
-        );
-
-        const bidGameCombos = chosenCombos.map(({ factionId, playerMatId }) => {
-          const faction = factionMap[factionId];
-          const playerMat = playerMatMap[playerMatId];
-          return transactionalEntityManager.create(BidGameCombo, {
-            faction,
-            playerMat,
-            bidGame,
-          });
-        });
-
-        bidGame.status = BidGameStatus.Bidding;
-        bidGame.modifiedAt = date;
-        bidGame.combos = bidGameCombos;
-
-        const orders = shuffle(
-          Array(bidGame.players.length)
-            .fill(null)
-            .map((_, idx) => idx + 1)
-        );
-
-        bidGame.players.forEach((player, idx) => {
-          player.order = orders[idx];
-        });
-
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
+      if (!bidGame.quickBid) {
+        throw new Error('That game does not have quick bids enabled');
       }
-    );
 
-    if (!bidGame) {
-      throw new Error('Something unexpected occurred');
-    }
+      if (bidGame.status !== BidGameStatus.Bidding) {
+        throw new Error('That game has already started');
+      }
 
-    return bidGame;
-  };
+      if (player.quickBids) {
+        throw new Error('You already have active bids');
+      }
 
-  bid = async (
-    bidGameId: number,
-    userId: number,
-    comboId: number,
-    coins: number
-  ): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
+      bidGame.status = BidGameStatus.Bidding;
+      bidGame.modifiedAt = date;
 
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
+      if (Object.keys(quickBids).length !== bidGame.combos?.length) {
+        throw new Error('Invalid quick bid format');
+      }
+
+      const comboIdSet = new Set<number>();
+
+      quickBids.forEach(({ comboId, bidCoins }) => {
+        if (comboIdSet.has(comboId)) {
+          throw new Error('Invalid quick bid format');
+        }
+        comboIdSet.add(comboId);
+        const foundCombo = bidGame?.combos?.find(
+          ({ id }) => id === Number(comboId)
         );
-
-        const player = bidGame.players.find(
-          (player) => player.user.id === userId
-        );
-
-        if (!player) {
-          throw new Error('You must be in the game to bid');
-        }
-
-        const activePlayer = getActivePlayer(bidGame);
-
-        if (!activePlayer) {
-          throw new Error('An error has occurred');
-        }
-
-        if (player.id !== activePlayer.id) {
-          throw new Error('It is not your turn to bid');
-        }
-
-        if (bidGame.status !== BidGameStatus.Bidding) {
-          throw new Error('That game has already started');
-        }
-
-        if (player.bid) {
-          throw new Error('You already have an active bid');
-        }
-
-        bidGame.status = BidGameStatus.Bidding;
-        bidGame.modifiedAt = date;
-        const foundCombo = bidGame.combos?.find(({ id }) => id === comboId);
 
         if (!foundCombo) {
           throw new Error('That combo is not in this game');
         }
 
-        if (foundCombo.bid) {
-          if (foundCombo.bid.coins >= coins) {
-            throw new Error(
-              `Your bid must be higher than the current bid of ${foundCombo.bid.coins}`
-            );
-          }
+        if (bidCoins < 0 || bidCoins > 250) {
+          throw new Error(
+            'Bids must be a non-negative integer within the limit'
+          );
+        }
+      });
 
-          const previousBidder = bidGame.players.find(
-            (p) => p.bid?.id === foundCombo.bid?.id
+      player.quickBids = quickBids;
+
+      await transactionalEntityManager.save(player);
+
+      if (bidGame.players?.every((player) => !!player.quickBids)) {
+        const idsToPlayerObjects: Record<
+          number,
+          { id: number; quickBids: QuickBidInput[] }
+        > = {};
+        const queue = [...bidGame.players]
+          .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
+          .map((player) => {
+            if (!player.quickBids) {
+              throw new Error('Something went wrong');
+            }
+            const playerObject = {
+              id: player.id,
+              quickBids: player.quickBids,
+            };
+            idsToPlayerObjects[playerObject.id] = playerObject;
+            return playerObject;
+          });
+        const bids: Record<
+          number,
+          {
+            playerId: number;
+            bidCoins: number;
+          } | null
+        > = {};
+        bidGame.combos.forEach((combo) => {
+          bids[combo.id] = null;
+        });
+        while (queue.length !== 0) {
+          const currentPlayer = queue.shift();
+          if (!currentPlayer?.quickBids) {
+            throw new Error('Something went wrong');
+          }
+          const chosenBid = currentPlayer.quickBids.reduce(
+            (bestBidSoFar, curr) => {
+              if (bestBidSoFar === null) {
+                return curr;
+              }
+              const currDiff =
+                curr.bidCoins - ((bids[curr.comboId]?.bidCoins ?? -1) + 1);
+              const bestBidSoFarDiff =
+                bestBidSoFar.bidCoins -
+                ((bids[bestBidSoFar.comboId]?.bidCoins ?? -1) + 1);
+              if (currDiff === bestBidSoFarDiff) {
+                return curr.order < bestBidSoFar.order ? curr : bestBidSoFar;
+              }
+              return currDiff > bestBidSoFarDiff ? curr : bestBidSoFar;
+            },
+            null as null | QuickBidInput
           );
 
-          await transactionalEntityManager.delete(Bid, foundCombo.bid.id);
+          if (!chosenBid) {
+            throw new Error('Something went wrong');
+          }
 
-          if (previousBidder) {
-            previousBidder.bid = null;
+          const prevBid = bids[chosenBid.comboId];
+          if (prevBid) {
+            const prevBidderId = prevBid.playerId;
+            queue.push(idsToPlayerObjects[prevBidderId]);
+
+            if (prevBid.bidCoins > 1000) {
+              throw new Error('Something went wrong');
+            }
+
+            bids[chosenBid.comboId] = {
+              bidCoins: prevBid.bidCoins + 1,
+              playerId: currentPlayer.id,
+            };
+          } else {
+            bids[chosenBid.comboId] = {
+              bidCoins: 0,
+              playerId: currentPlayer.id,
+            };
           }
         }
-        const bid = await transactionalEntityManager.save(
-          transactionalEntityManager.create(Bid, {
-            bidGameCombo: foundCombo,
-            bidGamePlayer: player,
-            coins,
-            date,
+
+        const createdBids = await Promise.all(
+          Object.entries(bids).map(([comboId, finalBid]) => {
+            if (!finalBid) {
+              throw new Error('Something went wrong');
+            }
+
+            const foundCombo: BidGameCombo | undefined = bidGame?.combos?.find(
+              ({ id }) => id === Number(comboId)
+            );
+
+            const foundPlayer = bidGame?.players.find(
+              ({ id }) => id === finalBid.playerId
+            );
+
+            return transactionalEntityManager.save(
+              transactionalEntityManager.create(Bid, {
+                bidGameCombo: foundCombo,
+                bidGamePlayer: foundPlayer,
+                coins: finalBid.bidCoins,
+                date,
+              })
+            );
           })
         );
 
-        player.bid = bid;
-        foundCombo.bid = bid;
-
-        await transactionalEntityManager.save(player);
-        await transactionalEntityManager.save(foundCombo);
-
-        if (bidGame.combos?.every((combo) => !!combo.bid)) {
-          bidGame.status = BidGameStatus.BiddingFinished;
-        }
-
-        bidGame.bidHistory.push({
-          coins,
-          date,
-          factionId: foundCombo.faction.id,
-          playerMatId: foundCombo.playerMat.id,
-          playerId: player.id,
-        });
-
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
-      }
-    );
-
-    if (!bidGame) {
-      throw new Error('Something unexpected occurred');
-    }
-
-    return bidGame;
-  };
-
-  quickBid = async (
-    bidGameId: number,
-    userId: number,
-    quickBids: Array<QuickBidInput>
-  ): Promise<BidGame> => {
-    let bidGame: BidGame | undefined;
-
-    await this.manager.transaction(
-      'SERIALIZABLE',
-      async (transactionalEntityManager) => {
-        const date = new Date();
-        bidGame = await transactionalEntityManager.findOneOrFail(
-          BidGame,
-          bidGameId
-        );
-
-        const player = bidGame.players.find(
-          (player) => player.user.id === userId
-        );
-
-        if (!player) {
-          throw new Error('You must be in the game to bid');
-        }
-
-        if (!bidGame.quickBid) {
-          throw new Error('That game does not have quick bids enabled');
-        }
-
-        if (bidGame.status !== BidGameStatus.Bidding) {
-          throw new Error('That game has already started');
-        }
-
-        if (player.quickBids) {
-          throw new Error('You already have active bids');
-        }
-
-        bidGame.status = BidGameStatus.Bidding;
-        bidGame.modifiedAt = date;
-
-        if (Object.keys(quickBids).length !== bidGame.combos?.length) {
-          throw new Error('Invalid quick bid format');
-        }
-
-        const comboIdSet = new Set<number>();
-
-        quickBids.forEach(({ comboId, bidCoins }) => {
-          if (comboIdSet.has(comboId)) {
-            throw new Error('Invalid quick bid format');
-          }
-          comboIdSet.add(comboId);
+        createdBids.forEach((b) => {
           const foundCombo = bidGame?.combos?.find(
-            ({ id }) => id === Number(comboId)
+            ({ id }) => id === b.bidGameCombo.id
           );
 
-          if (!foundCombo) {
-            throw new Error('That combo is not in this game');
+          if (foundCombo) {
+            foundCombo.bid = b;
           }
 
-          if (bidCoins < 0 || bidCoins > 250) {
-            throw new Error(
-              'Bids must be a non-negative integer within the limit'
-            );
+          const foundPlayer = bidGame?.players.find(
+            ({ id }) => id === b.bidGamePlayer.id
+          );
+
+          if (foundPlayer) {
+            foundPlayer.bid = b;
           }
         });
 
-        player.quickBids = quickBids;
-
-        await transactionalEntityManager.save(player);
-
-        if (bidGame.players?.every((player) => !!player.quickBids)) {
-          const idsToPlayerObjects: Record<
-            number,
-            { id: number; quickBids: QuickBidInput[] }
-          > = {};
-          const queue = [...bidGame.players]
-            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0))
-            .map((player) => {
-              if (!player.quickBids) {
-                throw new Error('Something went wrong');
-              }
-              const playerObject = {
-                id: player.id,
-                quickBids: player.quickBids,
-              };
-              idsToPlayerObjects[playerObject.id] = playerObject;
-              return playerObject;
-            });
-          const bids: Record<
-            number,
-            {
-              playerId: number;
-              bidCoins: number;
-            } | null
-          > = {};
-          bidGame.combos.forEach((combo) => {
-            bids[combo.id] = null;
-          });
-          while (queue.length !== 0) {
-            const currentPlayer = queue.shift();
-            if (!currentPlayer?.quickBids) {
-              throw new Error('Something went wrong');
-            }
-            const chosenBid = currentPlayer.quickBids.reduce(
-              (bestBidSoFar, curr) => {
-                if (bestBidSoFar === null) {
-                  return curr;
-                }
-                const currDiff =
-                  curr.bidCoins - ((bids[curr.comboId]?.bidCoins ?? -1) + 1);
-                const bestBidSoFarDiff =
-                  bestBidSoFar.bidCoins -
-                  ((bids[bestBidSoFar.comboId]?.bidCoins ?? -1) + 1);
-                if (currDiff === bestBidSoFarDiff) {
-                  return curr.order < bestBidSoFar.order ? curr : bestBidSoFar;
-                }
-                return currDiff > bestBidSoFarDiff ? curr : bestBidSoFar;
-              },
-              null as null | QuickBidInput
-            );
-
-            if (!chosenBid) {
-              throw new Error('Something went wrong');
-            }
-
-            const prevBid = bids[chosenBid.comboId];
-            if (prevBid) {
-              const prevBidderId = prevBid.playerId;
-              queue.push(idsToPlayerObjects[prevBidderId]);
-
-              if (prevBid.bidCoins > 1000) {
-                throw new Error('Something went wrong');
-              }
-
-              bids[chosenBid.comboId] = {
-                bidCoins: prevBid.bidCoins + 1,
-                playerId: currentPlayer.id,
-              };
-            } else {
-              bids[chosenBid.comboId] = {
-                bidCoins: 0,
-                playerId: currentPlayer.id,
-              };
-            }
-          }
-
-          const createdBids = await Promise.all(
-            Object.entries(bids).map(([comboId, finalBid]) => {
-              if (!finalBid) {
-                throw new Error('Something went wrong');
-              }
-
-              const foundCombo = bidGame?.combos?.find(
-                ({ id }) => id === Number(comboId)
-              );
-
-              const foundPlayer = bidGame?.players.find(
-                ({ id }) => id === finalBid.playerId
-              );
-
-              return transactionalEntityManager.save(
-                transactionalEntityManager.create(Bid, {
-                  bidGameCombo: foundCombo,
-                  bidGamePlayer: foundPlayer,
-                  coins: finalBid.bidCoins,
-                  date,
-                })
-              );
-            })
-          );
-
-          createdBids.forEach((b) => {
-            const foundCombo = bidGame?.combos?.find(
-              ({ id }) => id === b.bidGameCombo.id
-            );
-
-            if (foundCombo) {
-              foundCombo.bid = b;
-            }
-
-            const foundPlayer = bidGame?.players.find(
-              ({ id }) => id === b.bidGamePlayer.id
-            );
-
-            if (foundPlayer) {
-              foundPlayer.bid = b;
-            }
-          });
-
-          bidGame.status = BidGameStatus.BiddingFinished;
-        }
-
-        bidGame = await transactionalEntityManager.save(bidGame);
-
-        return bidGame;
+        bidGame.status = BidGameStatus.BiddingFinished;
       }
-    );
 
-    if (!bidGame) {
-      throw new Error('Something unexpected occurred');
+      bidGame = await transactionalEntityManager.save(bidGame);
+
+      return bidGame;
     }
+  );
 
-    return bidGame;
-  };
-}
+  if (!bidGame) {
+    throw new Error('Something unexpected occurred');
+  }
+
+  return bidGame;
+};
+
+const BidGameRepository = scytheDb.getRepository(BidGame).extend({
+  createBidGame,
+  joinBidGame,
+  updateBidGameSettings,
+  updateSetting,
+  startBidGame,
+  bid,
+  quickBid,
+});
 
 function assignCombos(
   numPlayers: number,
@@ -686,3 +682,5 @@ function assignCombos(
 
   return null;
 }
+
+export default BidGameRepository;

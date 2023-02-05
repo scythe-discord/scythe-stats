@@ -20,13 +20,13 @@ export interface Context {
   res: Response;
 }
 
-export const resolveContext = ({
+export const resolveContext = async ({
   req,
   res,
 }: {
   req: Request;
   res: Response;
-}): Context => {
+}): Promise<Context> => {
   // Is this a great way to handle this...?
   // Nope! But it'll do for now
   let isAdmin = false;

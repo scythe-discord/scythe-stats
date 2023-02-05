@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
 
 import { Match, PlayerMatchResult } from '../../../db/entities';
+import { scytheDb } from '../../../db';
 import { redisClient } from '../../../common/services';
 import { MATCH_SENSITIVE_CACHE_PREFIX } from '../../utils';
 import Schema from '../codegen';
@@ -60,7 +60,7 @@ export const resolvers: Schema.Resolvers = {
         // Pass
       }
 
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalMatchesRes = (await pmrRepo
         .createQueryBuilder('pmr')
@@ -114,7 +114,7 @@ export const resolvers: Schema.Resolvers = {
         // Pass
       }
 
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalWinsRes = (await pmrRepo
         .createQueryBuilder('pmr')
@@ -177,7 +177,7 @@ export const resolvers: Schema.Resolvers = {
         // Pass
       }
 
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalWinsRes = (await pmrRepo
         .createQueryBuilder('pmr')
@@ -241,7 +241,7 @@ export const resolvers: Schema.Resolvers = {
         // Pass
       }
 
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalWinsRes = (await pmrRepo
         .createQueryBuilder('pmr')
@@ -306,7 +306,7 @@ export const resolvers: Schema.Resolvers = {
         // Pass
       }
 
-      const pmrRepo = getRepository(PlayerMatchResult);
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalWinsRes = (await pmrRepo
         .createQueryBuilder('pmr')

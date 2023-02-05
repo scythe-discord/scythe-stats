@@ -39,7 +39,7 @@ const ComboWinRatesForFaction: FC<Props> = ({
     return 1;
   });
   const onClickBar = useCallback(
-    ({ idx }) => {
+    ({ idx }: { idx: number }) => {
       const combo = orderedPlayerMats[idx];
       onClickMatCombo(combo.faction.id, combo.playerMat.id);
     },

@@ -1,10 +1,10 @@
-import { EntityRepository, Repository } from 'typeorm';
 import { User } from '../entities';
 import UserTrueskill from '../entities/user-trueskill';
 
-@EntityRepository(User)
-export default class UserRepository extends Repository<User> {
-  upsertUser = async ({
+import { scytheDb } from '..';
+
+const UserRepository = scytheDb.getRepository(User).extend({
+  upsertUser: async ({
     discordId,
     username,
     discriminator,
@@ -14,7 +14,7 @@ export default class UserRepository extends Repository<User> {
     discriminator: string;
   }) => {
     let userId: number | undefined = undefined;
-    await this.manager.transaction(
+    await scytheDb.manager.transaction(
       'SERIALIZABLE',
       async (transactionalEntityManager) => {
         const result = await transactionalEntityManager.upsert(
@@ -39,5 +39,7 @@ export default class UserRepository extends Repository<User> {
       throw new Error('Something went wrong creating a new user');
     }
     return userId;
-  };
-}
+  },
+});
+
+export default UserRepository;

@@ -1,6 +1,6 @@
-import { gql } from 'apollo-server-express';
-import { getRepository } from 'typeorm';
+import { gql } from 'graphql-tag';
 import { BidPreset } from '../../../db/entities';
+import { scytheDb } from '../../../db';
 
 import Schema from '../codegen';
 
@@ -26,7 +26,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     bidPresets: async () => {
-      const bidPresetRepo = getRepository(BidPreset);
+      const bidPresetRepo = scytheDb.getRepository(BidPreset);
       const allBidPresets = await bidPresetRepo.find({
         relations: [
           'bidPresetSettings',

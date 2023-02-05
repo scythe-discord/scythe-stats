@@ -1,7 +1,7 @@
-import { gql } from 'apollo-server-express';
+import { gql } from 'graphql-tag';
 import { connectionFromArray } from 'graphql-relay';
-import { getRepository } from 'typeorm';
 
+import { scytheDb } from '../../../db';
 import { Player } from '../../../db/entities';
 import Schema from '../codegen';
 
@@ -18,7 +18,7 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   Query: {
     playersByName: async (_, { startsWith, first, after }) => {
-      const playerRepository = getRepository(Player);
+      const playerRepository = scytheDb.getRepository(Player);
       // Caveat: ILIKE only available in Postgres
       const query = playerRepository
         .createQueryBuilder('player')
