@@ -20,7 +20,7 @@ const StyledLink = withStyle(BaseLink as any, ({ $theme }) => ({
 
 interface Props {
   isNavItem: boolean;
-  children: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 const DiscordAuthItem: FC<Props> = ({ isNavItem, children }) => {

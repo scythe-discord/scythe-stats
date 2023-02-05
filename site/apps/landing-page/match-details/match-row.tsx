@@ -49,13 +49,9 @@ const MatchRow: FC<Props> = ({
     <>
       <CenteredBodyCell
         $striped={striped}
-        overrides={{
-          Root: {
-            style: {
-              paddingBottom: '5px',
-              paddingTop: '5px',
-            },
-          },
+        style={{
+          paddingBottom: '5px',
+          paddingTop: '5px',
         }}
       >
         {playerName}{' '}

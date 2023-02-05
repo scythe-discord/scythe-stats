@@ -148,7 +148,7 @@ const FactionSnippet: FC<Props> = ({
     0
   );
 
-  let topPlayerLabel: JSX.Element | string = <Spinner size={SIZE.small} />;
+  let topPlayerLabel: JSX.Element | string = <Spinner $size={SIZE.small} />;
 
   if (!topPlayerStatsLoading && topPlayerStats) {
     topPlayerLabel = `${topPlayerStats.player.displayName} (${topPlayerStats.totalWins} Wins)`;

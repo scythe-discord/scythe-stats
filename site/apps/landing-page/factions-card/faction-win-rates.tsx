@@ -37,7 +37,7 @@ const FactionWinRates: FC<Props> = ({
 }) => {
   const [_, theme] = useStyletron();
   const onClickBar = useCallback(
-    ({ idx }) => {
+    ({ idx }: { idx: number }) => {
       onClickFaction(idx);
     },
     [onClickFaction]
