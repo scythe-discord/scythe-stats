@@ -296,6 +296,7 @@ export const resolvers: Schema.Resolvers = {
           'playerMatchResults.player',
           'playerMatchResults.faction',
           'playerMatchResults.playerMat',
+          'playerMatchResults.bidGamePlayer',
         ],
       });
 

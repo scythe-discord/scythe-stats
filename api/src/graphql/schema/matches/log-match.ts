@@ -138,6 +138,7 @@ const postMatchLog = (matchId: number) => {
         'playerMatchResults.player',
         'playerMatchResults.faction',
         'playerMatchResults.playerMat',
+        'playerMatchResults.bidGamePlayer',
       ],
     })
     .then(({ playerMatchResults, numRounds }) => {
