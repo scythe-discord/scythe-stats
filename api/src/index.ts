@@ -10,7 +10,12 @@ import connectRedis from 'connect-redis';
 import { Context, resolveContext } from './graphql/context';
 import schema from './graphql/schema';
 import { scytheDb } from './db';
-import { API_SERVER_PORT, SESSION_SECRET, SITE_URL } from './common/config';
+import {
+  API_SERVER_PORT,
+  API_URL,
+  SESSION_SECRET,
+  SITE_URL,
+} from './common/config';
 import { redisClient } from './common/services';
 import { authRouter } from './routes';
 import http from 'http';
@@ -97,7 +102,7 @@ async function startApolloServer() {
     })
   );
 
-  console.log(`🚀  Server ready at ${SITE_URL}`);
+  console.log(`🚀  Server ready at ${API_URL}`);
 
   const wsServer = new WebSocketServer({
     // This is the `httpServer` we created in a previous step.
