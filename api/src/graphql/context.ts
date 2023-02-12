@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { Session } from 'express-session';
 
 import { GRAPHQL_SERVER_BASIC_AUTH } from '../common/config';
+import { FactionMatStatsDataSource } from './data-sources/faction-mat-stats';
 
 export interface Context {
   isAdmin: boolean;
@@ -18,6 +19,9 @@ export interface Context {
   };
   req: Request;
   res: Response;
+  dataSources: {
+    factionMatStats: FactionMatStatsDataSource;
+  };
 }
 
 export const resolveContext = async ({
@@ -43,5 +47,8 @@ export const resolveContext = async ({
     session: req.session,
     req: req,
     res: res,
+    dataSources: {
+      factionMatStats: new FactionMatStatsDataSource(),
+    },
   };
 };

@@ -2,32 +2,9 @@ import { gql } from 'graphql-tag';
 
 import { scytheDb } from '../../../db';
 import { Match, PlayerMatchResult } from '../../../db/entities';
-import { redisClient } from '../../../common/services';
-import { MATCH_SENSITIVE_CACHE_PREFIX } from '../../utils';
 import Schema from '../codegen';
 
 const PLAYER_COUNTS = [2, 3, 4, 5, 6, 7];
-
-const FACTION_STAT_PREFIX = 'fs';
-
-const getCachedVal = (
-  fieldName: string,
-  factionId: number,
-  playerCount: number
-) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${FACTION_STAT_PREFIX}:${fieldName}:${factionId}:${playerCount}`;
-  return redisClient.get(cacheKey);
-};
-
-const setCachedVal = (
-  fieldName: string,
-  factionId: number,
-  playerCount: number,
-  val: any
-) => {
-  const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${FACTION_STAT_PREFIX}:${fieldName}:${factionId}:${playerCount}`;
-  redisClient.set(cacheKey, JSON.stringify(val));
-};
 
 export const typeDef = gql`
   type FactionStatsWithPlayerCount {
@@ -40,16 +17,6 @@ export const typeDef = gql`
 export const resolvers: Schema.Resolvers = {
   FactionStatsWithPlayerCount: {
     totalMatches: async ({ faction: { id }, playerCount }) => {
-      try {
-        const cachedVal = await getCachedVal('totalMatches', id, playerCount);
-
-        if (cachedVal) {
-          return Number.parseInt(JSON.parse(cachedVal)) || 0;
-        }
-      } catch (e) {
-        // Pass
-      }
-
       const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalMatchesRes = (await pmrRepo
@@ -76,26 +43,9 @@ export const resolvers: Schema.Resolvers = {
         totalMatches: string;
       };
 
-      setCachedVal(
-        'totalMatches',
-        id,
-        playerCount,
-        totalMatchesRes.totalMatches
-      );
-
       return Number.parseInt(totalMatchesRes.totalMatches) || 0;
     },
     totalWins: async ({ faction: { id }, playerCount }) => {
-      try {
-        const cachedVal = await getCachedVal('totalWins', id, playerCount);
-
-        if (cachedVal) {
-          return Number.parseInt(JSON.parse(cachedVal)) || 0;
-        }
-      } catch (e) {
-        // Pass
-      }
-
       const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
 
       const totalWinsRes = (await pmrRepo
@@ -131,8 +81,6 @@ export const resolvers: Schema.Resolvers = {
         .getRawOne()) as {
         totalWins: string;
       };
-
-      setCachedVal('totalWins', id, playerCount, totalWinsRes.totalWins);
 
       return Number.parseInt(totalWinsRes.totalWins) || 0;
     },
