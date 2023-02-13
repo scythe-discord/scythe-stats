@@ -64,7 +64,13 @@ async function startApolloServer() {
 
   app.use(
     cors({
-      origin: [SITE_URL, 'https://studio.apollographql.com'],
+      // A little hacky, but just make life easier here
+      // for now during the site cutover
+      origin: [
+        SITE_URL,
+        'https://www.belovedpacifist.com',
+        'https://studio.apollographql.com',
+      ],
       credentials: true,
     })
   );
@@ -93,7 +99,11 @@ async function startApolloServer() {
   app.use(
     '/graphql',
     cors({
-      origin: [SITE_URL, 'https://studio.apollographql.com'],
+      origin: [
+        SITE_URL,
+        'https://www.belovedpacifist.com',
+        'https://studio.apollographql.com',
+      ],
       credentials: true,
     }),
     json(),
