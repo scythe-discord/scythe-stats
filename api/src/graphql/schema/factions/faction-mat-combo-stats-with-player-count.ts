@@ -63,7 +63,8 @@ export const resolvers: Schema.Resolvers = {
           totalWins: winStats.totalWins,
           avgCoinsOnWin: winStats.avgCoins,
           avgRoundsOnWin: winStats.avgRounds,
-          leastRoundsForWin: winStats.minRounds,
+          leastRoundsForWin:
+            winStats.minRounds === 0 ? null : winStats.minRounds,
         };
       });
     },
