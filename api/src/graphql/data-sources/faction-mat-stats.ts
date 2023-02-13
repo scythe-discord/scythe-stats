@@ -35,7 +35,7 @@ const getCachedVal = (fieldName: string) => {
 
 const setCachedVal = (fieldName: string, val: any) => {
   const cacheKey = `${MATCH_SENSITIVE_CACHE_PREFIX}:${fieldName}`;
-  redisClient.set(cacheKey, JSON.stringify(val));
+  redisClient.set(cacheKey, JSON.stringify(val), 'EX', 3600);
 };
 
 const totalStatsCacheKey = 'totalStats';
