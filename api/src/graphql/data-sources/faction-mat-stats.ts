@@ -13,8 +13,16 @@ export type ComboWinStats = {
   avgRounds: number;
   minRounds: number;
 };
-export type TotalStats = Map<number, Map<number, Map<number, ComboTotalStats>>>;
-export type WinStats = Map<number, Map<number, Map<number, ComboWinStats>>>;
+export type TotalStats = Map<number, Map<number, ComboTotalStats>>;
+export type WinStats = Map<number, Map<number, ComboWinStats>>;
+export type TotalStatsByPlayerCount = Map<
+  number,
+  Map<number, Map<number, ComboTotalStats>>
+>;
+export type WinStatsByPlayerCount = Map<
+  number,
+  Map<number, Map<number, ComboWinStats>>
+>;
 export type BatchStatsInput = {
   factionId: number;
   playerMatId: number;
@@ -30,8 +38,145 @@ const setCachedVal = (fieldName: string, val: any) => {
   redisClient.set(cacheKey, JSON.stringify(val));
 };
 
+const totalStatsCacheKey = 'totalStats';
+const winStatsCacheKey = 'winStats';
+const totalStatsByPlayerCountCacheKey = 'totalStatsByPlayerCount';
+const winStatsByPlayerCountCacheKey = 'winStatsByPlayerCount';
+
 export class FactionMatStatsDataSource {
-  private async getTotalStats(): Promise<TotalStats> {
+  private async getTotalStatsInternal(): Promise<TotalStats> {
+    let totalMatchStatsRes: {
+      totalMatches: string;
+      factionId: number;
+      playerMatId: number;
+    }[];
+    try {
+      const cachedVal = await getCachedVal(totalStatsCacheKey);
+
+      if (cachedVal) {
+        totalMatchStatsRes = JSON.parse(cachedVal);
+      } else {
+        throw new Error('Cache miss');
+      }
+    } catch (e) {
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
+      totalMatchStatsRes = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr.id)', 'totalMatches')
+        .addSelect('pmr.factionId', 'factionId')
+        .addSelect('pmr.playerMatId', 'playerMatId')
+        .addGroupBy('pmr."factionId"')
+        .addGroupBy('pmr."playerMatId"')
+        .getRawMany();
+
+      setCachedVal(totalStatsCacheKey, totalMatchStatsRes);
+    }
+
+    const totalStats = new Map<number, Map<number, ComboTotalStats>>();
+
+    totalMatchStatsRes.forEach(({ totalMatches, factionId, playerMatId }) => {
+      if (!totalStats.has(factionId)) {
+        totalStats.set(factionId, new Map());
+      }
+
+      const factionTotalStats = totalStats.get(factionId);
+
+      factionTotalStats?.set(playerMatId, {
+        totalMatches: parseInt(totalMatches),
+      });
+    });
+
+    return totalStats;
+  }
+
+  private async getWinStatsInternal(): Promise<WinStats> {
+    let winStatsRes: {
+      totalWinsRaw: string;
+      avgCoinsRaw: string;
+      avgRoundsRaw: string;
+      minRounds: number;
+      factionId: number;
+      playerMatId: number;
+    }[];
+    try {
+      const cachedVal = await getCachedVal(winStatsCacheKey);
+
+      if (cachedVal) {
+        winStatsRes = JSON.parse(cachedVal);
+      } else {
+        throw new Error('Cache miss');
+      }
+    } catch (e) {
+      const pmrRepo = scytheDb.getRepository(PlayerMatchResult);
+      winStatsRes = await pmrRepo
+        .createQueryBuilder('pmr')
+        .select('COUNT(pmr.id)', 'totalWinsRaw')
+        .addSelect('pmr.factionId', 'factionId')
+        .addSelect('pmr.playerMatId', 'playerMatId')
+        .addSelect('AVG(pmr.coins)', 'avgCoinsRaw')
+        .addSelect('AVG("playerCounts"."numRounds")', 'avgRoundsRaw')
+        .addSelect('MIN("playerCounts"."numRounds")', 'minRounds')
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(PlayerMatchResult, 'pmr2')
+              .select('MAX(pmr2.coins)', 'maxCoins')
+              .addSelect('pmr2."matchId"')
+              .groupBy('pmr2."matchId"'),
+          'maxes',
+          'maxes."maxCoins" = pmr.coins AND maxes."matchId" = pmr."matchId"'
+        )
+        .innerJoin(
+          (qb) =>
+            qb
+              .from(Match, 'match')
+              .select('match.id', 'matchId')
+              .addSelect('match.numRounds', 'numRounds'),
+          'playerCounts',
+          '"playerCounts"."matchId" = pmr."matchId"'
+        )
+        .where('pmr."tieOrder" = 0')
+        .groupBy('pmr."factionId"')
+        .addGroupBy('pmr."playerMatId"')
+        .getRawMany();
+
+      setCachedVal(winStatsCacheKey, winStatsRes);
+    }
+
+    const winStats = new Map<number, Map<number, ComboWinStats>>();
+
+    winStatsRes.forEach(
+      ({
+        totalWinsRaw,
+        avgCoinsRaw,
+        avgRoundsRaw,
+        minRounds,
+        factionId,
+        playerMatId,
+      }) => {
+        const totalWins = parseInt(totalWinsRaw);
+        const avgCoins = Math.floor(parseFloat(avgCoinsRaw));
+        const avgRounds = parseFloat(avgRoundsRaw);
+
+        if (!winStats.has(factionId)) {
+          winStats.set(factionId, new Map());
+        }
+
+        const factionTotalStats = winStats.get(factionId);
+
+        factionTotalStats?.set(playerMatId, {
+          totalWins,
+          avgCoins,
+          avgRounds,
+          minRounds,
+        });
+      }
+    );
+
+    return winStats;
+  }
+
+  private async getTotalStatsByPlayerCountInternal(): Promise<TotalStatsByPlayerCount> {
     let totalMatchStatsRes: {
       totalMatches: string;
       playerCount: string;
@@ -39,7 +184,7 @@ export class FactionMatStatsDataSource {
       playerMatId: number;
     }[];
     try {
-      const cachedVal = await getCachedVal('totalStats');
+      const cachedVal = await getCachedVal(totalStatsByPlayerCountCacheKey);
 
       if (cachedVal) {
         totalMatchStatsRes = JSON.parse(cachedVal);
@@ -70,7 +215,7 @@ export class FactionMatStatsDataSource {
         .addGroupBy('pmr."playerMatId"')
         .getRawMany();
 
-      setCachedVal('totalStats', totalMatchStatsRes);
+      setCachedVal(totalStatsByPlayerCountCacheKey, totalMatchStatsRes);
     }
 
     const totalStats = new Map<
@@ -101,7 +246,7 @@ export class FactionMatStatsDataSource {
     return totalStats;
   }
 
-  private async getWinStats(): Promise<WinStats> {
+  private async getWinStatsByPlayerCountInternal(): Promise<WinStatsByPlayerCount> {
     let winStatsRes: {
       totalWinsRaw: string;
       avgCoinsRaw: string;
@@ -112,7 +257,7 @@ export class FactionMatStatsDataSource {
       playerMatId: number;
     }[];
     try {
-      const cachedVal = await getCachedVal('winStats');
+      const cachedVal = await getCachedVal(winStatsByPlayerCountCacheKey);
 
       if (cachedVal) {
         winStatsRes = JSON.parse(cachedVal);
@@ -158,7 +303,7 @@ export class FactionMatStatsDataSource {
         .addGroupBy('pmr."playerMatId"')
         .getRawMany();
 
-      setCachedVal('winStats', winStatsRes);
+      setCachedVal(winStatsByPlayerCountCacheKey, winStatsRes);
     }
 
     const winStats = new Map<number, Map<number, Map<number, ComboWinStats>>>();
@@ -175,7 +320,7 @@ export class FactionMatStatsDataSource {
       }) => {
         const playerCount = parseInt(playerCountRaw);
         const totalWins = parseInt(totalWinsRaw);
-        const avgCoins = parseFloat(avgCoinsRaw);
+        const avgCoins = Math.floor(parseFloat(avgCoinsRaw));
         const avgRounds = parseFloat(avgRoundsRaw);
 
         if (!winStats.has(factionId)) {
@@ -204,9 +349,9 @@ export class FactionMatStatsDataSource {
 
   private batchTotalStats = new DataLoader<
     BatchStatsInput,
-    Map<number, ComboTotalStats> | null
+    ComboTotalStats | null
   >(async (inputs) => {
-    const totalStats = await this.getTotalStats();
+    const totalStats = await this.getTotalStatsInternal();
 
     return inputs.map(({ factionId, playerMatId }) => {
       const res = totalStats.get(factionId)?.get(playerMatId);
@@ -219,11 +364,44 @@ export class FactionMatStatsDataSource {
     });
   });
 
-  private batchWinStats = new DataLoader<
+  private batchWinStats = new DataLoader<BatchStatsInput, ComboWinStats | null>(
+    async (inputs) => {
+      const totalStats = await this.getWinStatsInternal();
+
+      return inputs.map(({ factionId, playerMatId }) => {
+        const res = totalStats.get(factionId)?.get(playerMatId);
+
+        if (!res) {
+          return null;
+        }
+
+        return res;
+      });
+    }
+  );
+
+  private batchTotalStatsByPlayerCount = new DataLoader<
+    BatchStatsInput,
+    Map<number, ComboTotalStats> | null
+  >(async (inputs) => {
+    const totalStats = await this.getTotalStatsByPlayerCountInternal();
+
+    return inputs.map(({ factionId, playerMatId }) => {
+      const res = totalStats.get(factionId)?.get(playerMatId);
+
+      if (!res) {
+        return null;
+      }
+
+      return res;
+    });
+  });
+
+  private batchWinStatsByPlayerCount = new DataLoader<
     BatchStatsInput,
     Map<number, ComboWinStats> | null
   >(async (inputs) => {
-    const totalStats = await this.getWinStats();
+    const totalStats = await this.getWinStatsByPlayerCountInternal();
 
     return inputs.map(({ factionId, playerMatId }) => {
       const res = totalStats.get(factionId)?.get(playerMatId);
@@ -240,7 +418,7 @@ export class FactionMatStatsDataSource {
     factionId: number,
     playerMatId: number
   ): Promise<Map<number, ComboTotalStats> | null> {
-    return this.batchTotalStats.load({
+    return this.batchTotalStatsByPlayerCount.load({
       factionId,
       playerMatId,
     });
@@ -250,6 +428,26 @@ export class FactionMatStatsDataSource {
     factionId: number,
     playerMatId: number
   ): Promise<Map<number, ComboWinStats> | null> {
+    return this.batchWinStatsByPlayerCount.load({
+      factionId,
+      playerMatId,
+    });
+  }
+
+  async getTotalStats(
+    factionId: number,
+    playerMatId: number
+  ): Promise<ComboTotalStats | null> {
+    return this.batchTotalStats.load({
+      factionId,
+      playerMatId,
+    });
+  }
+
+  async getWinStats(
+    factionId: number,
+    playerMatId: number
+  ): Promise<ComboWinStats | null> {
     return this.batchWinStats.load({
       factionId,
       playerMatId,
