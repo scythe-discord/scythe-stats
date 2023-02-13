@@ -15,10 +15,7 @@ const wsLink =
 
 const httpLink = new HttpLink({
   uri: GRAPHQL_API_URL,
-  credentials:
-    process.env.NEXT_PUBLIC_NODE_ENV === 'production'
-      ? 'same-origin'
-      : 'include',
+  credentials: 'include',
 });
 
 export default new ApolloClient({

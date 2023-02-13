@@ -16,11 +16,14 @@
     "dev:site": "yarn --cwd site next",
     "build:api": "rimraf -rf api/dist && tsc --project api/tsconfig.json",
     "build:bot": "rimraf -rf bot/dist && tsc --project bot/tsconfig.json",
+    "build:site": "yarn --cwd site next build",
     "codegen:api": "yarn --cwd api graphql-codegen --config codegen.yml",
     "codegen:site": "yarn --cwd site graphql-codegen --config codegen.yml",
     "codegen": "yarn codegen:api && yarn codegen:site",
     "typeorm": "yarn --cwd api ts-node ./node_modules/typeorm/cli.js",
-    "install": "yarn --cwd api && yarn --cwd bot && yarn --cwd site"
+    "install:all": "yarn && yarn --cwd api && yarn --cwd bot && yarn --cwd site",
+    "install:api": "yarn install --frozen-lockfile --no-cache --cwd api",
+    "install:site": "yarn install --frozen-lockfile --no-cache --cwd site"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^5.50.0",
