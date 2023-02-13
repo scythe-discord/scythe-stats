@@ -1,5 +1,6 @@
 import { gql } from 'graphql-tag';
-import { toGlobalId, connectionFromArray } from 'graphql-relay';
+import { toGlobalId } from 'graphql-relay';
+import { LessThan } from 'typeorm';
 
 import { scytheDb } from '../../../db';
 import { Match } from '../../../db/entities';
@@ -50,9 +51,19 @@ export const typeDef = gql`
   }
 `;
 
+const getMatchCursor = (m: Match) => {
+  return Buffer.from(`match:${m.datePlayed.toISOString()}`).toString('base64');
+};
+
+const matchCursorToOffset = (cursor: string): Date => {
+  const rawCursor = Buffer.from(cursor, 'base64').toString('ascii');
+
+  return new Date(rawCursor.substring(6));
+};
+
 export const resolvers: Schema.Resolvers = {
   Query: {
-    matches: async (_, args) => {
+    matches: async (_, { first, after }) => {
       const matchRepository = scytheDb.getRepository(Match);
       const matches = await matchRepository.find({
         relations: [
@@ -65,9 +76,28 @@ export const resolvers: Schema.Resolvers = {
         order: {
           datePlayed: 'DESC',
         },
+        where: after
+          ? {
+              datePlayed: LessThan(matchCursorToOffset(after)),
+            }
+          : undefined,
+        take: first,
       });
 
-      return connectionFromArray(matches, args);
+      return {
+        edges: matches.map((m) => ({
+          cursor: getMatchCursor(m),
+          node: m,
+        })),
+        pageInfo: {
+          startCursor: matches[0] ? getMatchCursor(matches[0]) : undefined,
+          endCursor: matches[matches.length - 1]
+            ? getMatchCursor(matches[matches.length - 1])
+            : undefined,
+          hasNextPage: matches.length >= first,
+          hasPreviousPage: false,
+        },
+      };
     },
   },
   Match: {
