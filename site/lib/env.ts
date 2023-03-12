@@ -12,3 +12,6 @@ export const GA_TRACKING_ID = process.env.NEXT_PUBLIC_GA_TRACKING_ID || '';
 
 export const DISCORD_CLIENT_ID =
   process.env.NEXT_PUBLIC_DISCORD_CLIENT_ID || '';
+
+export const INTERNAL_GRAPHQL_API_URL =
+  process.env.INTERNAL_GRAPHQL_API_URL || '';
