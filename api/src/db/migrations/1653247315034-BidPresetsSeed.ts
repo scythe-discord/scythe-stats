@@ -18,6 +18,21 @@ IFA['Rusviet']['Industrial'] = false;
 IFA['Crimean']['Patriotic'] = false;
 
 const BASE = cloneDeep(ANYTHING_GOES);
+// Banned for Overpower
+BASE['Rusviet']['Industrial'] = false;
+BASE['Crimean']['Patriotic'] = false;
+// Mats not in the base
+BASE['Rusviet']['Militant'] = false;
+BASE['Rusviet']['Innovative'] = false;
+BASE['Crimean']['Militant'] = false;
+BASE['Crimean']['Innovative'] = false;
+BASE['Polania']['Militant'] = false;
+BASE['Polania']['Innovative'] = false;
+BASE['Saxony']['Militant'] = false;
+BASE['Saxony']['Innovative'] = false;
+BASE['Nordic']['Militant'] = false;
+BASE['Nordic']['Innovative'] = false;
+
 Object.keys(BASE['Togawa']).forEach(
   (playerMat) => (BASE['Togawa'][playerMat] = false)
 );
