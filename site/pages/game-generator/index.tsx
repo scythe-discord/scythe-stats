@@ -25,6 +25,7 @@ import { getFactionEmblem } from 'lib/scythe';
 import ComboTable, { ComboTableRow } from 'lib/components/bid-game/combo-table';
 import { shuffle } from 'lodash';
 import { assignCombos } from 'apps/game-generator/domain';
+import GameBiddingTable from 'apps/game-generator/game-bidding-table';
 
 interface Props {
   factions: GQL.FactionsQuery['factions'];
@@ -663,42 +664,7 @@ const GameGenerator: NextComponentType<BaseContext, Props, Props> = ({
               </HeadingMedium>
 
               {generatedCombos.length ? (
-                <div>
-                  {generatedCombos.map((combo, index) => (
-                    <div
-                      key={index}
-                      className={css({
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '15px',
-                        padding: '15px 0',
-                        borderBottom:
-                          index < generatedCombos.length - 1
-                            ? `1px solid ${theme.colors.borderOpaque}`
-                            : 'none',
-                      })}
-                    >
-                      <Image
-                        src={getFactionEmblem(combo.faction.name)}
-                        alt={combo.faction.name}
-                        width={48}
-                        height={48}
-                      />
-                      <div className={css({ flex: 1 })}>
-                        <div className={css({ fontWeight: 'bold' })}>
-                          {combo.playerName}
-                        </div>
-                        <div
-                          className={css({
-                            color: theme.colors.contentSecondary,
-                          })}
-                        >
-                          {combo.faction.name} • {combo.playerMat.name}
-                        </div>
-                      </div>
-                    </div>
-                  ))}
-                </div>
+                <GameBiddingTable combos={generatedCombos} />
               ) : (
                 <LabelMedium
                   color={theme.colors.contentSecondary}
