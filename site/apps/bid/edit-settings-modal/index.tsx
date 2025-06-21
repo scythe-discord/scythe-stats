@@ -237,7 +237,7 @@ const EditSettingsModal: FC<ModalProps & Props> = ({
                 return newTableData;
               });
             }}
-            playerMats={playerMats}
+            playerMats={playerMats.playerMats}
           />
         </StatefulPanel>
       </ModalBody>

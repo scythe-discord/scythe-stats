@@ -1,13 +1,13 @@
-/*global require, __dirname */
-/* eslint-disable @typescript-eslint/no-var-requires */
-/* eslint-disable node/no-extraneous-require */
-const path = require('path');
-require('dotenv').config({ path: path.resolve(process.cwd(), '..', '.env') });
+import path from 'path';
+import { DataSource } from 'typeorm';
+import dotenv from 'dotenv';
 
-module.exports = {
+dotenv.config({ path: path.resolve(process.cwd(), '..', '.env') });
+
+export default new DataSource({
   type: 'postgres',
   host: process.env.DB_HOST || 'localhost',
-  port: parseInt(process.env.DB_PORT) || 5432,
+  port: parseInt(process.env.DB_PORT || '5432'),
   username: process.env.DB_USERNAME || 'postgres',
   password: process.env.DB_PASSWORD || 'postgres',
   database: process.env.DB_NAME || 'scythe',
@@ -23,7 +23,4 @@ module.exports = {
     process.env.NODE_ENV === 'production'
       ? [`${__dirname}/dist/db/subscribers/**/*.js`]
       : [`${__dirname}/src/db/subscribers/**/*.ts`],
-  cli: {
-    migrationsDir: 'src/db/migrations',
-  },
-};
+});
