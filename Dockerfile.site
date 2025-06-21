@@ -35,7 +35,7 @@ RUN npm install --global yarn
 
 COPY --from=site-builder /app/site /app/site
 
-ENV NODE_ENV production
+ENV NODE_ENV=production
 WORKDIR /app
 
 CMD ["yarn", "--cwd", "site", "next", "start", "-p", "9000"]

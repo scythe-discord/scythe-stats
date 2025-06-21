@@ -115,7 +115,7 @@ like to run multiple programs (e.g. multiple terminals):
 ```
 yarn dev:db
 yarn dev:redis
-yarn typeorm migration:run # You only need to run this when you have migrations to run - e.g. the first time
+yarn typeorm migration:run -d ./ormconfig.ts # You only need to run this when you have migrations to run - e.g. the first time
 yarn dev:api
 ```
 
