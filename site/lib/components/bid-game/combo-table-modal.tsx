@@ -81,7 +81,7 @@ const ComboTableModal: FC<ModalProps & Props> = ({
         <ComboTable
           tableData={genTableDataFromCombos(combos, factions, playerMats)}
           readonly
-          playerMats={playerMats}
+          playerMats={playerMats.playerMats}
         />
       </ModalBody>
     </Modal>

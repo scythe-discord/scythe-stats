@@ -79,6 +79,15 @@ const CondensedNavItems: FC = () => {
               </Link>
             </SpacedNavigationItem>
             <SpacedNavigationItem>
+              <Link
+                href="/game-generator"
+                passHref={true}
+                legacyBehavior={true}
+              >
+                <StyledLink>Game Generator</StyledLink>
+              </Link>
+            </SpacedNavigationItem>
+            <SpacedNavigationItem>
               <a
                 href={DISCORD_OAUTH_URL}
                 onClick={async (e) => {

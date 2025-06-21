@@ -91,6 +91,11 @@ const StandardNavItems: FC = () => {
         </Link>
       </SpacedNavigationItem>
       <SpacedNavigationItem>
+        <Link href="/game-generator" passHref={true} legacyBehavior={true}>
+          <StyledLink>Game Generator</StyledLink>
+        </Link>
+      </SpacedNavigationItem>
+      <SpacedNavigationItem>
         <Button
           kind={BUTTON_KIND.secondary}
           size={BUTTON_SIZE.compact}

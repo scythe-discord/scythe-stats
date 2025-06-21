@@ -30,7 +30,7 @@ export default function ComboTable({
   readonly,
 }: {
   tableData: ComboTableRow[];
-  playerMats: GQL.PlayerMatsQuery;
+  playerMats: GQL.PlayerMatsQuery['playerMats'];
   tableHeaderOnChange?: () => void;
   columnHeaderOnChange?: (playerMatId: number) => void;
   rowHeaderOnChange?: (rowIdx: number) => void;
@@ -73,6 +73,7 @@ export default function ComboTable({
                 alignItems: 'center',
                 gap: '0 10px',
               })}
+              key={`${row.factionName}-${idx}`}
             >
               <Checkbox
                 checked={allChecked}
@@ -89,7 +90,7 @@ export default function ComboTable({
           );
         }}
       </TableBuilderColumn>
-      {playerMats.playerMats.map(({ id, abbrev }) => {
+      {playerMats.map(({ id, abbrev }) => {
         const allChecked = tableData.every(({ checked }) => checked[id]);
         const hasChecked = tableData.some(({ checked }) => checked[id]);
         const header = (
@@ -116,10 +117,14 @@ export default function ComboTable({
         );
 
         return (
-          <TableBuilderColumn<ComboTableRow> header={header}>
+          <TableBuilderColumn<ComboTableRow>
+            key={`${abbrev}-${id}`}
+            header={header}
+          >
             {(row, rowIdx) => {
               return (
                 <div
+                  key={`${row.factionName}-${id}-${rowIdx}`}
                   className={css({
                     display: 'flex',
                     justifyContent: 'center',
