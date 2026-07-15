@@ -11,6 +11,7 @@
   },
   "dependencies": {
     "@hookform/resolvers": "^5.4.0",
+    "@next/third-parties": "^16.2.10",
     "@scythe/config": "workspace:*",
     "@scythe/db": "workspace:*",
     "@scythe/domain": "workspace:*",

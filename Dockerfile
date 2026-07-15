@@ -25,6 +25,9 @@ COPY . .
 # Placeholder env so any eager env validation passes at build time.
 ENV DATABASE_URL=postgres://build:build@localhost:5432/build \
     REDIS_URL=redis://localhost:6379
+# GA4 measurement ID, inlined into the client bundle (NEXT_PUBLIC_*).
+ARG NEXT_PUBLIC_GA_TRACKING_ID=""
+ENV NEXT_PUBLIC_GA_TRACKING_ID=$NEXT_PUBLIC_GA_TRACKING_ID
 RUN pnpm --filter @scythe/web build
 
 # ── db migrator ───────────────────────────────────────────────────────────────
