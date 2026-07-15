@@ -1,0 +1,40 @@
+# Local dev dependencies: Postgres + Redis.
+# Host ports (8432 / 8379) match the old dev setup to avoid clashing with any
+# system Postgres/Redis on the default ports.
+services:
+  postgres:
+    image: postgres:17-alpine
+    container_name: scythe-postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: scythe
+      POSTGRES_PASSWORD: scythe
+      POSTGRES_DB: scythe
+    ports:
+      - "8432:5432"
+    volumes:
+      - scythe-pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U scythe -d scythe"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+  redis:
+    image: redis:7-alpine
+    container_name: scythe-redis
+    restart: unless-stopped
+    command: ["redis-server", "--appendonly", "yes", "--requirepass", "scythe"]
+    ports:
+      - "8379:6379"
+    volumes:
+      - scythe-redisdata:/data
+    healthcheck:
+      test: ["CMD", "redis-cli", "-a", "scythe", "ping"]
+      interval: 5s
+      timeout: 5s
+      retries: 10
+
+volumes:
+  scythe-pgdata:
+  scythe-redisdata:

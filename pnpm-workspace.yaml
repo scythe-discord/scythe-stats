@@ -1,0 +1,17 @@
+packages:
+  - "apps/*"
+  - "packages/*"
+
+# Dependencies allowed to run install/build scripts (pnpm blocks these by
+# default for supply-chain safety). esbuild fetches its native binary for
+# Vitest; lefthook installs git hooks; sharp is Next's image optimiser. The
+# ssh2/cpu-features/protobufjs native builds (pulled in transitively by
+# Testcontainers' Docker client) are not needed — we reach Docker over the local
+# socket, not SSH — so they're disabled.
+allowBuilds:
+  esbuild: true
+  lefthook: true
+  sharp: true
+  cpu-features: false
+  protobufjs: false
+  ssh2: false

@@ -114,4 +114,13 @@
 !**/.vscode/launch.json
 !**/.vscode/extensions.json
 **/*.code-workspace
-fly.toml
+
+# Project-specific: keep the build context small and PII out of the image
+.git
+.github
+dump_*.sql
+*.sql
+# ...but the Drizzle migration SQL must reach the image (the release_command
+# migrator reads it from /app/migrate/drizzle).
+!packages/db/drizzle/*.sql
+apps/web/.env

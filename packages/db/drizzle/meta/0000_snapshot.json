@@ -1,0 +1,1189 @@
+{
+  "id": "2c55c106-bda1-4dfd-8dbf-b9eff9f22dbe",
+  "prevId": "00000000-0000-0000-0000-000000000000",
+  "version": "7",
+  "dialect": "postgresql",
+  "tables": {
+    "public.bid": {
+      "name": "bid",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "coins": {
+          "name": "coins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "date": {
+          "name": "date",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bidGamePlayerId": {
+          "name": "bidGamePlayerId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bidGameComboId": {
+          "name": "bidGameComboId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bid_bidGamePlayerId_bid_game_player_id_fk": {
+          "name": "bid_bidGamePlayerId_bid_game_player_id_fk",
+          "tableFrom": "bid",
+          "tableTo": "bid_game_player",
+          "columnsFrom": ["bidGamePlayerId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_bidGameComboId_bid_game_combo_id_fk": {
+          "name": "bid_bidGameComboId_bid_game_combo_id_fk",
+          "tableFrom": "bid",
+          "tableTo": "bid_game_combo",
+          "columnsFrom": ["bidGameComboId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_bidGamePlayerId_unique": {
+          "name": "bid_bidGamePlayerId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidGamePlayerId"]
+        },
+        "bid_bidGameComboId_unique": {
+          "name": "bid_bidGameComboId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidGameComboId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bid_game": {
+      "name": "bid_game",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "status": {
+          "name": "status",
+          "type": "bid_game_status_enum",
+          "typeSchema": "public",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'CREATED'"
+        },
+        "matchId": {
+          "name": "matchId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bidPresetId": {
+          "name": "bidPresetId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "createdAt": {
+          "name": "createdAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "modifiedAt": {
+          "name": "modifiedAt",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "hostId": {
+          "name": "hostId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bidTimeLimitSeconds": {
+          "name": "bidTimeLimitSeconds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "enabledCombos": {
+          "name": "enabledCombos",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "bidHistory": {
+          "name": "bidHistory",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'[]'::jsonb"
+        },
+        "quickBid": {
+          "name": "quickBid",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        },
+        "ranked": {
+          "name": "ranked",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true,
+          "default": false
+        }
+      },
+      "indexes": {
+        "bid_game_ranked_status_idx": {
+          "name": "bid_game_ranked_status_idx",
+          "columns": [
+            {
+              "expression": "ranked",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            },
+            {
+              "expression": "status",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "bid_game_matchId_match_id_fk": {
+          "name": "bid_game_matchId_match_id_fk",
+          "tableFrom": "bid_game",
+          "tableTo": "match",
+          "columnsFrom": ["matchId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        },
+        "bid_game_bidPresetId_bid_preset_id_fk": {
+          "name": "bid_game_bidPresetId_bid_preset_id_fk",
+          "tableFrom": "bid_game",
+          "tableTo": "bid_preset",
+          "columnsFrom": ["bidPresetId"],
+          "columnsTo": ["id"],
+          "onDelete": "set null",
+          "onUpdate": "no action"
+        },
+        "bid_game_hostId_bid_game_player_id_fk": {
+          "name": "bid_game_hostId_bid_game_player_id_fk",
+          "tableFrom": "bid_game",
+          "tableTo": "bid_game_player",
+          "columnsFrom": ["hostId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_game_matchId_unique": {
+          "name": "bid_game_matchId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["matchId"]
+        },
+        "bid_game_hostId_unique": {
+          "name": "bid_game_hostId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["hostId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bid_game_combo": {
+      "name": "bid_game_combo",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "bidGameId": {
+          "name": "bidGameId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "factionId": {
+          "name": "factionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerMatId": {
+          "name": "playerMatId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bid_game_combo_bidGameId_bid_game_id_fk": {
+          "name": "bid_game_combo_bidGameId_bid_game_id_fk",
+          "tableFrom": "bid_game_combo",
+          "tableTo": "bid_game",
+          "columnsFrom": ["bidGameId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_game_combo_factionId_faction_id_fk": {
+          "name": "bid_game_combo_factionId_faction_id_fk",
+          "tableFrom": "bid_game_combo",
+          "tableTo": "faction",
+          "columnsFrom": ["factionId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_game_combo_playerMatId_player_mat_id_fk": {
+          "name": "bid_game_combo_playerMatId_player_mat_id_fk",
+          "tableFrom": "bid_game_combo",
+          "tableTo": "player_mat",
+          "columnsFrom": ["playerMatId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_game_combo_bidGameId_factionId_playerMatId_unique": {
+          "name": "bid_game_combo_bidGameId_factionId_playerMatId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidGameId", "factionId", "playerMatId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bid_game_player": {
+      "name": "bid_game_player",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "dateJoined": {
+          "name": "dateJoined",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bidGameId": {
+          "name": "bidGameId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerMatchResultId": {
+          "name": "playerMatchResultId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "quickBids": {
+          "name": "quickBids",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bid_game_player_bidGameId_bid_game_id_fk": {
+          "name": "bid_game_player_bidGameId_bid_game_id_fk",
+          "tableFrom": "bid_game_player",
+          "tableTo": "bid_game",
+          "columnsFrom": ["bidGameId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_game_player_userId_user_id_fk": {
+          "name": "bid_game_player_userId_user_id_fk",
+          "tableFrom": "bid_game_player",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_game_player_playerMatchResultId_player_match_result_id_fk": {
+          "name": "bid_game_player_playerMatchResultId_player_match_result_id_fk",
+          "tableFrom": "bid_game_player",
+          "tableTo": "player_match_result",
+          "columnsFrom": ["playerMatchResultId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_game_player_playerMatchResultId_unique": {
+          "name": "bid_game_player_playerMatchResultId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["playerMatchResultId"]
+        },
+        "bid_game_player_bidGameId_order_unique": {
+          "name": "bid_game_player_bidGameId_order_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidGameId", "order"]
+        },
+        "bid_game_player_bidGameId_userId_unique": {
+          "name": "bid_game_player_bidGameId_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidGameId", "userId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bid_preset": {
+      "name": "bid_preset",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "default": {
+          "name": "default",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_preset_default_unique": {
+          "name": "bid_preset_default_unique",
+          "nullsNotDistinct": false,
+          "columns": ["default"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.bid_preset_setting": {
+      "name": "bid_preset_setting",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "enabled": {
+          "name": "enabled",
+          "type": "boolean",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bidPresetId": {
+          "name": "bidPresetId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "factionId": {
+          "name": "factionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerMatId": {
+          "name": "playerMatId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "bid_preset_setting_bidPresetId_bid_preset_id_fk": {
+          "name": "bid_preset_setting_bidPresetId_bid_preset_id_fk",
+          "tableFrom": "bid_preset_setting",
+          "tableTo": "bid_preset",
+          "columnsFrom": ["bidPresetId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_preset_setting_factionId_faction_id_fk": {
+          "name": "bid_preset_setting_factionId_faction_id_fk",
+          "tableFrom": "bid_preset_setting",
+          "tableTo": "faction",
+          "columnsFrom": ["factionId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "bid_preset_setting_playerMatId_player_mat_id_fk": {
+          "name": "bid_preset_setting_playerMatId_player_mat_id_fk",
+          "tableFrom": "bid_preset_setting",
+          "tableTo": "player_mat",
+          "columnsFrom": ["playerMatId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "bid_preset_setting_bidPresetId_factionId_playerMatId_unique": {
+          "name": "bid_preset_setting_bidPresetId_factionId_playerMatId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["bidPresetId", "factionId", "playerMatId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.discord_blacklist": {
+      "name": "discord_blacklist",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "discordId": {
+          "name": "discordId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.faction": {
+      "name": "faction",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "position": {
+          "name": "position",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "faction_name_unique": {
+          "name": "faction_name_unique",
+          "nullsNotDistinct": false,
+          "columns": ["name"]
+        },
+        "faction_position_unique": {
+          "name": "faction_position_unique",
+          "nullsNotDistinct": false,
+          "columns": ["position"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.mat_combo_tier": {
+      "name": "mat_combo_tier",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "tierId": {
+          "name": "tierId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "factionId": {
+          "name": "factionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerMatId": {
+          "name": "playerMatId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "mat_combo_tier_tierId_tier_id_fk": {
+          "name": "mat_combo_tier_tierId_tier_id_fk",
+          "tableFrom": "mat_combo_tier",
+          "tableTo": "tier",
+          "columnsFrom": ["tierId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "mat_combo_tier_factionId_faction_id_fk": {
+          "name": "mat_combo_tier_factionId_faction_id_fk",
+          "tableFrom": "mat_combo_tier",
+          "tableTo": "faction",
+          "columnsFrom": ["factionId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "mat_combo_tier_playerMatId_player_mat_id_fk": {
+          "name": "mat_combo_tier_playerMatId_player_mat_id_fk",
+          "tableFrom": "mat_combo_tier",
+          "tableTo": "player_mat",
+          "columnsFrom": ["playerMatId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "mat_combo_tier_factionId_playerMatId_unique": {
+          "name": "mat_combo_tier_factionId_playerMatId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["factionId", "playerMatId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.match": {
+      "name": "match",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "numRounds": {
+          "name": "numRounds",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "datePlayed": {
+          "name": "datePlayed",
+          "type": "timestamp",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "recordingUserId": {
+          "name": "recordingUserId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.player": {
+      "name": "player",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "steamId": {
+          "name": "steamId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {
+        "player_floating_display_name_unique": {
+          "name": "player_floating_display_name_unique",
+          "columns": [
+            {
+              "expression": "displayName",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": true,
+          "where": "\"player\".\"steamId\" IS NULL AND \"player\".\"userId\" IS NULL",
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "player_userId_user_id_fk": {
+          "name": "player_userId_user_id_fk",
+          "tableFrom": "player",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "player_userId_unique": {
+          "name": "player_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["userId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.player_mat": {
+      "name": "player_mat",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "abbrev": {
+          "name": "abbrev",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "order": {
+          "name": "order",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "player_mat_name_unique": {
+          "name": "player_mat_name_unique",
+          "nullsNotDistinct": false,
+          "columns": ["name"]
+        },
+        "player_mat_abbrev_unique": {
+          "name": "player_mat_abbrev_unique",
+          "nullsNotDistinct": false,
+          "columns": ["abbrev"]
+        },
+        "player_mat_order_unique": {
+          "name": "player_mat_order_unique",
+          "nullsNotDistinct": false,
+          "columns": ["order"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.player_match_result": {
+      "name": "player_match_result",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "coins": {
+          "name": "coins",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "playerId": {
+          "name": "playerId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "factionId": {
+          "name": "factionId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "playerMatId": {
+          "name": "playerMatId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "matchId": {
+          "name": "matchId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "tieOrder": {
+          "name": "tieOrder",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 0
+        },
+        "rank": {
+          "name": "rank",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "playerTrueskill": {
+          "name": "playerTrueskill",
+          "type": "jsonb",
+          "primaryKey": false,
+          "notNull": false
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "player_match_result_playerId_player_id_fk": {
+          "name": "player_match_result_playerId_player_id_fk",
+          "tableFrom": "player_match_result",
+          "tableTo": "player",
+          "columnsFrom": ["playerId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "player_match_result_factionId_faction_id_fk": {
+          "name": "player_match_result_factionId_faction_id_fk",
+          "tableFrom": "player_match_result",
+          "tableTo": "faction",
+          "columnsFrom": ["factionId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "player_match_result_playerMatId_player_mat_id_fk": {
+          "name": "player_match_result_playerMatId_player_mat_id_fk",
+          "tableFrom": "player_match_result",
+          "tableTo": "player_mat",
+          "columnsFrom": ["playerMatId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        },
+        "player_match_result_matchId_match_id_fk": {
+          "name": "player_match_result_matchId_match_id_fk",
+          "tableFrom": "player_match_result",
+          "tableTo": "match",
+          "columnsFrom": ["matchId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "player_match_result_matchId_rank_unique": {
+          "name": "player_match_result_matchId_rank_unique",
+          "nullsNotDistinct": false,
+          "columns": ["matchId", "rank"]
+        },
+        "player_match_result_matchId_playerId_unique": {
+          "name": "player_match_result_matchId_playerId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["matchId", "playerId"]
+        },
+        "player_match_result_matchId_factionId_unique": {
+          "name": "player_match_result_matchId_factionId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["matchId", "factionId"]
+        },
+        "player_match_result_matchId_playerMatId_unique": {
+          "name": "player_match_result_matchId_playerMatId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["matchId", "playerMatId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.tier": {
+      "name": "tier",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "name": {
+          "name": "name",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "rank": {
+          "name": "rank",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "tier_name_unique": {
+          "name": "tier_name_unique",
+          "nullsNotDistinct": false,
+          "columns": ["name"]
+        },
+        "tier_rank_unique": {
+          "name": "tier_rank_unique",
+          "nullsNotDistinct": false,
+          "columns": ["rank"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user": {
+      "name": "user",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "username": {
+          "name": "username",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "discordId": {
+          "name": "discordId",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "displayName": {
+          "name": "displayName",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": false
+        },
+        "discriminator": {
+          "name": "discriminator",
+          "type": "varchar",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {},
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_discordId_unique": {
+          "name": "user_discordId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["discordId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_bid_games_bid_game": {
+      "name": "user_bid_games_bid_game",
+      "schema": "",
+      "columns": {
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        },
+        "bidGameId": {
+          "name": "bidGameId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {
+        "user_bid_games_bid_game_idx": {
+          "name": "user_bid_games_bid_game_idx",
+          "columns": [
+            {
+              "expression": "bidGameId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        },
+        "user_bid_games_user_idx": {
+          "name": "user_bid_games_user_idx",
+          "columns": [
+            {
+              "expression": "userId",
+              "isExpression": false,
+              "asc": true,
+              "nulls": "last"
+            }
+          ],
+          "isUnique": false,
+          "concurrently": false,
+          "method": "btree",
+          "with": {}
+        }
+      },
+      "foreignKeys": {
+        "user_bid_games_bid_game_userId_user_id_fk": {
+          "name": "user_bid_games_bid_game_userId_user_id_fk",
+          "tableFrom": "user_bid_games_bid_game",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "cascade",
+          "onUpdate": "cascade"
+        },
+        "user_bid_games_bid_game_bidGameId_bid_game_id_fk": {
+          "name": "user_bid_games_bid_game_bidGameId_bid_game_id_fk",
+          "tableFrom": "user_bid_games_bid_game",
+          "tableTo": "bid_game",
+          "columnsFrom": ["bidGameId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {
+        "user_bid_games_bid_game_userId_bidGameId_pk": {
+          "name": "user_bid_games_bid_game_userId_bidGameId_pk",
+          "columns": ["userId", "bidGameId"]
+        }
+      },
+      "uniqueConstraints": {},
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    },
+    "public.user_trueskill": {
+      "name": "user_trueskill",
+      "schema": "",
+      "columns": {
+        "id": {
+          "name": "id",
+          "type": "serial",
+          "primaryKey": true,
+          "notNull": true
+        },
+        "mu": {
+          "name": "mu",
+          "type": "numeric(7, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": "'25'::numeric"
+        },
+        "sigma": {
+          "name": "sigma",
+          "type": "numeric(7, 2)",
+          "primaryKey": false,
+          "notNull": true,
+          "default": 8.333333333333334
+        },
+        "userId": {
+          "name": "userId",
+          "type": "integer",
+          "primaryKey": false,
+          "notNull": true
+        }
+      },
+      "indexes": {},
+      "foreignKeys": {
+        "user_trueskill_userId_user_id_fk": {
+          "name": "user_trueskill_userId_user_id_fk",
+          "tableFrom": "user_trueskill",
+          "tableTo": "user",
+          "columnsFrom": ["userId"],
+          "columnsTo": ["id"],
+          "onDelete": "no action",
+          "onUpdate": "no action"
+        }
+      },
+      "compositePrimaryKeys": {},
+      "uniqueConstraints": {
+        "user_trueskill_userId_unique": {
+          "name": "user_trueskill_userId_unique",
+          "nullsNotDistinct": false,
+          "columns": ["userId"]
+        }
+      },
+      "policies": {},
+      "checkConstraints": {},
+      "isRLSEnabled": false
+    }
+  },
+  "enums": {
+    "public.bid_game_status_enum": {
+      "name": "bid_game_status_enum",
+      "schema": "public",
+      "values": ["CREATED", "DELETED", "BIDDING", "BIDDING_FINISHED", "GAME_RECORDED", "EXPIRED"]
+    }
+  },
+  "schemas": {},
+  "sequences": {},
+  "roles": {},
+  "policies": {},
+  "views": {},
+  "_meta": {
+    "columns": {},
+    "schemas": {},
+    "tables": {}
+  }
+}

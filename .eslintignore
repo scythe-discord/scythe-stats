@@ -1,7 +1,0 @@
-# Don't ever lint node_modules
-node_modules
-# Don't lint build output
-dist
-# Don't lint generated GQL typings
-api/src/graphql/schema/codegen/generated.ts
-site/lib/graphql/codegen.tsx
