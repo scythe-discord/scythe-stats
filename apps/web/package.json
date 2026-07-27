@@ -28,7 +28,7 @@
     "next": "^16.2.9",
     "next-auth": "5.0.0-beta.31",
     "next-themes": "^0.4.6",
-    "postcss": "^8.5.15",
+    "postcss": "^8.5.18",
     "radix-ui": "^1.6.0",
     "react": "^19.2.7",
     "react-dom": "^19.2.7",
